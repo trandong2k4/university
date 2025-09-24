@@ -1,0 +1,7 @@
+{
+  "code": 200,
+  "message": "Token refreshed",
+  "result": {
+    "token": "fake-jwt-token-refreshed"
+  }
+}

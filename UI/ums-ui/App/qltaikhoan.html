@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Tài khoản | Learning Hub</title>
+    <!-- Use Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7g0n7s2xU8W+c/qA8Nf6A2y7t6L/j8E5Jz3r2b+oW9s5/b4/F5A2zR8xV/K6l6zU1e+A9sQ3FjQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        #chat-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        #chat-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="text-2xl font-bold text-blue-600">Learning Hub</div>
+            <ul class="flex space-x-6 md:space-x-8 lg:space-x-10">
+                <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Trang chủ</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Quản trị</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Báo cáo</a></li>
+                <li><a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Cài đặt</a></li>
+                <li><a href="#" id="logoutBtn" class="text-red-500 hover:text-red-700 transition-colors font-semibold">Đăng xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Banner -->
+        <section id="banner" class="bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-xl shadow-lg p-8 text-center animate-fade-in">
+            <h1 class="text-4xl lg:text-5xl font-extrabold leading-tight">Quản lý Tài khoản</h1>
+            <p class="mt-2 text-lg">Quản lý thông tin chi tiết các tài khoản người dùng trong hệ thống.</p>
+        </section>
+
+        <!-- Main Content Section -->
+        <section class="mt-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-6">
+                    <button id="addAccountBtn" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-plus-circle mr-2"></i> Thêm tài khoản
+                    </button>
+                    <button id="editAccountBtn" class="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full hover:bg-yellow-600 transition-colors flex items-center justify-center">
+                        <i class="fas fa-edit mr-2"></i> Sửa
+                    </button>
+                    <button id="deleteAccountBtn" class="bg-red-600 text-white font-bold py-3 px-6 rounded-full hover:bg-red-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-trash-alt mr-2"></i> Xóa
+                    </button>
+                    <button id="toggleStatusBtn" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-full hover:bg-indigo-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-lock mr-2"></i> Khóa/Mở khóa
+                    </button>
+                    <div class="flex-grow"></div>
+                    <button id="backBtn" class="bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-full hover:bg-gray-400 transition-colors flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                    </button>
+                </div>
+                
+                <!-- Account Table -->
+                <div id="account-table-container" class="overflow-x-auto">
+                    <table class="min-w-full leading-normal">
+                        <thead>
+                            <tr>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tên đăng nhập</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Họ tên</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Vai trò</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Trạng thái</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ngày tạo</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="account-table-body">
+                            <!-- Data will be populated by JS -->
+                            <tr class="bg-white hover:bg-gray-50 cursor-pointer" data-id="admin1">
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">admin1</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">Trần Thanh Trúc</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">truc.tt@example.com</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">Admin</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm text-green-600 font-semibold">Hoạt động</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">2023-01-15</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <button class="view-details-btn bg-blue-500 text-white px-3 py-1 rounded-full text-xs hover:bg-blue-600">Xem chi tiết</button>
+                                </td>
+                            </tr>
+                            <tr class="bg-white hover:bg-gray-50 cursor-pointer" data-id="teacher1">
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">teacher1</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">Lê Văn Khoa</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">khoa.lv@example.com</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">Giảng viên</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm text-green-600 font-semibold">Hoạt động</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">2023-02-20</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <button class="view-details-btn bg-blue-500 text-white px-3 py-1 rounded-full text-xs hover:bg-blue-600">Xem chi tiết</button>
+                                </td>
+                            </tr>
+                            <tr class="bg-white hover:bg-gray-50 cursor-pointer" data-id="student1">
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">student1</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">Phạm Thị Lan</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">lan.pt@example.com</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">Sinh viên</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm text-red-600 font-semibold">Đã khóa</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">2023-03-10</td>
+                                <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <button class="view-details-btn bg-blue-500 text-white px-3 py-1 rounded-full text-xs hover:bg-blue-600">Xem chi tiết</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Modals for Add/Edit -->
+    <div id="modal-container" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 id="modal-title" class="text-2xl font-bold mb-4"></h3>
+            <form id="account-form">
+                <div class="mb-4">
+                    <label for="username" class="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
+                    <input type="text" id="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                </div>
+                <div class="mb-4">
+                    <label for="fullName" class="block text-sm font-medium text-gray-700">Họ tên</label>
+                    <input type="text" id="fullName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                </div>
+                <div class="mb-4">
+                    <label for="role" class="block text-sm font-medium text-gray-700">Vai trò</label>
+                    <select id="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                        <option value="Admin">Admin</option>
+                        <option value="Giảng viên">Giảng viên</option>
+                        <option value="Sinh viên">Sinh viên</option>
+                        <option value="Kế toán">Kế toán</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="status" class="block text-sm font-medium text-gray-700">Trạng thái</label>
+                    <select id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+                        <option value="Hoạt động">Hoạt động</option>
+                        <option value="Đã khóa">Đã khóa</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="closeModalBtn" class="bg-gray-400 text-white font-bold py-2 px-4 rounded-full hover:bg-gray-500">Hủy</button>
+                    <button type="submit" id="saveBtn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-full hover:bg-green-700">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Chatbot Widget and UI -->
+    <div id="chatbot-icon" class="fixed bottom-6 right-6 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform">
+        <i class="fas fa-robot text-2xl"></i>
+    </div>
+    <div id="chatbot-window" class="fixed bottom-20 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl flex flex-col hidden z-50">
+        <div class="p-4 bg-blue-600 text-white rounded-t-lg flex justify-between items-center">
+            <h4 class="font-bold">AI Chatbot</h4>
+            <button id="close-chat-btn" class="text-white hover:text-gray-200">&times;</button>
+        </div>
+        <div id="chat-content" class="flex-1 p-4 overflow-y-auto">
+            <div class="text-center text-sm text-gray-500">Chào bạn! Tôi có thể giúp gì cho bạn về quản lý tài khoản?</div>
+        </div>
+        <form id="chat-form" class="p-4 border-t border-gray-200 flex">
+            <input type="text" id="chat-input" class="flex-1 border-0 rounded-full bg-gray-100 px-4 py-2 focus:outline-none" placeholder="Nhập tin nhắn...">
+            <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Simulated data
+        let accounts = [
+            { id: 'admin1', username: 'admin1', fullName: 'Trần Thanh Trúc', email: 'truc.tt@example.com', role: 'Admin', status: 'Hoạt động', creationDate: '2023-01-15' },
+            { id: 'teacher1', username: 'teacher1', fullName: 'Lê Văn Khoa', email: 'khoa.lv@example.com', role: 'Giảng viên', status: 'Hoạt động', creationDate: '2023-02-20' },
+            { id: 'student1', username: 'student1', fullName: 'Phạm Thị Lan', email: 'lan.pt@example.com', role: 'Sinh viên', status: 'Đã khóa', creationDate: '2023-03-10' },
+            { id: 'accountant1', username: 'accountant1', fullName: 'Nguyễn Thanh Hằng', email: 'hang.nt@example.com', role: 'Kế toán', status: 'Hoạt động', creationDate: '2023-04-05' },
+        ];
+        
+        let selectedRow = null;
+        let isEditMode = false;
+
+        // DOM elements
+        const accountTableBody = document.getElementById('account-table-body');
+        const addAccountBtn = document.getElementById('addAccountBtn');
+        const editAccountBtn = document.getElementById('editAccountBtn');
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        const toggleStatusBtn = document.getElementById('toggleStatusBtn');
+        const modalContainer = document.getElementById('modal-container');
+        const modalTitle = document.getElementById('modal-title');
+        const accountForm = document.getElementById('account-form');
+        const usernameInput = document.getElementById('username');
+        const fullNameInput = document.getElementById('fullName');
+        const emailInput = document.getElementById('email');
+        const roleInput = document.getElementById('role');
+        const statusInput = document.getElementById('status');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const backBtn = document.getElementById('backBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        // Functions
+        function renderAccountsTable() {
+            accountTableBody.innerHTML = '';
+            accounts.forEach(account => {
+                const row = document.createElement('tr');
+                row.className = 'bg-white hover:bg-gray-50 cursor-pointer';
+                row.setAttribute('data-id', account.id);
+                const statusColor = account.status === 'Hoạt động' ? 'text-green-600' : 'text-red-600';
+                row.innerHTML = `
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${account.username}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${account.fullName}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${account.email}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${account.role}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm font-semibold ${statusColor}">${account.status}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">${account.creationDate}</td>
+                    <td class="px-5 py-5 border-b border-gray-200 text-sm">
+                        <button class="view-details-btn bg-blue-500 text-white px-3 py-1 rounded-full text-xs hover:bg-blue-600">Xem chi tiết</button>
+                    </td>
+                `;
+                accountTableBody.appendChild(row);
+            });
+        }
+        
+        function openModal(mode, data = {}) {
+            modalContainer.classList.remove('hidden');
+            isEditMode = mode === 'edit';
+            
+            if (isEditMode) {
+                modalTitle.textContent = 'Sửa tài khoản';
+                usernameInput.value = data.username;
+                usernameInput.readOnly = true;
+                fullNameInput.value = data.fullName;
+                emailInput.value = data.email;
+                roleInput.value = data.role;
+                statusInput.value = data.status;
+            } else {
+                modalTitle.textContent = 'Thêm tài khoản';
+                accountForm.reset();
+                usernameInput.readOnly = false;
+            }
+        }
+        
+        function closeModal() {
+            modalContainer.classList.add('hidden');
+            selectedRow = null;
+            renderAccountsTable(); // Re-render to clear selection
+        }
+        
+        function showMessage(message) {
+            // Using a simple alert for demonstration. You can replace this with a custom modal.
+            alert(message);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAccountsTable();
+        });
+        
+        accountTableBody.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (row) {
+                if (e.target.classList.contains('view-details-btn')) {
+                    const accountId = row.getAttribute('data-id');
+                    const accountData = accounts.find(a => a.id === accountId);
+                    showMessage(`Xem chi tiết tài khoản:\nTên đăng nhập: ${accountData.username}\nHọ tên: ${accountData.fullName}\nEmail: ${accountData.email}\nVai trò: ${accountData.role}\nTrạng thái: ${accountData.status}`);
+                    return;
+                }
+                
+                if (selectedRow) {
+                    selectedRow.classList.remove('bg-indigo-100');
+                }
+                selectedRow = row;
+                selectedRow.classList.add('bg-indigo-100');
+            }
+        });
+        
+        addAccountBtn.addEventListener('click', () => {
+            openModal('add');
+        });
+        
+        editAccountBtn.addEventListener('click', () => {
+            if (selectedRow) {
+                const accountId = selectedRow.getAttribute('data-id');
+                const accountData = accounts.find(a => a.id === accountId);
+                openModal('edit', accountData);
+            } else {
+                showMessage('Vui lòng chọn một tài khoản để sửa.');
+            }
+        });
+        
+        deleteAccountBtn.addEventListener('click', () => {
+            if (selectedRow) {
+                const accountId = selectedRow.getAttribute('data-id');
+                const confirmation = confirm('Bạn có chắc chắn muốn xóa tài khoản này?');
+                if (confirmation) {
+                    accounts = accounts.filter(a => a.id !== accountId);
+                    showMessage('Xóa tài khoản thành công.');
+                    selectedRow = null;
+                    renderAccountsTable();
+                }
+            } else {
+                showMessage('Vui lòng chọn một tài khoản để xóa.');
+            }
+        });
+
+        toggleStatusBtn.addEventListener('click', () => {
+            if (selectedRow) {
+                const accountId = selectedRow.getAttribute('data-id');
+                const account = accounts.find(a => a.id === accountId);
+                if (account) {
+                    account.status = account.status === 'Hoạt động' ? 'Đã khóa' : 'Hoạt động';
+                    showMessage('Đã thay đổi trạng thái tài khoản thành công.');
+                    renderAccountsTable();
+                }
+            } else {
+                showMessage('Vui lòng chọn một tài khoản để khóa/mở khóa.');
+            }
+        });
+        
+        accountForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = usernameInput.value;
+            const fullName = fullNameInput.value;
+            const email = emailInput.value;
+            const role = roleInput.value;
+            const status = statusInput.value;
+            
+            if (isEditMode) {
+                // Edit existing account
+                const account = accounts.find(a => a.username === username);
+                if (account) {
+                    account.fullName = fullName;
+                    account.email = email;
+                    account.role = role;
+                    account.status = status;
+                    showMessage('Sửa tài khoản thành công.');
+                }
+            } else {
+                // Add new account
+                const newId = 'user' + (accounts.length + 1);
+                accounts.push({ id: newId, username, fullName, email, role, status, creationDate: new Date().toISOString().slice(0, 10) });
+                showMessage('Thêm tài khoản thành công.');
+            }
+            closeModal();
+        });
+        
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Simple navigation buttons
+        backBtn.addEventListener('click', () => {
+            alert('Quay lại trang quản trị.');
+        });
+        
+        logoutBtn.addEventListener('click', () => {
+            alert('Đăng xuất khỏi hệ thống.');
+        });
+        
+        // Chatbot logic
+        const chatbotIcon = document.getElementById('chatbot-icon');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const closeChatBtn = document.getElementById('close-chat-btn');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatContent = document.getElementById('chat-content');
+
+        chatbotIcon.addEventListener('click', () => {
+            chatbotWindow.classList.toggle('hidden');
+        });
+
+        closeChatBtn.addEventListener('click', () => {
+            chatbotWindow.classList.add('hidden');
+        });
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userMessage = chatInput.value.trim();
+            if (userMessage === '') return;
+
+            const userBubble = document.createElement('div');
+            userBubble.className = 'flex justify-end mb-2';
+            userBubble.innerHTML = `<div class="bg-blue-500 text-white p-3 rounded-lg max-w-xs">${userMessage}</div>`;
+            chatContent.appendChild(userBubble);
+            chatInput.value = '';
+            chatContent.scrollTop = chatContent.scrollHeight;
+
+            setTimeout(() => {
+                const aiBubble = document.createElement('div');
+                aiBubble.className = 'flex justify-start mb-2';
+                aiBubble.innerHTML = `<div class="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-xs">Chào bạn, tôi có thể giải đáp các thắc mắc về quản lý tài khoản.</div>`;
+                chatContent.appendChild(aiBubble);
+                chatContent.scrollTop = chatContent.scrollHeight;
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin · Dashboard</title>
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/layout.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <script type="module" src="/components/header.js"></script>
+    <script type="module" src="/components/sidebar.js"></script>
+    <script type="module">
+        import { authGuard, roleGuard } from '/js/guard.js';
+        import { ROLES } from '/js/roles.js';
+        if (authGuard() && roleGuard([ROLES.ADMIN])) {
+            // ok
+        }
+    </script>
+</head>
+
+<body>
+    <app-header></app-header>
+    <div class="container page">
+        <app-sidebar role="ADMIN"></app-sidebar>
+        <main>
+            <h1>Admin Overview</h1>
+            <div id="cards" class="grid"></div>
+        </main>
+    </div>
+
+    <!-- <script type="module">
+        import { api } from '/js/api.js';
+        const cards = document.getElementById('cards');
+        // ví dụ gọi API thống kê
+        (async () => {
+            try {
+                const stats = await api('/admin/stats'); // Spring: GET /api/admin/stats
+                cards.innerHTML = `
+          <div class="card"><h3>Users</h3><p>${stats.users}</p></div>
+          <div class="card"><h3>Courses</h3><p>${stats.courses}</p></div>
+          <div class="card"><h3>Enrollments</h3><p>${stats.enrollments}</p></div>
+        `;
+            } catch (e) {
+                cards.innerHTML = `<div class="alert error">${e.message}</div>`;
+            }
+        })();
+    </script> -->
+
+
+    <script type="module">
+        import { requireAuth, getCurrentUser } from '/js/auth.js';
+        (async () => {
+            const ok = await requireAuth();
+            if (!ok) return;
+
+            const user = getCurrentUser();
+            // TODO: render dashboard theo role...
+        })();
+    </script>
+
+</body>
+
+</html>

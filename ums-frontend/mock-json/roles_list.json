@@ -1,0 +1,96 @@
+{
+  "code": 200,
+  "message": "Roles fetched",
+  "result": [
+    {
+      "name": "ADMIN",
+      "description": "Admin role",
+      "permissions": [
+        {
+          "name": "USER_READ",
+          "description": "User Read"
+        },
+        {
+          "name": "USER_WRITE",
+          "description": "User Write"
+        },
+        {
+          "name": "COURSE_READ",
+          "description": "Course Read"
+        },
+        {
+          "name": "COURSE_WRITE",
+          "description": "Course Write"
+        },
+        {
+          "name": "SCHEDULE_READ",
+          "description": "Schedule Read"
+        },
+        {
+          "name": "SCHEDULE_WRITE",
+          "description": "Schedule Write"
+        },
+        {
+          "name": "PAYMENT_READ",
+          "description": "Payment Read"
+        },
+        {
+          "name": "PAYMENT_WRITE",
+          "description": "Payment Write"
+        }
+      ]
+    },
+    {
+      "name": "STAFF",
+      "description": "Staff role",
+      "permissions": [
+        {
+          "name": "USER_READ",
+          "description": "User Read"
+        },
+        {
+          "name": "COURSE_READ",
+          "description": "Course Read"
+        },
+        {
+          "name": "COURSE_WRITE",
+          "description": "Course Write"
+        },
+        {
+          "name": "SCHEDULE_READ",
+          "description": "Schedule Read"
+        },
+        {
+          "name": "SCHEDULE_WRITE",
+          "description": "Schedule Write"
+        },
+        {
+          "name": "PAYMENT_READ",
+          "description": "Payment Read"
+        }
+      ]
+    },
+    {
+      "name": "STUDENT",
+      "description": "Student role",
+      "permissions": [
+        {
+          "name": "USER_READ",
+          "description": "User Read"
+        },
+        {
+          "name": "COURSE_READ",
+          "description": "Course Read"
+        },
+        {
+          "name": "SCHEDULE_READ",
+          "description": "Schedule Read"
+        },
+        {
+          "name": "PAYMENT_READ",
+          "description": "Payment Read"
+        }
+      ]
+    }
+  ]
+}

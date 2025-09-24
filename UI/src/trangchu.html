@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Hub • Trang chủ</title>
+  <style>
+    :root{
+      --red:#b70d0d; --red-dark:#8f0b0b; --bg:#111; --panel:#1c1c1c; --muted:#888; --brand:#ffce3a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Segoe UI,Arial,Helvetica,sans-serif;background:var(--bg);color:#eee}
+    a{color:#fff;text-decoration:none}
+    .container{display:flex;gap:12px;max-width:1300px;margin:0 auto;padding:12px}
+
+    /* Header */
+    header{background:var(--red);border-bottom:2px solid #000;}
+    .topbar{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 12px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+    .logo .mark{width:34px;height:34px;border-radius:6px;background:#fff;color:var(--red);display:grid;place-items:center;font-weight:900}
+    nav.main a{padding:8px 12px;border-radius:6px}
+    nav.main a:hover{background:rgba(255,255,255,.12)}
+    .lang{font-size:13px;color:#f6f6f6;opacity:.9}
+
+    /* Banner */
+    .banner{background:linear-gradient(90deg,var(--red-dark),#5a0a0a);}
+    .banner-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:14px;padding:16px 12px}
+    .tile{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px}
+    .hero h1{margin:0 0 8px;font-size:28px;letter-spacing:.3px}
+    .hero p{margin:0;color:#f3f3f3;opacity:.9}
+    .quicklinks a{display:flex;align-items:center;gap:8px;margin:6px 0;padding:10px 12px;border-radius:8px;background:rgba(0,0,0,.25)}
+    .quicklinks a:hover{background:rgba(0,0,0,.35)}
+    .event{
+      display:flex;flex-direction:column;gap:8px
+    }
+    .countdown{display:flex;gap:6px;flex-wrap:wrap}
+    .cd-box{background:#2a2a2a;border:1px solid #3d3d3d;color:#fff;padding:10px 12px;border-radius:8px;min-width:64px;text-align:center}
+    .cd-box .num{font-size:20px;font-weight:800}
+    .cd-box .lbl{font-size:11px;color:#bbb}
+
+    /* Layout */
+    .sidebar{width:260px}
+    .panel{background:var(--panel);border:1px solid #242424;border-radius:10px}
+    .panel h3{margin:0;padding:12px 14px;border-bottom:1px solid #2b2b2b;font-size:14px;letter-spacing:.3px;color:#fff;background:#161616;border-top-left-radius:10px;border-top-right-radius:10px}
+
+    /* Accordion */
+    .acc{padding:6px}
+    .acc details{margin:6px 6px;background:#1a1a1a;border:1px solid #272727;border-radius:8px}
+    .acc summary{cursor:pointer;list-style:none;padding:10px 12px;font-weight:600}
+    .acc ul{margin:0;padding:0 0 10px 16px}
+    .acc li{list-style:"› ";margin:6px 0;color:#ccc}
+    .badge{background:#2d2d2d;border:1px solid #3b3b3b;color:#bbb;font-size:11px;padding:2px 6px;border-radius:999px;margin-left:6px}
+    .badge.admin{background:#4a1f1f;color:#ffb8b8;border-color:#703131}
+
+    /* Content */
+    .content{flex:1;display:grid;gap:12px}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+    .card{background:var(--panel);border:1px solid #242424;border-radius:10px;padding:14px}
+    .card h4{margin:0 0 10px;font-size:16px;color:var(--brand)}
+    .list{display:grid;gap:10px}
+    .list .item{padding:10px;border:1px solid #2a2a2a;border-radius:8px;background:#171717}
+    .item small{color:var(--muted)}
+    .courses{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .course{background:#171717;border:1px solid #2a2a2a;border-radius:8px;padding:10px}
+
+    footer{max-width:1300px;margin:14px auto 40px;color:#bbb;text-align:center}
+
+    /* Chatbot */
+    .bot-btn{position:fixed;right:18px;bottom:18px;width:64px;height:64px;border-radius:50%;background:var(--red);display:grid;place-items:center;font-size:24px;cursor:pointer;box-shadow:0 10px 20px rgba(0,0,0,.35)}
+    .bot{position:fixed;right:18px;bottom:92px;width:340px;max-width:90vw;background:#0f0f0f;border:1px solid #262626;border-radius:12px;display:none;overflow:hidden}
+    .bot header{background:#161616;border-bottom:1px solid #262626;padding:10px 12px}
+    .bot .body{height:260px;overflow:auto;padding:8px}
+    .msg{background:#1a1a1a;border:1px solid #2a2a2a;padding:8px 10px;border-radius:8px;margin:6px 0}
+    .input{display:flex;gap:6px;padding:8px;border-top:1px solid #262626}
+    .input input{flex:1;padding:10px;border-radius:8px;border:1px solid #2a2a2a;background:#141414;color:#fff}
+    .input button{padding:10px 14px;border-radius:8px;border:1px solid #2a2a2a;background:var(--red);color:#fff;cursor:pointer}
+
+    /* Responsive */
+    @media (max-width: 1024px){
+      .banner-inner{grid-template-columns:1fr}
+      .courses{grid-template-columns:repeat(2,1fr)}
+      .grid{grid-template-columns:1fr}
+      .sidebar{display:none}
+    }
+    @media (max-width: 560px){
+      nav.main{display:none}
+      .courses{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+   <div class="topbar">
+    <div class="logo"><span class="mark">LH</span> Learning Hub</div>
+    <nav class="main">
+      <a href="#">Trang chủ</a>
+      <a href="#about">Giới thiệu</a>
+      <a href="#courses">Nội dung khóa học</a>
+      <a href="#exam">Lịch thi</a>
+      <a href="#news">Tin tức</a>
+      <a href="#contact">Liên hệ</a>
+     
+      <a href="#logout">Đăng xuất</a>
+    </nav>
+    <div class="lang">Việt Nam | English</div>
+  </div>
+  </header>
+
+  <!-- Banner -->
+  <section class="banner">
+    <div class="banner-inner">
+      <div class="tile hero">
+        <h1>Nền tảng học tập thông minh • Chatbot AI 24/7</h1>
+        <p>Quản lý đào tạo – Lịch học – Lịch thi – Kết quả – Kế toán – Thư viện số, tất cả trong một.</p>
+      </div>
+      <div class="tile event">
+        <strong>⏰ Kỳ học sắp khai giảng</strong>
+        <div class="countdown" id="countdown">
+          <div class="cd-box"><div class="num" id="cd-d">00</div><div class="lbl">Ngày</div></div>
+          <div class="cd-box"><div class="num" id="cd-h">00</div><div class="lbl">Giờ</div></div>
+          <div class="cd-box"><div class="num" id="cd-m">00</div><div class="lbl">Phút</div></div>
+          <div class="cd-box"><div class="num" id="cd-s">00</div><div class="lbl">Giây</div></div>
+        </div>
+        <small class="muted">Khai giảng dự kiến: 05/10/2025</small>
+      </div>
+      <div class="tile quicklinks">
+        <strong>🔗 Liên kết nhanh</strong>
+        <a href="#gmail">📧 Gmail</a>
+        <a href="#learning">🎓 Học trực tuyến</a>
+        <a href="#forum">💬 Diễn đàn</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Sidebar (role-aware) -->
+    <aside class="sidebar">
+      <div class="panel">
+        <h3>Menu cá nhân</h3>
+        <div class="acc">
+          <details open>
+            <summary>Thông tin & Kết quả</summary>
+            <ul>
+              <li>Thông tin cá nhân</li>
+              <li>Kết quả học tập (2.10)</li>
+              <li>Kết quả môn học (2.11)</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Lịch & Thi</summary>
+            <ul>
+              <li>Lịch học (2.15)</li>
+              <li>Lịch thi (2.5)</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Khóa học</summary>
+            <ul>
+              <li>Nội dung khóa học (2.7)</li>
+              <li>Kỳ học sắp khai giảng (2.6)</li>
+              <li>Tín chỉ (2.22)</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Tin tức & Liên hệ</summary>
+            <ul>
+              <li>Tin tức (2.9)</li>
+              <li>Bài viết (2.27)</li>
+              <li>Liên hệ (2.8)</li>
+              <li>Gmail (2.26)</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <h3>Quản trị <span class="badge admin">Admin</span></h3>
+        <div class="acc">
+          <details>
+            <summary>Tổ chức</summary>
+            <ul>
+              <li>Quản lí giảng viên (2.12)</li>
+              <li>Quản lí sinh viên (2.14)</li>
+              <li>Quản lí lớp học (2.16)</li>
+              <li>Quản lí phòng học (2.23)</li>
+              <li>Quản lí chức vụ (2.24)</li>
+              <li>Quản lí tài khoản (2.21)</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Đào tạo</summary>
+            <ul>
+              <li>Quản lí môn học (2.20)</li>
+              <li>Quản lí lịch học (2.15)</li>
+              <li>Quản lí lịch thi (2.17)</li>
+              <li>Quản lí tín chỉ (2.22)</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Kế toán</summary>
+            <ul>
+              <li>Quản lí kế toán (2.13)</li>
+              <li>Phiếu thu (2.18)</li>
+              <li>Phiếu chi (2.19)</li>
+            </ul>
+          </details>
+          <details>
+            <summary>Truyền thông</summary>
+            <ul>
+              <li>Quản lí liên hệ (2.25)</li>
+              <li>Quản lí bài viết (2.27)</li>
+              <li>Quản lí gmail (2.26)</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <section class="content">
+      <div class="grid">
+        <div class="card" id="news">
+          <h4>📰 Tin tức mới nhất</h4>
+          <div class="list">
+            <div class="item"><strong>Khai giảng Học kỳ Thu 2025</strong><br/><small>Đăng ngày 20/08/2025 • Đào tạo</small></div>
+            <div class="item"><strong>Hướng dẫn đăng ký tín chỉ trực tuyến</strong><br/><small>Đăng ngày 18/08/2025 • Phòng đào tạo</small></div>
+            <div class="item"><strong>Nhà trường hợp tác doanh nghiệp ABC</strong><br/><small>Đăng ngày 15/08/2025 • Hợp tác</small></div>
+          </div>
+        </div>
+        <div class="card" id="exam">
+          <h4>📅 Lịch thi sắp tới</h4>
+          <div class="list">
+            <div class="item"><strong>Toán rời rạc</strong> – 08:00 12/09/2025 – Phòng A101</div>
+            <div class="item"><strong>Cơ sở dữ liệu</strong> – 13:30 15/09/2025 – Phòng B203</div>
+            <div class="item"><strong>Lập trình Java</strong> – 08:00 20/09/2025 – Phòng C305</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="courses">
+        <h4>⭐ Khóa học nổi bật</h4>
+        <div class="courses">
+          <div class="course"><strong>Phát triển Web</strong><br/><small>Giảng viên: Trần Minh</small></div>
+          <div class="course"><strong>Phân tích dữ liệu</strong><br/><small>Giảng viên: Lê Hoa</small></div>
+          <div class="course"><strong>Hệ quản trị CSDL</strong><br/><small>Giảng viên: Nguyễn An</small></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" id="about">
+          <h4>ℹ️ Giới thiệu</h4>
+          <p>Learning Hub là nền tảng quản lý đào tạo tích hợp Chatbot AI giúp tra cứu lịch học, lịch thi, nội dung khóa học, và theo dõi kết quả học tập nhanh chóng.</p>
+        </div>
+        <div class="card" id="contact">
+          <h4>📞 Liên hệ</h4>
+          <p>Email: support@learninghub.vn<br/>Hotline: 0123 456 789<br/>Địa chỉ: 123 Đường Giáo Dục, Hà Nội</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Learning Hub • Chính sách • Hỗ trợ kỹ thuật • FAQ
+  </footer>
+
+  <!-- Chatbot Mock -->
+  <div class="bot" id="bot">
+    <header><strong>Chatbot AI</strong></header>
+    <div class="body" id="botBody">
+      <div class="msg">Xin chào! Bạn muốn xem lịch thi hay kết quả môn học?</div>
+    </div>
+    <div class="input">
+      <input id="botInput" placeholder="Nhập câu hỏi... (vd: lịch thi tuần này)" />
+      <button onclick="sendMsg()">Gửi</button>
+    </div>
+  </div>
+  <div class="bot-btn" id="botBtn" title="AI Chatbot">💬</div>
+
+  <script>
+    // Countdown to a fixed date
+    const target = new Date('2025-10-05T07:00:00');
+    const $ = (id)=>document.getElementById(id);
+    function tick(){
+      const now = new Date();
+      const diff = Math.max(0, target - now);
+      const s = Math.floor(diff/1000);
+      const d = Math.floor(s/86400);
+      const h = Math.floor((s%86400)/3600);
+      const m = Math.floor((s%3600)/60);
+      const sec = s%60;
+      $('cd-d').textContent = String(d).padStart(2,'0');
+      $('cd-h').textContent = String(h).padStart(2,'0');
+      $('cd-m').textContent = String(m).padStart(2,'0');
+      $('cd-s').textContent = String(sec).padStart(2,'0');
+    }
+    setInterval(tick,1000); tick();
+
+    // Chatbot toggle + mock reply
+    const bot = $('bot');
+    $('botBtn').addEventListener('click',()=>{
+      bot.style.display = bot.style.display==='block' ? 'none' : 'block';
+    });
+    function sendMsg(){
+      const input = $('botInput');
+      const body = $('botBody');
+      if(!input.value.trim()) return;
+      const me = document.createElement('div'); me.className='msg'; me.textContent = input.value; body.appendChild(me);
+      const reply = document.createElement('div'); reply.className='msg';
+      // very simple intent mock
+      const q = input.value.toLowerCase();
+      if(q.includes('lịch thi')) reply.textContent = 'Bạn có 3 lịch thi sắp tới: 12/09 (A101), 15/09 (B203), 20/09 (C305).';
+      else if(q.includes('kết quả')) reply.textContent = 'Điểm học kỳ gần nhất: GPA 3.24. Xem chi tiết tại "Kết quả học tập".';
+      else if(q.includes('liên hệ')) reply.textContent = 'Hotline 0123 456 789, email support@learninghub.vn';
+      else reply.textContent = 'Mình có thể giúp tra cứu lịch học, lịch thi, kết quả, hoặc hướng dẫn đăng ký tín chỉ.';
+      body.appendChild(reply); body.scrollTop = body.scrollHeight; input.value='';
+    }
+  </script>
+</body>
+</html>

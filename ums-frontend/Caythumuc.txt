@@ -1,0 +1,51 @@
+ums-frontend/
+├─ index.html                   # Landing (khách) + CTA đăng ký/đăng nhập
+├─ login.html                   # Trang đăng nhập
+├─ register.html                # Trang đăng ký
+├─ 403.html                     # Không đủ quyền
+├─ 404.html                     # Không tìm thấy trang
+│
+├─ pages/                       # Trang theo chức năng
+│  ├─ public/                   # Khách (chưa đăng nhập)
+│  │  ├─ about.html
+│  │  └─ courses.html           # Danh sách khóa học public
+│  ├─ admin/
+│  │  ├─ dashboard.html
+│  │  ├─ users.html
+│  │  └─ reports.html
+│  ├─ lecturer/
+│  │  ├─ dashboard.html
+│  │  ├─ my-courses.html
+│  │  └─ gradebook.html
+│  └─ student/
+│     ├─ dashboard.html
+│     ├─ enrollments.html
+│     └─ transcripts.html
+│
+├─ components/                  # Thành phần giao diện dùng lại
+│  ├─ header.js                 # <app-header> (menu đổi theo role)
+│  ├─ footer.js                 # <app-footer>
+│  └─ sidebar.js                # <app-sidebar role="...">
+│
+├─ assets/
+│  ├─ css/
+│  │  ├─ base.css               # Reset/normalize + tokens màu, font
+│  │  ├─ layout.css             # Grid, container, header/footer
+│  │  └─ components.css         # Card, table, form, button...
+│  ├─ img/                      # Logo, icons
+│  └─ fonts/
+│
+├─ js/
+│  ├─ config.js                 # Cấu hình môi trường (API base URL)
+│  ├─ api.js                    # fetch wrapper (JWT, JSON)
+│  ├─ auth.js                   # login/logout, giữ token, lấy profile
+│  ├─ guard.js                  # chặn truy cập (authGuard, roleGuard)
+│  ├─ router.js                 # điều hướng đơn giản (optional SPA-lite)
+│  ├─ ui.js                     # tiện ích UI: toast, modal, spinner
+│  ├─ util.js                   # helper: qs, formToJSON, debounce...
+│  └─ roles.js                  # hằng số ROLE, permission map
+│
+├─ mocks/                       # Dùng khi chưa có BE (tùy chọn)
+│  └─ users.json
+│
+└─ README.md

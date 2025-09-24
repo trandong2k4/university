@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giới Thiệu | Learning Hub</title>
+    <!-- Use Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7g0n7s2xU8W+c/qA8Nf6A2y7t6L/j8E5Jz3r2b+oW9s5/b4/F5A2zR8xV/K6l6zU1e+A9sQ3FjQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        #chat-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        #chat-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        #chat-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="text-2xl font-bold text-blue-600">Learning Hub</div>
+            <ul class="flex space-x-6 md:space-x-8 lg:space-x-10">
+                <li><a href="../App/trangchu.html" class="text-gray-600 hover:text-blue-600 transition-colors">Trang chủ</a></li>
+                <li><a href="../App/gioithieu.html" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Giới thiệu</a></li>
+                <li><a href="../App/lichthi.html" class="text-gray-600 hover:text-blue-600 transition-colors">Lịch thi</a></li>
+                <li><a href="../App/tintuc.html" class="text-gray-600 hover:text-blue-600 transition-colors">Tin tức</a></li>
+                <li><a href="../App/lienhe.html" class="text-gray-600 hover:text-blue-600 transition-colors">Liên hệ</a></li>
+                <li><a href="../dangnhap.html" id="logoutBtn" class="text-red-500 hover:text-red-700 transition-colors font-semibold">Đăng xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- About Us Section -->
+        <section class="bg-white p-8 rounded-lg shadow-md text-center">
+            <img src="https://placehold.co/150x150/1e40af/ffffff?text=Logo" alt="Learning Hub Logo" class="mx-auto w-24 h-24 mb-4 rounded-full shadow-lg">
+            <h1 class="text-4xl font-bold text-blue-600 mb-4">Chào mừng đến với Learning Hub</h1>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                Chúng tôi là một nền tảng học tập trực tuyến tiên phong, mang đến một không gian học thuật năng động và hiệu quả. Sứ mệnh của chúng tôi là dân chủ hóa giáo dục, giúp mọi người dễ dàng tiếp cận với kiến thức chất lượng cao, bất kể họ ở đâu.
+            </p>
+        </section>
+
+        <!-- Mission, Vision, Goals -->
+        <section class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-purple-500">
+                <i class="fas fa-bullseye text-4xl text-purple-600 mb-3"></i>
+                <h3 class="text-2xl font-semibold mb-2">Sứ Mệnh</h3>
+                <p class="text-gray-700">Cung cấp các khóa học chất lượng cao, giúp người học phát triển kỹ năng và đạt được mục tiêu cá nhân và nghề nghiệp.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-yellow-500">
+                <i class="fas fa-eye text-4xl text-yellow-600 mb-3"></i>
+                <h3 class="text-2xl font-semibold mb-2">Tầm Nhìn</h3>
+                <p class="text-gray-700">Trở thành nền tảng giáo dục trực tuyến hàng đầu, xây dựng một cộng đồng học tập toàn cầu, không ngừng đổi mới và sáng tạo.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-teal-500">
+                <i class="fas fa-trophy text-4xl text-teal-600 mb-3"></i>
+                <h3 class="text-2xl font-semibold mb-2">Mục Tiêu</h3>
+                <p class="text-gray-700">Tạo ra các trải nghiệm học tập tương tác, cá nhân hóa, và cung cấp chứng chỉ uy tín cho người học.</p>
+            </div>
+        </section>
+
+        <!-- Our Team Section -->
+        <section class="mt-8 bg-white p-8 rounded-lg shadow-md">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Đội Ngũ Giảng Viên Chuyên Nghiệp</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <!-- Team Member 1 -->
+                <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                    <img src="https://placehold.co/120x120/1d4ed8/ffffff?text=AVATAR" alt="Avatar" class="rounded-full w-24 h-24 mx-auto mb-2">
+                    <h4 class="font-semibold text-lg">Nguyễn Văn A</h4>
+                    <p class="text-sm text-gray-500">Giảng viên Lập trình Web</p>
+                </div>
+                <!-- Team Member 2 -->
+                <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                    <img src="https://placehold.co/120x120/1d4ed8/ffffff?text=AVATAR" alt="Avatar" class="rounded-full w-24 h-24 mx-auto mb-2">
+                    <h4 class="font-semibold text-lg">Lê Thị B</h4>
+                    <p class="text-sm text-gray-500">Chuyên gia Phân tích Dữ liệu</p>
+                </div>
+                <!-- Team Member 3 -->
+                <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                    <img src="https://placehold.co/120x120/1d4ed8/ffffff?text=AVATAR" alt="Avatar" class="rounded-full w-24 h-24 mx-auto mb-2">
+                    <h4 class="font-semibold text-lg">Phạm Văn C</h4>
+                    <p class="text-sm text-gray-500">Giảng viên Thiết kế Đồ họa</p>
+                </div>
+                <!-- Team Member 4 -->
+                <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                    <img src="https://placehold.co/120x120/1d4ed8/ffffff?text=AVATAR" alt="Avatar" class="rounded-full w-24 h-24 mx-auto mb-2">
+                    <h4 class="font-semibold text-lg">Trần Thị D</h4>
+                    <p class="text-sm text-gray-500">Chuyên gia Marketing</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Benefits Section -->
+        <section class="mt-8 bg-white p-8 rounded-lg shadow-md">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Lợi Ích Khi Tham Gia Learning Hub</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex items-start bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <i class="fas fa-check-circle text-2xl text-green-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-lg">Khoa học chất lượng cao</h4>
+                        <p class="text-sm text-gray-600">Được biên soạn bởi các chuyên gia đầu ngành, cập nhật xu hướng mới nhất.</p>
+                    </div>
+                </div>
+                <div class="flex items-start bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <i class="fas fa-clock text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-lg">Linh hoạt về thời gian</h4>
+                        <p class="text-sm text-gray-600">Học mọi lúc, mọi nơi, trên mọi thiết bị với các bài giảng được thiết kế chuyên nghiệp.</p>
+                    </div>
+                </div>
+                <div class="flex items-start bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <i class="fas fa-users text-2xl text-indigo-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-lg">Cộng đồng hỗ trợ</h4>
+                        <p class="text-sm text-gray-600">Tham gia vào các diễn đàn, nhóm học tập để trao đổi kiến thức và kinh nghiệm.</p>
+                    </div>
+                </div>
+                <div class="flex items-start bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <i class="fas fa-certificate text-2xl text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-lg">Chứng chỉ uy tín</h4>
+                        <p class="text-sm text-gray-600">Nhận chứng chỉ hoàn thành khóa học được công nhận, giúp tăng cơ hội nghề nghiệp.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chatbot Widget and UI (reused from previous screen) -->
+    <div id="chatbot-icon" class="fixed bottom-6 right-6 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform">
+        <i class="fas fa-robot text-2xl"></i>
+    </div>
+    <div id="chatbot-window" class="fixed bottom-20 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl flex flex-col hidden z-50">
+        <div class="p-4 bg-blue-600 text-white rounded-t-lg flex justify-between items-center">
+            <h4 class="font-bold">AI Chatbot</h4>
+            <button id="close-chat-btn" class="text-white hover:text-gray-200">&times;</button>
+        </div>
+        <div id="chat-content" class="flex-1 p-4 overflow-y-auto">
+            <div class="text-center text-sm text-gray-500">Chào mừng bạn! Tôi có thể giúp gì cho bạn?</div>
+        </div>
+        <form id="chat-form" class="p-4 border-t border-gray-200 flex" onsubmit="handleChatSubmit(event)">
+            <input type="text" id="chat-input" class="flex-1 border-0 rounded-full bg-gray-100 px-4 py-2 focus:outline-none" placeholder="Nhập tin nhắn...">
+            <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+    <script src="../js/gioithieu.js"></script>
+</body>
+</html>

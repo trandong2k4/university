@@ -1,0 +1,25 @@
+{
+  "code": 200,
+  "message": "Sinh vien fetched",
+  "result": [
+    {
+      "maSinhVien": "11111111-1111-1111-1111-111111111111",
+      "hoTen": "Nguyen Van A",
+      "email": "sva@dtu.edu.vn",
+      "soDienThoai": "0901111222",
+      "maNganhHoc": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "ngayNhapHoc": "2023-09-10",
+      "userId": "00000000-0000-0000-0000-000000000002"
+    },
+    { 
+      "maSinhVien": "22222222-2222-2222-2222-222222222222",
+      "hoTen": "Le Thi C",
+      "email": "ltc@dtu.edu.vn",
+      "soDienThoai": "0901111333",
+      "maNganhHoc": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ngayNhapHoc": "2023-09-10",
+      "userId": "00000000-0000-0000-0000-000000000004"
+    }
+  ]
+}
+
