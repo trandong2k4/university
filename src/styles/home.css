@@ -1,0 +1,154 @@
+/* ================== HEADER ================== */
+header {
+    background: #2F80ED;
+    color: #fff;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+header nav a {
+    color: #fff;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+header nav a:hover {
+    color: #FFD166;
+}
+
+/* ================== BANNER ================== */
+.banner {
+    text-align: center;
+    background: linear-gradient(to right, #2F80ED, #56CCF2);
+    color: #fff;
+    padding: 80px 20px;
+}
+
+.banner h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.banner p {
+    font-size: 20px;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+/* ================== SEARCH BOX ================== */
+.search-box {
+    display: flex;
+    justify-content: center;
+    margin: 30px auto;
+    max-width: 600px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+}
+
+.search-box button {
+    background: #2F80ED;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.search-box button:hover {
+    background: #1C5FBD;
+}
+
+/* ================== NGÀNH HỌC ================== */
+.nganhhoc {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 40px;
+}
+
+.nganhhoc .card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.nganhhoc .card:hover {
+    transform: translateY(-5px);
+}
+
+/* ================== TIN TỨC ================== */
+.tintuc {
+    background: #F5F6FA;
+    padding: 40px;
+}
+
+.tintuc h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.tintuc .item {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    transition: box-shadow 0.3s;
+}
+
+.tintuc .item:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ================== CHATBOT ================== */
+.chatbot-btn {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    background: #2F80ED;
+    color: #fff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.chatbot-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ================== FOOTER ================== */
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+}

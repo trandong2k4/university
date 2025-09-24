@@ -1,0 +1,79 @@
+/src
+ ├── api/                   # Gọi API đến Spring Boot
+ │    ├── authApi.js
+ │    ├── studentApi.js
+ │    ├── teacherApi.js
+ │    ├── adminApi.js
+ │    └── accountantApi.js
+ │
+ ├── assets/                # Hình ảnh, icons
+ ├── components/            # Các component tái sử dụng
+ │    ├── HeaderPublic.jsx
+ │    ├── HeaderPrivate.jsx
+ │    ├── Sidebar.jsx
+ │    ├── Footer.jsx
+ │    ├── ProtectedRoute.jsx
+ │    └── RoleBasedRoute.jsx
+ │
+ ├── context/               # Context quản lý Auth, Role
+ │    └── AuthContext.jsx
+ │
+ ├── layouts/               # Layout theo role
+ │    ├── PublicLayout.jsx
+ │    ├── StudentLayout.jsx
+ │    ├── TeacherLayout.jsx
+ │    ├── AccountantLayout.jsx
+ │    └── AdminLayout.jsx
+ │
+ ├── pages/                 # Các trang chức năng
+ │    ├── public/
+ │    │    ├── Home.jsx
+ │    │    ├── SearchCourse.jsx
+ │    │    ├── MajorDetail.jsx
+ │    │    ├── BlogGuide.jsx
+ │    │    └── Chatbot.jsx
+ │    │
+ │    ├── auth/
+ │    │    ├── Login.jsx
+ │    │    ├── Register.jsx
+ │    │    └── ForgotPassword.jsx
+ │    │
+ │    ├── student/
+ │    │    ├── Profile.jsx
+ │    │    ├── Courses.jsx
+ │    │    ├── Schedule.jsx
+ │    │    ├── Grades.jsx
+ │    │    ├── Tuition.jsx
+ │    │    ├── RegisterCredit.jsx
+ │    │    └── CancelCredit.jsx
+ │    │
+ │    ├── teacher/
+ │    │    ├── StudentInfo.jsx
+ │    │    ├── TeacherCourses.jsx
+ │    │    ├── TeacherSchedule.jsx
+ │    │    ├── StudentGrades.jsx
+ │    │    └── UpdateGrades.jsx
+ │    │
+ │    ├── accountant/
+ │    │    ├── StudentTuition.jsx
+ │    │    ├── CreateTuition.jsx
+ │    │    └── UpdateTuition.jsx
+ │    │
+ │    ├── admin/
+ │    │    ├── ManageStudents.jsx
+ │    │    ├── ManageCourses.jsx
+ │    │    ├── ManageSchedule.jsx
+ │    │    ├── ManageGrades.jsx
+ │    │    ├── ManageTuition.jsx
+ │    │    └── ManageCreditRegister.jsx
+ │    │
+ │    └── dashboard/
+ │         ├── PublicDashboard.jsx
+ │         └── AdminDashboard.jsx
+ │
+ ├── router/
+ │    └── AppRouter.jsx     # Định nghĩa route + phân quyền
+ │
+ ├── App.jsx
+ ├── main.jsx
+ └── index.css

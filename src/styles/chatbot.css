@@ -1,0 +1,146 @@
+/* ================== CHATBOT WRAPPER ================== */
+.chatbot-container {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 340px;
+    height: 420px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+    z-index: 9999;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ================== HEADER ================== */
+.chatbot-header {
+    background: #2F80ED;
+    color: #fff;
+    padding: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chatbot-header button {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* ================== MESSAGES AREA ================== */
+.chatbot-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Tin nhắn chung */
+.msg {
+    padding: 8px 12px;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Tin nhắn từ Bot */
+.msg.bot {
+    background: #f0f2f5;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 0;
+}
+
+/* Tin nhắn từ User */
+.msg.user {
+    background: #2F80ED;
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 0;
+}
+
+/* ================== INPUT AREA ================== */
+.chatbot-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+    background: #fafafa;
+}
+
+.chatbot-input input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    margin-right: 6px;
+}
+
+.chatbot-input input:focus {
+    border-color: #2F80ED;
+    box-shadow: 0 0 3px rgba(47, 128, 237, 0.3);
+}
+
+.chatbot-input button {
+    background: #2F80ED;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.chatbot-input button:hover {
+    background: #1c5fbd;
+}
+
+/* ================== FLOAT BUTTON ================== */
+.chatbot-toggle {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: #2F80ED;
+    color: #fff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s;
+    z-index: 9999;
+}
+
+.chatbot-toggle:hover {
+    transform: scale(1.1);
+}
