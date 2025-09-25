@@ -1,7 +1,7 @@
 // StudentGrades.jsx - placeholder
 import React from "react";
 import mockData from "../../mockData";
-import "../../styles/StudentGrades.css";
+import "../../styles/studentGrades.css";
 
 export default function StudentGrades() {
   const grades = mockData.entities.ketQuaHocTap || [];
