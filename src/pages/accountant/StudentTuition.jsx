@@ -1,6 +1,7 @@
-// StudentTuition.jsx - placeholder
+// StudentTuition.jsx
 import React, { useMemo } from "react";
 import mockData from "../../mockData";
+import "../../styles/studentTuition.css";
 
 const formatVND = (n) => (typeof n === "number" ? n.toLocaleString("vi-VN") + " ₫" : "-");
 
@@ -18,18 +19,18 @@ export default function StudentTuition() {
     }, []);
 
     return (
-        <div className="space-y-4">
-            <h1 className="text-2xl font-bold">Quản lý học phí (toàn bộ sinh viên)</h1>
+        <div className="student-tuition-container">
+            <h1 className="student-tuition-title">Quản lý học phí (toàn bộ sinh viên)</h1>
 
-            <div className="overflow-x-auto bg-white rounded-xl border">
-                <table className="min-w-[840px] w-full text-sm">
-                    <thead className="bg-gray-50 text-gray-600">
+            <div className="student-tuition-table-wrapper">
+                <table className="student-tuition-table">
+                    <thead className="student-tuition-thead">
                         <tr>
-                            <th className="p-3 text-left">Sinh viên</th>
-                            <th className="p-3 text-left">Kỳ</th>
-                            <th className="p-3 text-right">Số tiền</th>
-                            <th className="p-3 text-left">Ngày đóng</th>
-                            <th className="p-3 text-left">Trạng thái</th>
+                            <th className="stu-th">Sinh viên</th>
+                            <th className="stu-th">Kỳ</th>
+                            <th className="stu-th text-right">Số tiền</th>
+                            <th className="stu-th">Ngày đóng</th>
+                            <th className="stu-th">Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,21 +38,21 @@ export default function StudentTuition() {
                             const sv = studentsById[f.sinhVienId];
                             const k = kiById[f.kiHocId];
                             return (
-                                <tr key={f.id} className="border-t">
-                                    <td className="p-3">
+                                <tr key={f.id} className="stu-tr">
+                                    <td className="stu-td">
                                         {sv?.tenSinhVien}{" "}
-                                        <span className="text-xs text-gray-500">({sv?.maSinhVien})</span>
+                                        <span className="stu-subtext">({sv?.maSinhVien})</span>
                                     </td>
-                                    <td className="p-3">{k?.tenKiHoc || "-"}</td>
-                                    <td className="p-3 text-right font-medium">{formatVND(f.soTien)}</td>
-                                    <td className="p-3">{f.ngayDong || "-"}</td>
-                                    <td className="p-3">{f.trangThai}</td>
+                                    <td className="stu-td">{k?.tenKiHoc || "-"}</td>
+                                    <td className="stu-td text-right">{formatVND(f.soTien)}</td>
+                                    <td className="stu-td">{f.ngayDong || "-"}</td>
+                                    <td className="stu-td">{f.trangThai}</td>
                                 </tr>
                             );
                         })}
                         {!fees.length && (
                             <tr>
-                                <td className="p-3 text-gray-500" colSpan={5}>
+                                <td className="stu-no-data" colSpan={5}>
                                     Chưa có dữ liệu học phí.
                                 </td>
                             </tr>

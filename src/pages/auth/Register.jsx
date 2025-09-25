@@ -1,7 +1,8 @@
-// Register.jsx - placeholder
+// Register.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import "../../styles/register.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -13,8 +14,8 @@ export default function Register() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    // Mock: sau khi "đăng ký", tự đăng nhập luôn
     login({ name, role });
+
     switch (role.toLowerCase()) {
       case "student":
         navigate("/student/profile", { replace: true });
@@ -34,47 +35,53 @@ export default function Register() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 flex justify-center">
-      <div className="w-full max-w-md bg-white rounded-2xl border shadow-sm p-6">
-        <h1 className="text-2xl font-bold mb-6">Đăng ký (mock)</h1>
+    <div className="register-container">
+      <div className="register-card">
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Họ và tên</label>
+        <div className="login-links">
+          <h1 >
+            <Link to="">Learning Hub</Link>
+          </h1>
+        </div>
+        <h2 className="register-title">Đăng ký (mock)</h2>
+
+        <form onSubmit={onSubmit} className="register-form">
+          <div className="register-field">
+            <label className="register-label">Họ và tên</label>
             <input
-              className="w-full rounded-lg border px-3 py-2"
+              className="register-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Nguyen Van A"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+          <div className="register-field">
+            <label className="register-label">Email</label>
             <input
               type="email"
-              className="w-full rounded-lg border px-3 py-2"
+              className="register-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Mật khẩu</label>
+          <div className="register-field">
+            <label className="register-label">Mật khẩu</label>
             <input
               type="password"
-              className="w-full rounded-lg border px-3 py-2"
+              className="register-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Role (mock)</label>
+          <div className="register-field">
+            <label className="register-label">Role (mock)</label>
             <select
-              className="w-full rounded-lg border px-3 py-2"
+              className="register-input"
               value={role}
               onChange={(e) => setRole(e.target.value)}
             >
@@ -85,16 +92,14 @@ export default function Register() {
             </select>
           </div>
 
-          <button className="w-full rounded-lg bg-blue-600 text-white py-2 font-medium">
+          <button type="submit" className="register-btn">
             Đăng ký
           </button>
         </form>
 
-        <div className="text-sm mt-4">
+        <div className="register-footer">
           Đã có tài khoản?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Đăng nhập
-          </Link>
+          <Link to="/login">Đăng nhập</Link>
         </div>
       </div>
     </div>

@@ -1,27 +1,28 @@
-// StudentLayout.jsx - placeholder
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import HeaderPrivate from "../components/HeaderPrivate";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
+import Chatbot from "../components/Chatbot";
+import "../styles/student-layout.css"; // CSS riêng cho layout này
 
 export default function StudentLayout() {
   const { user } = useAuth(); // { name, role }
   const userRole = user?.role || "STUDENT";
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <HeaderPrivate userRole={userRole} />
+    <div className="student-layout">
+      <HeaderPrivate userRole={userRole} className="student-layout-header" />
 
-      <div className="flex flex-1">
-        <Sidebar userRole={userRole} />
-        <main className="flex-1 p-6 bg-gray-50">
+      <div className="student-layout-body">
+        <Sidebar userRole={userRole} className="student-sidebar-container" />
+        <main className="student-layout-main">
           <Outlet />
         </main>
       </div>
-
-      <Footer />
+      <Chatbot />
+      <Footer className="student-layout-footer" />
     </div>
   );
 }

@@ -1,0 +1,74 @@
+.manage-container {
+    padding: 24px;
+}
+
+.manage-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.manage-form {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 16px;
+}
+
+.manage-input,
+.manage-select {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.manage-btn-add {
+    background-color: #2563eb;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.manage-table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    margin-top: 16px;
+}
+
+.manage-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.manage-table-head {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.manage-table-cell {
+    padding: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.manage-table-sub {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.manage-btn-remove {
+    background-color: #dc2626;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.manage-empty {
+    text-align: center;
+    color: #6b7280;
+    padding: 12px;
+}

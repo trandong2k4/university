@@ -1,0 +1,81 @@
+/* Teacher Layout */
+.teacher-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header */
+.teacher-layout-header {
+    flex-shrink: 0;
+}
+
+/* Body: sidebar + main */
+.teacher-layout-body {
+    display: flex;
+    flex: 1;
+}
+
+/* Sidebar */
+.teacher-sidebar-container {
+    width: 16rem;
+    /* 256px */
+    background: #eef2ff;
+    /* indigo-50 (khác student một chút) */
+    height: calc(100vh - 64px);
+    position: sticky;
+    top: 0;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+/* Main content */
+.teacher-layout-main {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    min-height: 100%;
+}
+
+/* Footer */
+.teacher-layout-footer {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+/* Chatbot button */
+.teacher-chatbot-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: #4f46e5;
+    /* indigo-600 */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+}
+
+.teacher-chatbot-btn:hover {
+    background: #4338ca;
+    /* indigo-700 */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .teacher-sidebar-container {
+        position: fixed;
+        left: -100%;
+        transition: left 0.3s ease;
+        z-index: 50;
+    }
+
+    .teacher-sidebar-container.open {
+        left: 0;
+    }
+}

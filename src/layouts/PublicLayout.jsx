@@ -1,30 +1,22 @@
-// src/layouts/PublicLayout.jsx
 import React from "react";
 import { Outlet } from "react-router-dom";
 import HeaderPublic from "../components/HeaderPublic";
 import Footer from "../components/Footer";
+import Chatbot from "../components/Chatbot";
+import "../styles/public-layout.css"; // thêm CSS riêng
 
 export default function PublicLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <HeaderPublic />
+    <div className="public-layout">
 
-      {/* Nội dung trang */}
-      <main className="flex-1 container mx-auto px-4 py-6">
-        <Outlet />
+      <HeaderPublic />
+      <img class="img-all" src="/src/assets/learning.jpg" alt=""></img>
+      <main className="public-layout-content">
+        <Outlet /> {/* Render các trang public */}
       </main>
 
-      {/* Nút chatbot nổi (mock) */}
-      <button
-        type="button"
-        className="fixed bottom-6 right-6 rounded-full shadow-lg p-4 bg-blue-600 text-white hover:bg-blue-700 transition"
-        title="Chatbot AI (mock)"
-      >
-        🤖
-      </button>
+      <Chatbot />
 
-      {/* Footer */}
       <Footer />
     </div>
   );

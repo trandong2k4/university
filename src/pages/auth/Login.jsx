@@ -1,7 +1,8 @@
-// Login.jsx - placeholder
+// Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import "../../styles/login.css";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -13,10 +14,8 @@ export default function Login() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        // Giả lập login: chỉ set user vào context
         login({ name: username || "Nguyen Van A", role });
 
-        // Điều hướng theo role để test ProtectedRoute
         const redirect = params.get("redirect");
         if (redirect) return navigate(redirect, { replace: true });
 
@@ -39,36 +38,42 @@ export default function Login() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-12 flex justify-center">
-            <div className="w-full max-w-md bg-white rounded-2xl border shadow-sm p-6">
-                <h1 className="text-2xl font-bold mb-6">Đăng nhập (mock)</h1>
+        <div className="login-container">
+            <div className="login-card">
+                <div className="login-links">
+                    <h1 className="logo-text">
+                        <Link to="/">Learning Hub</Link>
+                    </h1>
+                </div>
 
-                <form onSubmit={onSubmit} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Tên đăng nhập</label>
+                <h2 className="login-title">Đăng nhập (mock)</h2>
+
+                <form onSubmit={onSubmit} className="login-form">
+                    <div className="login-field">
+                        <label className="login-label">Tên đăng nhập</label>
                         <input
-                            className="w-full rounded-lg border px-3 py-2"
+                            className="login-input"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             placeholder="Nhập tên đăng nhập"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Mật khẩu</label>
+                    <div className="login-field">
+                        <label className="login-label">Mật khẩu</label>
                         <input
                             type="password"
-                            className="w-full rounded-lg border px-3 py-2"
+                            className="login-input"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••••"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Role (mock)</label>
+                    <div className="login-field">
+                        <label className="login-label">Role (mock)</label>
                         <select
-                            className="w-full rounded-lg border px-3 py-2"
+                            className="login-input"
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
                         >
@@ -77,26 +82,19 @@ export default function Login() {
                             <option value="accountant">Accountant</option>
                             <option value="admin">Admin</option>
                         </select>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="login-note">
                             Chọn role để test route phân quyền.
                         </p>
                     </div>
 
-                    <button
-                        type="submit"
-                        className="w-full rounded-lg bg-blue-600 text-white py-2 font-medium"
-                    >
+                    <button type="submit" className="login-btn">
                         Đăng nhập
                     </button>
                 </form>
 
-                <div className="flex justify-between text-sm mt-4">
-                    <Link to="/forgot-password" className="text-blue-600 hover:underline">
-                        Quên mật khẩu?
-                    </Link>
-                    <Link to="/register" className="text-blue-600 hover:underline">
-                        Tạo tài khoản
-                    </Link>
+                <div className="login-links">
+                    <Link to="/forgot-password">Quên mật khẩu?</Link>
+                    <Link to="/register">Tạo tài khoản</Link>
                 </div>
             </div>
         </div>

@@ -20,7 +20,7 @@ export default function MajorDetail() {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="text-red-600 font-semibold">Không tìm thấy ngành học (id: {id}).</div>
-                <Link to="/nganh-hoc" className="text-blue-600 underline mt-2 inline-block">
+                <Link to="/majors" className="text-blue-600 underline mt-2 inline-block">
                     Quay lại danh sách ngành
                 </Link>
             </div>
@@ -60,6 +60,14 @@ export default function MajorDetail() {
                     <div className="text-sm text-gray-500">Chưa có môn học cho ngành này.</div>
                 )}
             </section>
+
+
+            <div className="container mx-auto px-4 py-8">
+                <div className="text-red-600 font-semibold">Không tìm thấy ngành học (id: {id}).</div>
+                <Link to="/" className="text-blue-600 underline mt-2 inline-block">
+                    Quay lại danh sách ngành
+                </Link>
+            </div>
         </div>
     );
 }

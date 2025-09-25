@@ -2,15 +2,18 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import PublicLayout from "./layouts/PublicLayout";
 import AppRouter from "./router/AppRouter";
-import "./index.css";
+import PublicLayout from "./layouts/PublicLayout";
+
+import "./App.css"; // nhớ import CSS layout
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRouter />
+        <div className="app">
+          <AppRouter />
+        </div>
       </AuthProvider>
     </BrowserRouter>
   );

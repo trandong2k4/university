@@ -1,6 +1,7 @@
-// CreateTuition.jsx - placeholder
+// CreateTuition.jsx
 import React, { useMemo, useState } from "react";
 import mockData from "../../mockData";
+import "../../styles/createTuition.css";
 
 export default function CreateTuition() {
     const students = mockData.entities.sinhVien || [];
@@ -28,14 +29,14 @@ export default function CreateTuition() {
     };
 
     return (
-        <div className="space-y-4 max-w-xl">
-            <h1 className="text-2xl font-bold">Tạo học phí</h1>
+        <div className="tuition-container">
+            <h1 className="tuition-title">Tạo học phí</h1>
 
-            <form onSubmit={onSubmit} className="bg-white rounded-xl border p-4 space-y-4">
-                <div>
-                    <label className="block text-sm font-medium mb-1">Sinh viên</label>
+            <form onSubmit={onSubmit} className="tuition-form">
+                <div className="tuition-field">
+                    <label className="tuition-label">Sinh viên</label>
                     <select
-                        className="w-full rounded-lg border px-3 py-2"
+                        className="tuition-select"
                         value={sinhVienId}
                         onChange={(e) => setSinhVienId(e.target.value)}
                     >
@@ -47,10 +48,10 @@ export default function CreateTuition() {
                     </select>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Kỳ học</label>
+                <div className="tuition-field">
+                    <label className="tuition-label">Kỳ học</label>
                     <select
-                        className="w-full rounded-lg border px-3 py-2"
+                        className="tuition-select"
                         value={kiHocId}
                         onChange={(e) => setKiHocId(e.target.value)}
                     >
@@ -62,13 +63,13 @@ export default function CreateTuition() {
                     </select>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Số tiền (VND)</label>
+                <div className="tuition-grid">
+                    <div className="tuition-field">
+                        <label className="tuition-label">Số tiền (VND)</label>
                         <input
                             type="number"
                             min="0"
-                            className="w-full rounded-lg border px-3 py-2"
+                            className="tuition-input"
                             value={soTien}
                             onChange={(e) => setSoTien(e.target.value)}
                             placeholder="VD: 12000000"
@@ -76,11 +77,11 @@ export default function CreateTuition() {
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Ngày đóng (tuỳ chọn)</label>
+                    <div className="tuition-field">
+                        <label className="tuition-label">Ngày đóng (tuỳ chọn)</label>
                         <input
                             type="date"
-                            className="w-full rounded-lg border px-3 py-2"
+                            className="tuition-input"
                             value={ngayDong}
                             onChange={(e) => setNgayDong(e.target.value)}
                             placeholder="YYYY-MM-DD"
@@ -88,10 +89,10 @@ export default function CreateTuition() {
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Trạng thái</label>
+                <div className="tuition-field">
+                    <label className="tuition-label">Trạng thái</label>
                     <select
-                        className="w-full rounded-lg border px-3 py-2"
+                        className="tuition-select"
                         value={trangThai}
                         onChange={(e) => setTrangThai(e.target.value)}
                     >
@@ -102,8 +103,7 @@ export default function CreateTuition() {
                 </div>
 
                 <button
-                    className={`w-full rounded-lg py-2 font-medium ${canSubmit ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500"
-                        }`}
+                    className={`tuition-submit ${canSubmit ? "tuition-submit-active" : "tuition-submit-disabled"}`}
                     disabled={!canSubmit}
                 >
                     Tạo học phí (mock)

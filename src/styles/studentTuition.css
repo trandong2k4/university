@@ -1,0 +1,52 @@
+.student-tuition-container {
+    padding: 32px 16px;
+}
+
+.student-tuition-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 24px;
+}
+
+.student-tuition-table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.student-tuition-table {
+    width: 100%;
+    min-width: 840px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.student-tuition-thead {
+    background: #f9fafb;
+    color: #4b5563;
+}
+
+.stu-th {
+    padding: 12px;
+    text-align: left;
+}
+
+.stu-tr {
+    border-top: 1px solid #e5e7eb;
+}
+
+.stu-td {
+    padding: 12px;
+}
+
+.stu-subtext {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.stu-no-data {
+    padding: 12px;
+    color: #6b7280;
+    text-align: center;
+}

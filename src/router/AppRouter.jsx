@@ -1,6 +1,5 @@
 // AppRouter.jsx - placeholder
-// src/router/AppRouter.jsx
-import React from "react";
+
 import { Routes, Route } from "react-router-dom";
 
 // Layouts
@@ -19,6 +18,8 @@ import SearchCourse from "../pages/public/SearchCourse";
 import MajorDetail from "../pages/public/MajorDetail";
 import BlogGuide from "../pages/public/BlogGuide";
 import Chatbot from "../pages/public/Chatbot";
+import About from "../pages/public/About";
+import Contact from "../pages/public/Contact";
 
 // (Tuỳ chọn) Dashboards
 import PublicDashboard from "../pages/dashboard/PublicDashboard";
@@ -62,20 +63,24 @@ export default function AppRouter() {
     return (
         <Routes>
             {/* Public routes */}
-            <Route element={<PublicLayout />}>
-                <Route path="/" element={<Home />} />
-                {/* tuỳ chọn: public dashboard */}
-                <Route path="/dashboard" element={<PublicDashboard />} />
-                <Route path="/courses" element={<SearchCourse />} />
+            <Route path="/" element={<PublicLayout />}>
+                <Route index element={<PublicDashboard />} />
+                <Route path="/Dashboard" element={<PublicDashboard />} />
+                <Route path="courses" element={<SearchCourse />} />
                 <Route path="/majors/:id" element={<MajorDetail />} />
-                <Route path="/blog" element={<BlogGuide />} />
-                <Route path="/chatbot" element={<Chatbot />} />
+                <Route path="blog" element={<BlogGuide />} />
+                <Route path="chatbot" element={<Chatbot />} />
+                <Route path="about" element={<About />} />
+                <Route path="contact" element={<Contact />} />
+
+                {/* Auth routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+
             </Route>
 
-            {/* Auth routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+
 
             {/* Student routes */}
             <Route element={<ProtectedRoute roles={["STUDENT"]} />}>

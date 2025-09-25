@@ -1,20 +1,21 @@
 // HeaderPublic.jsx - placeholder
 import { Link } from "react-router-dom";
-
+import "../styles/header.css";
 
 export default function HeaderPublic() {
     return (
-        <header className="bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
-            <div className="font-bold text-xl">Learning Hub</div>
-            <nav className="space-x-6 hidden md:flex">
-                <Link to="/">Trang chủ</Link>
-                <Link to="/gioi-thieu">Giới thiệu</Link>
-                <Link to="/nganh-hoc">Ngành học</Link>
-                <Link to="/tin-tuc">Tin tức</Link>
-                <Link to="/lien-he">Liên hệ</Link>
-                <Link to="/login">Đăng nhập</Link>
+        <header className="header">
+            <div className="header-logo">
+                <Link className="header-logo-text" to="/">Learning Hub</Link>
+            </div>
+            <nav className="header-nav">
+                <Link to="/Dashboard"><p>Trang chủ</p></Link>
+                <Link to="/about">Giới thiệu</Link>
+                <Link to="/">Ngành học</Link>
+                <Link to="/blog">Tin tức</Link>
+                <Link to="/contact">Liên hệ</Link>
+                <Link className="nav-login" to="/login">Đăng nhập</Link>
             </nav>
         </header>
     );
 }
-

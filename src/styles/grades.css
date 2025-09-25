@@ -1,0 +1,59 @@
+.grades-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.grades-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.grades-table-wrapper {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+}
+
+.grades-table {
+    min-width: 720px;
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.grades-table th,
+.grades-table td {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #e5e7eb;
+    /* gray-200 */
+}
+
+.grades-table thead {
+    background-color: #f9fafb;
+    /* gray-50 */
+    color: #6b7280;
+    /* gray-600 */
+}
+
+.grades-center {
+    text-align: center;
+}
+
+.grades-bold {
+    font-weight: 500;
+}
+
+.grades-subtext {
+    font-size: 0.75rem;
+    color: #6b7280;
+    /* gray-500 */
+}
+
+.grades-empty {
+    text-align: center;
+    color: #6b7280;
+    /* gray-500 */
+    padding: 1rem;
+}

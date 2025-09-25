@@ -1,6 +1,7 @@
 // ForgotPassword.jsx - placeholder
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import "../../styles/ForgotPassword.css";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -13,29 +14,33 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 flex justify-center">
-      <div className="w-full max-w-md bg-white rounded-2xl border shadow-sm p-6">
-        <h1 className="text-2xl font-bold mb-6">Quên mật khẩu (mock)</h1>
+    <div className="fp-container">
+      <div className="fp-card">
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+        <div className="login-links">
+          <h1>
+            <Link>Learning Hub</Link>
+          </h1>
+        </div>
+        <h2 className="fp-title">Quên mật khẩu (mock)</h2>
+
+        <form onSubmit={onSubmit} className="fp-form">
+          <div className="fp-field">
+            <label className="fp-label">Email</label>
             <input
               type="email"
-              className="w-full rounded-lg border px-3 py-2"
+              className="fp-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
             />
           </div>
 
-        <button className="w-full rounded-lg bg-blue-600 text-white py-2 font-medium">
-            Gửi liên kết đặt lại
-          </button>
+          <button className="fp-button">Gửi liên kết đặt lại</button>
         </form>
 
-        <div className="text-sm mt-4">
-          <Link to="/login" className="text-blue-600 hover:underline">
+        <div className="fp-footer">
+          <Link to="/login" className="fp-link">
             Quay lại đăng nhập
           </Link>
         </div>

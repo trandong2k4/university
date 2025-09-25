@@ -1,8 +1,17 @@
 // TeacherSchedule.jsx - placeholder
 import React, { useMemo } from "react";
 import mockData from "../../mockData";
+import "../../styles/teacherSchedule.css";
 
-const dayNames = { 1: "Thứ 2", 2: "Thứ 3", 3: "Thứ 4", 4: "Thứ 5", 5: "Thứ 6", 6: "Thứ 7", 7: "CN" };
+const dayNames = {
+    1: "Thứ 2",
+    2: "Thứ 3",
+    3: "Thứ 4",
+    4: "Thứ 5",
+    5: "Thứ 6",
+    6: "Thứ 7",
+    7: "CN",
+};
 
 export default function TeacherSchedule() {
     const monHocById = useMemo(() => {
@@ -35,18 +44,18 @@ export default function TeacherSchedule() {
     const lich = mockData.entities.lichHoc || [];
 
     return (
-        <div className="space-y-4">
-            <h1 className="text-2xl font-bold">Lịch dạy (mock)</h1>
-            <div className="overflow-x-auto bg-white rounded-xl border">
-                <table className="min-w-[720px] w-full text-sm">
-                    <thead className="bg-gray-50 text-gray-600">
+        <div className="ts-container">
+            <h1 className="ts-title">Lịch dạy (mock)</h1>
+            <div className="ts-wrapper">
+                <table className="ts-table">
+                    <thead className="ts-thead">
                         <tr>
-                            <th className="p-3 text-left">Môn học</th>
-                            <th className="p-3 text-left">Phòng</th>
-                            <th className="p-3 text-left">Buổi</th>
-                            <th className="p-3 text-left">Tiết / Giờ</th>
-                            <th className="p-3 text-left">Thứ</th>
-                            <th className="p-3 text-left">Kỳ</th>
+                            <th className="ts-th">Môn học</th>
+                            <th className="ts-th">Phòng</th>
+                            <th className="ts-th">Buổi</th>
+                            <th className="ts-th">Tiết / Giờ</th>
+                            <th className="ts-th">Thứ</th>
+                            <th className="ts-th">Kỳ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,24 +66,26 @@ export default function TeacherSchedule() {
                             const b = buoiById[l.buoiHocId];
                             const k = kiById[l.kiHocId];
                             return (
-                                <tr key={l.id} className="border-t">
-                                    <td className="p-3">
+                                <tr key={l.id} className="ts-tr">
+                                    <td className="ts-td">
                                         {m?.tenMonHoc}{" "}
-                                        <span className="text-xs text-gray-500">({l.monHocId})</span>
+                                        <span className="ts-sub">({l.monHocId})</span>
                                     </td>
-                                    <td className="p-3">{p?.tenPhong || "-"}</td>
-                                    <td className="p-3">{b?.tenBuoi || "-"}</td>
-                                    <td className="p-3">
-                                        {g ? `Tiết ${g.tietBatDau}-${g.tietKetThuc} (${g.gioBatDau}–${g.gioKetThuc})` : "-"}
+                                    <td className="ts-td">{p?.tenPhong || "-"}</td>
+                                    <td className="ts-td">{b?.tenBuoi || "-"}</td>
+                                    <td className="ts-td">
+                                        {g
+                                            ? `Tiết ${g.tietBatDau}-${g.tietKetThuc} (${g.gioBatDau}–${g.gioKetThuc})`
+                                            : "-"}
                                     </td>
-                                    <td className="p-3">{dayNames[l.thuTrongTuan] || "-"}</td>
-                                    <td className="p-3">{k?.tenKiHoc || "-"}</td>
+                                    <td className="ts-td">{dayNames[l.thuTrongTuan] || "-"}</td>
+                                    <td className="ts-td">{k?.tenKiHoc || "-"}</td>
                                 </tr>
                             );
                         })}
                         {!lich.length && (
                             <tr>
-                                <td className="p-3 text-gray-500" colSpan={6}>
+                                <td className="ts-empty" colSpan={6}>
                                     Chưa có lịch dạy.
                                 </td>
                             </tr>

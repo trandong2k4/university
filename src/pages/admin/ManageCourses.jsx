@@ -1,6 +1,7 @@
-// ManageCourses.jsx - placeholder
+// ManageCourses.jsx
 import React, { useState } from "react";
 import mockData from "../../mockData";
+import "../../styles/manageCourses.css";
 
 export default function ManageCourses() {
     const [courses, setCourses] = useState(mockData.entities.monHoc || []);
@@ -13,41 +14,38 @@ export default function ManageCourses() {
     };
 
     return (
-        <div className="space-y-4">
-            <h1 className="text-2xl font-bold">Quản lý môn học</h1>
-            <div className="overflow-x-auto bg-white rounded-xl border">
-                <table className="min-w-[840px] w-full text-sm">
-                    <thead className="bg-gray-50 text-gray-600">
+        <div className="manage-courses-container">
+            <h1 className="manage-courses-title">Quản lý môn học</h1>
+            <div className="manage-courses-table-wrapper">
+                <table className="manage-courses-table">
+                    <thead className="manage-courses-thead">
                         <tr>
-                            <th className="p-3 text-left">Mã môn</th>
-                            <th className="p-3 text-left">Tên môn</th>
-                            <th className="p-3 text-left">Ngành</th>
-                            <th className="p-3 text-left">Tiên quyết</th>
-                            <th className="p-3 text-left">Mô tả</th>
-                            <th className="p-3 text-left">Thao tác</th>
+                            <th>Mã môn</th>
+                            <th>Tên môn</th>
+                            <th>Ngành</th>
+                            <th>Tiên quyết</th>
+                            <th>Mô tả</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         {courses.map((c) => (
-                            <tr key={c.maMonHoc} className="border-t">
-                                <td className="p-3 font-mono">{c.maMonHoc}</td>
-                                <td className="p-3">{c.tenMonHoc}</td>
-                                <td className="p-3">
+                            <tr key={c.maMonHoc} className="manage-courses-row">
+                                <td className="manage-courses-code">{c.maMonHoc}</td>
+                                <td>{c.tenMonHoc}</td>
+                                <td>
                                     {(c.nganhHocIds || []).map((id) => (
-                                        <span
-                                            key={id}
-                                            className="inline-block px-2 py-1 text-xs bg-gray-100 rounded mr-1"
-                                        >
+                                        <span key={id} className="manage-courses-major-badge">
                                             {majorsById[id]?.maNganh || `#${id}`}
                                         </span>
                                     ))}
                                 </td>
-                                <td className="p-3">{c.monHocTienQuyetId || "-"}</td>
-                                <td className="p-3 text-gray-600">{c.moTa}</td>
-                                <td className="p-3">
+                                <td>{c.monHocTienQuyetId || "-"}</td>
+                                <td className="manage-courses-desc">{c.moTa}</td>
+                                <td>
                                     <button
                                         onClick={() => onDelete(c.maMonHoc)}
-                                        className="px-3 py-1 text-sm rounded bg-rose-600 text-white hover:bg-rose-700"
+                                        className="manage-courses-delete-btn"
                                     >
                                         Xóa
                                     </button>
@@ -56,7 +54,7 @@ export default function ManageCourses() {
                         ))}
                         {!courses.length && (
                             <tr>
-                                <td className="p-3 text-gray-500" colSpan={6}>
+                                <td colSpan={6} className="manage-courses-empty">
                                     Không có môn học.
                                 </td>
                             </tr>

@@ -1,80 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../../styles/chatbot.css";
 
 export default function Chatbot() {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [input, setInput] = useState("");
     const [messages, setMessages] = useState([
         { from: "bot", text: "Xin chào 👋! Bạn muốn tư vấn ngành học nào?" }
     ]);
+    const messagesEndRef = useRef(null);
+
+    // Cuộn xuống cuối khi có tin nhắn mới
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
 
     const handleSend = () => {
         if (!input.trim()) return;
 
-        // Thêm câu hỏi user
         const userMsg = { from: "user", text: input };
-        setMessages((prev) => [...prev, userMsg]);
-
-        // Giả lập trả lời bot (placeholder)
         const botReply = {
             from: "bot",
-            text: `Mock trả lời cho: "${input}" 🤖 (sau này sẽ gọi API tư vấn thực tế).`
+            text: `Mock trả lời cho: "${input}" 🤖 (sau này sẽ gọi API thực tế).`
         };
-        setMessages((prev) => [...prev, userMsg, botReply]);
 
+        setMessages((prev) => [...prev, userMsg, botReply]);
         setInput("");
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-2xl font-bold mb-4">
-                Chatbot Tư vấn ngành học (mock)
-            </h1>
+        <>
+            {/* Nút nổi góc màn hình */}
+            <button
+                className="chatbot-btn"
+                onClick={() => setOpen((o) => !o)}
+                title={open ? "Đóng chatbot" : "Mở chatbot"}
+            >
+                💬
+            </button>
 
-            <div className="max-w-xl">
-                <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                    onClick={() => setOpen((o) => !o)}
-                >
-                    {open ? "Đóng cửa sổ" : "Mở cửa sổ"}
-                </button>
+            {open && (
+                <div className="chatbot-container">
+                    <div className="chatbot-header">
+                        <span>Chatbot Tư vấn ngành học</span>
+                        <button className="chatbot-close-btn" onClick={() => setOpen(false)}>
+                            ✖
+                        </button>
+                    </div>
 
-                {open && (
-                    <div className="mt-4 p-4 bg-white rounded-xl border shadow-sm flex flex-col h-96">
-                        {/* Vùng hiển thị tin nhắn */}
-                        <div className="flex-1 overflow-y-auto space-y-2 mb-3">
+                    <div className="chatbot-window">
+                        <div className="chatbot-messages">
                             {messages.map((msg, i) => (
                                 <div
                                     key={i}
-                                    className={`p-2 rounded-lg max-w-[80%] ${msg.from === "bot"
-                                        ? "bg-gray-100 text-gray-800 self-start"
-                                        : "bg-blue-600 text-white self-end ml-auto"
+                                    className={`chatbot-message ${msg.from === "bot" ? "chatbot-bot" : "chatbot-user"
                                         }`}
                                 >
-                                    {msg.text}
+                                    <span className="chatbot-avatar">
+                                        {msg.from === "bot" ? "🤖" : "👤"}
+                                    </span>
+                                    <span className="chatbot-text">{msg.text}</span>
                                 </div>
                             ))}
+                            <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input */}
-                        <div className="flex space-x-2">
+                        <div className="chatbot-input-area">
                             <input
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                                className="flex-1 px-3 py-2 rounded-lg border"
+                                className="chatbot-input"
                                 placeholder="Nhập câu hỏi..."
                             />
-                            <button
-                                onClick={handleSend}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                            >
+                            <button className="chatbot-send-btn" onClick={handleSend}>
                                 Gửi
                             </button>
                         </div>
                     </div>
-                )}
-            </div>
-        </div>
+                </div>
+            )}
+        </>
     );
 }

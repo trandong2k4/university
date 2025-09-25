@@ -1,27 +1,30 @@
-// TeacherLayout.jsx - placeholder
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import HeaderPrivate from "../components/HeaderPrivate";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
+import Chatbot from "../components/Chatbot";
+import "../styles/teacher-layout.css"; // CSS riêng cho layout giảng viên
 
 export default function TeacherLayout() {
   const { user } = useAuth();
   const userRole = user?.role || "TEACHER";
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <HeaderPrivate userRole={userRole} />
+    <div className="teacher-layout">
+      <HeaderPrivate userRole={userRole} className="teacher-layout-header" />
 
-      <div className="flex flex-1">
-        <Sidebar userRole={userRole} />
-        <main className="flex-1 p-6 bg-gray-50">
+      <div className="teacher-layout-body">
+        <Sidebar userRole={userRole} className="teacher-sidebar-container" />
+        <main className="teacher-layout-main">
           <Outlet />
         </main>
       </div>
 
-      <Footer />
+      <Chatbot />
+
+      <Footer className="teacher-layout-footer" />
     </div>
   );
 }

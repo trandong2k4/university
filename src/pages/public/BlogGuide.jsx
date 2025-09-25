@@ -1,5 +1,6 @@
-// BlogGuide.jsx - placeholder
+// BlogGuide.jsx
 import React from "react";
+import "../../styles/blogGuide.css";
 
 const posts = [
     {
@@ -18,13 +19,13 @@ const posts = [
 
 export default function BlogGuide() {
     return (
-        <div className="container mx-auto px-4 py-8 space-y-6">
-            <h1 className="text-2xl font-bold">Bài viết hướng dẫn</h1>
-            <div className="grid md:grid-cols-2 gap-4">
+        <div className="blog-container">
+            <h1 className="blog-title">Bài viết hướng dẫn</h1>
+            <div className="blog-posts">
                 {posts.map((p) => (
-                    <article key={p.id} className="p-4 bg-white rounded-xl border hover:shadow">
-                        <h2 className="font-semibold text-lg">{p.title}</h2>
-                        <p className="text-sm text-gray-700 mt-2">{p.content}</p>
+                    <article key={p.id} className="blog-post">
+                        <h2 className="blog-post-title">{p.title}</h2>
+                        <p className="blog-post-content">{p.content}</p>
                     </article>
                 ))}
             </div>

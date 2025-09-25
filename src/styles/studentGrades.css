@@ -1,0 +1,66 @@
+.sg-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sg-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.sg-table-wrapper {
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+}
+
+.sg-table {
+    width: 100%;
+    min-width: 820px;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.sg-thead {
+    background: #f9fafb;
+    color: #4b5563;
+}
+
+.sg-th {
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.sg-th-center {
+    text-align: center;
+}
+
+.sg-tr {
+    border-top: 1px solid #e5e7eb;
+}
+
+.sg-td {
+    padding: 0.75rem;
+}
+
+.sg-td-center {
+    text-align: center;
+}
+
+.sg-td-bold {
+    font-weight: 600;
+}
+
+.sg-sub {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-left: 0.25rem;
+}
+
+.sg-td-empty {
+    text-align: center;
+    color: #9ca3af;
+    padding: 1rem;
+}

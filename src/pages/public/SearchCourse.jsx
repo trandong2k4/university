@@ -25,29 +25,26 @@ export default function SearchCourse() {
   const prereqLabel = (id) => (id ? `Tiên quyết: ${id}` : "Không có tiên quyết");
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-2xl font-bold">Tìm kiếm môn học</h1>
-      {q && <div className="text-sm text-gray-600">Từ khóa: “{q}”</div>}
+    <div className="search-container">
+      <h1 className="search-title">Tìm kiếm môn học</h1>
+      {q && <div className="search-result">Từ khóa: “{q}”</div>}
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="search-grid">
         {courses.map((c) => (
-          <div key={c.maMonHoc} className="p-4 bg-white rounded-xl border hover:shadow">
-            <div className="flex items-center justify-between">
-              <div className="font-semibold">{c.tenMonHoc}</div>
-              <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">
-                {c.maMonHoc}
-              </span>
+          <div key={c.maMonHoc} className="search-card">
+            <div className="search-card-header">
+              <div>{c.tenMonHoc}</div>
+              <span className="search-code">{c.maMonHoc}</span>
             </div>
-            <div className="text-sm text-gray-600 mt-1">{c.moTa}</div>
-            <div className="text-sm text-gray-700 mt-2">{prereqLabel(c.monHocTienQuyetId)}</div>
+            <div className="search-desc">{c.moTa}</div>
+            <div className="search-prereq">{prereqLabel(c.monHocTienQuyetId)}</div>
 
-            {/* Majors */}
-            <div className="flex flex-wrap gap-2 mt-3">
+            <div className="search-majors">
               {(c.nganhHocIds || []).map((mid) => (
                 <Link
                   key={`${c.maMonHoc}-${mid}`}
                   to={`/majors/${mid}`}
-                  className="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200"
+                  className="search-major"
                   title={majorsById[mid]?.tenNganh}
                 >
                   {majorsById[mid]?.maNganh || `Mã ngành ${mid}`}
@@ -58,9 +55,14 @@ export default function SearchCourse() {
         ))}
       </div>
 
-      {!courses.length && (
-        <div className="text-sm text-gray-500">Không tìm thấy môn học phù hợp.</div>
-      )}
+      {!courses.length && <div className="search-empty">Không tìm thấy môn học phù hợp.</div>}
+
+      <div className="">
+        <Link to="/" className="">
+          Quay lại danh sách ngành
+        </Link>
+      </div>
     </div>
+
   );
 }

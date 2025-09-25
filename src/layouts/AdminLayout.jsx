@@ -1,26 +1,28 @@
-// AdminLayout.jsx - placeholder
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import HeaderPrivate from "../components/HeaderPrivate";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
+import Chatbot from "../components/Chatbot";
+import "../styles/admin-layout.css"; // import CSS riêng
 
 export default function AdminLayout() {
   const { user } = useAuth();
   const userRole = user?.role || "ADMIN";
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="admin-layout">
       <HeaderPrivate userRole={userRole} />
 
-      <div className="flex flex-1">
+      <div className="admin-layout-body">
         <Sidebar userRole={userRole} />
-        <main className="flex-1 p-6 bg-gray-50">
+        <main className="admin-layout-content">
           <Outlet />
         </main>
       </div>
 
+      <Chatbot />
       <Footer />
     </div>
   );
