@@ -1,7 +1,7 @@
 // StudentInfo.jsx - placeholder
 import React from "react";
 import mockData from "../../mockData";
-import "../../styles/StudentInfo.css";
+import "../../styles/studentInfo.css";
 
 export default function StudentInfo() {
     const students = mockData.entities.sinhVien || [];
