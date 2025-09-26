@@ -2,7 +2,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/home.css";
+=======
+import "../../styles/public/home.css";
+>>>>>>> 3725551 (Publiclayout)
 
 export default function Home() {
     const navigate = useNavigate();

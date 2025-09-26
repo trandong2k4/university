@@ -1,7 +1,11 @@
 // UpdateGrades.jsx - placeholder
 import React, { useState } from "react";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/updateGrades.css";
+=======
+import "../../styles/teacher/updateGrades.css";
+>>>>>>> 3725551 (Publiclayout)
 
 export default function UpdateGrades() {
     // Sao chép mảng để edit tại chỗ (mock)

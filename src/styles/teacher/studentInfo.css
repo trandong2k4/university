@@ -1,0 +1,44 @@
+.si-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.si-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.si-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .si-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.si-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.si-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.si-sub {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-top: 0.25rem;
+}
+
+.si-empty {
+    font-size: 0.875rem;
+    color: #9ca3af;
+}

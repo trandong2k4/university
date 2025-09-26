@@ -1,0 +1,83 @@
+.contact-page {
+    font-family: 'Roboto', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: black;
+
+}
+
+.contact-header {
+    background: #2F80ED;
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.contact-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.contact-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin: 30px auto;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.contact-info,
+.contact-form {
+    flex: 1 1 400px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.contact-info h2,
+.contact-form h2 {
+    font-size: 20px;
+    color: #2F80ED;
+    margin-bottom: 15px;
+}
+
+.contact-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: #2F80ED;
+    box-shadow: 0 0 3px rgba(47, 128, 237, 0.3);
+    outline: none;
+}
+
+.contact-form button {
+    background: #2F80ED;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.contact-form button:hover {
+    background: #1c5fbd;
+}

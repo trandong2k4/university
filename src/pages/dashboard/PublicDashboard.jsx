@@ -2,8 +2,12 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/publicDashboard.css";
 import bannerImg from "../../assets/banner.jpg";
+=======
+import "../../styles/dashboard/publicDashboard.css";
+>>>>>>> 3725551 (Publiclayout)
 
 export default function PublicDashboard() {
     const navigate = useNavigate();
@@ -37,10 +41,13 @@ export default function PublicDashboard() {
             {/* Banner / Search */}
             <section className="dashboard-banner">
 
+<<<<<<< HEAD
                 <div className="banner-img">
                     <img src={bannerImg} alt="Errol" />
                 </div>
 
+=======
+>>>>>>> 3725551 (Publiclayout)
                 <h1 className="dashboard-title">Learning Hub - Public Dashboard</h1>
                 <p className="dashboard-subtitle">Smart Education Platform (Mock)</p>
 

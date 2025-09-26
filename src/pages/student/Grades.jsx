@@ -1,6 +1,10 @@
 import React from "react";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/grades.css"; // CSS riêng
+=======
+import "../../styles/student/grades.css"; // CSS riêng
+>>>>>>> 3725551 (Publiclayout)
 
 export default function Grades() {
     const svId = mockData.entities.sinhVien?.[0]?.id;

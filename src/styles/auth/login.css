@@ -1,0 +1,119 @@
+.login-container {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+}
+
+.login-card {
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    background-color: white;
+}
+
+.login-links {
+    display: flexbox;
+    padding-left: 60px;
+    /* background-image: url("/src/assets/ums.png"); */
+}
+
+.logo-img {
+    width: 60px;
+    height: 60px;
+}
+
+.login-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 24px;
+    text-align: center;
+    color: #0045db;
+}
+
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.login-input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.login-note {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.user-note {
+    gap: 10px;
+    display: flex;
+    justify-items: left;
+}
+
+.user-checkbox {
+    width: 15px;
+}
+
+.user-note-text {
+    font-size: 16px;
+}
+
+.login-btn {
+    width: 100%;
+    background: #2563eb;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-btn:hover {
+    background: #1e40af;
+}
+
+.login-links {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-top: 16px;
+}
+
+.login-links a {
+    color: #2563eb;
+    text-decoration: none;
+    transition: text-decoration 0.2s;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}

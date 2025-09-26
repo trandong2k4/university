@@ -2,7 +2,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/courses.css";
+=======
+import "../../styles/student/courses.css";
+>>>>>>> 3725551 (Publiclayout)
 
 export default function Courses() {
     const courses = mockData.entities.monHoc || [];

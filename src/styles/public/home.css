@@ -1,0 +1,82 @@
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px;
+    min-height: 900px;
+}
+
+.home-banner {
+    text-align: center;
+    /* background: linear-gradient(to right, #3b82f6, #4f46e5); */
+    color: white;
+    border-radius: 16px;
+    padding: 48px 24px;
+}
+
+.home-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.home-search {
+    margin-top: 24px;
+    display: flex;
+    gap: 8px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.home-search-input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+}
+
+.home-search-btn {
+    background: white;
+    color: #2563eb;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* Majors */
+.home-majors-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.home-major-item {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s;
+}
+
+.home-major-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* News */
+.home-news-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.home-news-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.home-news-title {
+    font-weight: 600;
+}

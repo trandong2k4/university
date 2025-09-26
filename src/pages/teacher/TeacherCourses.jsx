@@ -1,7 +1,11 @@
 // TeacherCourses.jsx - placeholder
 import React from "react";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/teacherCourses.css";
+=======
+import "../../styles/teacher/teacherCourses.css";
+>>>>>>> 3725551 (Publiclayout)
 
 export default function TeacherCourses() {
     const courses = mockData.entities.monHoc || [];

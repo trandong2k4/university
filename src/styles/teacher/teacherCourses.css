@@ -1,0 +1,63 @@
+.tc-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tc-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.tc-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .tc-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.tc-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.tc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tc-name {
+    font-weight: 600;
+}
+
+.tc-code {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-radius: 6px;
+}
+
+.tc-desc {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-top: 0.25rem;
+}
+
+.tc-prereq {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.tc-empty {
+    font-size: 0.875rem;
+    color: #9ca3af;
+}

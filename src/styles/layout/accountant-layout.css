@@ -1,0 +1,47 @@
+/* Accountant Layout */
+.accountant-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.accountant-layout-body {
+    display: flex;
+    flex: 1;
+}
+
+.accountant-layout-content {
+    flex: 1;
+    padding: 1.5rem;
+    background: #f9fafb;
+    /* gray-50 */
+    min-height: calc(100vh - 64px - 60px);
+}
+
+/* Chatbot button cho accountant */
+.accountant-chatbot-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: #16a34a;
+    /* xanh lá (accountant) */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+}
+
+.accountant-chatbot-btn:hover {
+    background: #15803d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .accountant-layout-content {
+        padding: 1rem;
+    }
+}

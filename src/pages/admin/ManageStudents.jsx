@@ -1,7 +1,11 @@
 // ManageStudents.jsx
 import React, { useMemo, useState } from "react";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/manageStudents.css";
+=======
+import "../../styles/admin/manageStudents.css";
+>>>>>>> 3725551 (Publiclayout)
 
 export default function ManageStudents() {
     const [rows, setRows] = useState(mockData.entities.sinhVien || []);

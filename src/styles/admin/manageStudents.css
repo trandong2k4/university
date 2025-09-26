@@ -1,0 +1,85 @@
+.ms-container {
+    padding: 32px 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.ms-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.ms-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) 120px;
+    gap: 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.ms-input {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.ms-btn-add {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 10px;
+    font-weight: 500;
+}
+
+.ms-table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+}
+
+.ms-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 820px;
+}
+
+.ms-thead {
+    background: #f9fafb;
+    color: #4b5563;
+}
+
+.ms-tr {
+    border-top: 1px solid #e5e7eb;
+}
+
+.ms-td,
+.ms-td-code {
+    padding: 12px;
+}
+
+.ms-td-code {
+    font-family: monospace;
+}
+
+.ms-btn-remove {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.ms-no-data {
+    text-align: center;
+    color: #6b7280;
+    padding: 16px;
+}

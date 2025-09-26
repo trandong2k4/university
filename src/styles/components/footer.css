@@ -1,0 +1,28 @@
+.footer {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #ffffffe0;
+    text-align: center;
+    font-size: clamp(14px, 2vw, 18px);
+    padding: 24px 16px;
+    border: 2px solid #ffffffa9;
+    border-radius: 10px;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.footer-contact {
+    font-size: 16px;
+}
+
+
+.footer-links {
+    font-size: 20px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-decoration: none;
+}
+
+.footer-links a {
+    color: #39f500;
+    padding: 10px;
+}

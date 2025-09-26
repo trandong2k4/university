@@ -1,7 +1,11 @@
 // ManageCreditRegister.jsx
 import React, { useMemo, useState } from "react";
 import mockData from "../../mockData";
+<<<<<<< HEAD
 import "../../styles/manageCreditRegister.css";
+=======
+import "../../styles/admin/manageCreditRegister.css";
+>>>>>>> 3725551 (Publiclayout)
 
 export default function ManageCreditRegister() {
     const db = mockData.entities || {};

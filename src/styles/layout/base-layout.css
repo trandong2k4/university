@@ -1,0 +1,50 @@
+/* Header */
+.layout-header {
+    margin: 5px;
+}
+
+/* Body chung */
+.layout-body {
+    /* flex: 1; */
+    display: flex;
+    min-height: 0;
+    /* tránh lỗi scroll */
+}
+
+/* Sidebar */
+.layout-sidebar {
+    width: 240px;
+    /* background: #fff; */
+    border-right: 1px solid #ddd;
+    padding: 16px;
+}
+
+/* Main content */
+.layout-main {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+/* Footer */
+.layout-footer {
+    padding-top: 10px;
+}
+
+/* Chatbot */
+.layout-chatbot {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 1000;
+}
+
+/* Image */
+.layout-img {
+    position: fixed;
+    z-index: -1;
+}
+
+main {
+    padding-top: 60px;
+}

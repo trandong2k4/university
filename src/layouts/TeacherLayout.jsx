@@ -5,7 +5,12 @@ import HeaderPrivate from "../components/HeaderPrivate";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import Chatbot from "../components/Chatbot";
+<<<<<<< HEAD
 import "../styles/teacher-layout.css"; // CSS riêng cho layout giảng viên
+=======
+import "../styles/layout/base-layout.css"; //Import CSS chung
+import "../styles/layout/teacher-layout.css"; // CSS riêng cho layout giảng viên
+>>>>>>> 3725551 (Publiclayout)
 
 export default function TeacherLayout() {
   const { user } = useAuth();
