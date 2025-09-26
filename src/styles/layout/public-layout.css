@@ -1,32 +1,55 @@
 /* Public Layout */
 .public-layout {
-    display: inline;
-    width: 100%;
+    display: flex;
+    /* chuyển từ inline sang flex container */
     flex-direction: column;
-    /* ổn định trên mobile hơn 100vh */
-    min-height: 100dvh;
+    /* xếp các con theo hàng dọc */
+    min-height: 100vh;
+    /* vừa đủ cao bằng viewport */
+    width: 100%;
+    position: relative;
+    /* nếu cần làm position:absolute children */
 }
 
-.public-header {}
+/* Header */
+.public-header {
+    /* nếu muốn header luôn trên cùng, hoặc fixed, có thể:
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    */
+}
 
 /* Nội dung chính */
 .public-layout-content {
+    flex: 1;
+    /* chiếm không gian còn lại */
     width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-    display: flexbox;
-    padding-bottom: 20px;
+    margin: 0 auto;
+    padding-bottom: 80px;
 }
 
+/* Chatbot (nếu muốn luôn nổi trên content) */
+.public-chatbot {
+    position: fixed;
+    bottom: 80px;
+    /* cách trên footer một chút */
+    right: 24px;
+    z-index: 200;
+}
+
+/* Footer (nếu muốn footer fixed thì giữ nguyên của bạn),
+   hoặc nếu muốn footer ở đáy flex layout thì chuyển sang position: static:
+*/
 .public-footer {
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-}
+    /* C1: để footer fixed */
+    /* position: fixed;
+       bottom: 0;
+       left: 0;
+       width: 100%;
+    */
 
-/* Responsive */
-@media (max-width: 768px) {
-    .public-layout-content {
-        padding: 1rem;
-    }
+    /* C2: để footer nằm cuối flex container */
+    position: static;
+    /* hoặc xóa hoàn toàn position để nó nằm cuối flex container */
 }

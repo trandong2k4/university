@@ -7,7 +7,6 @@ import Footer from "../components/Footer";
 import Chatbot from "../components/Chatbot";
 import "../styles/layout/base-layout.css"; // Import CSS chung
 import "../styles/layout/student-layout.css"; // CSS riêng
-import imgStudent from "/src/assets/learning.jpg"; // Import image
 
 export default function StudentLayout() {
   const { user } = useAuth(); // { name, role }
@@ -18,9 +17,6 @@ export default function StudentLayout() {
 
       <HeaderPrivate userRole={userRole} className="student-layout-header" />
 
-      <div className="layout-img">
-        <img src={imgStudent} alt="Errol" />
-      </div>
       <div className="student-layout-body">
         <Sidebar userRole={userRole} className="student-sidebar-container" />
         <main className="student-layout-main">

@@ -1,7 +1,11 @@
 .learning-img {
-    /* Ảnh cố định so với viewport */
+    position: absolute;
     top: 0;
-    /* Bắt đầu từ trên cùng */
     left: 0;
-    /* ben trai */
+    width: 100%;
+    /* co giãn theo container */
+    height: 100%;
+    /* co giãn theo container */
+    object-fit: cover;
+    /* phủ kín tương tự background-size: cover */
 }

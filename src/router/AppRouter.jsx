@@ -3,6 +3,7 @@
 import { Routes, Route } from "react-router-dom";
 
 // Layouts
+import AuthLayout from "../layouts/AuthLayout";
 import PublicLayout from "../layouts/PublicLayout";
 import StudentLayout from "../layouts/StudentLayout";
 import TeacherLayout from "../layouts/TeacherLayout";
@@ -62,7 +63,7 @@ import ManageCreditRegister from "../pages/admin/ManageCreditRegister";
 export default function AppRouter() {
     return (
         <Routes>
-            {/* Public routes */}
+            {/* Public */}
             <Route path="/" element={<PublicLayout />}>
                 <Route index element={<PublicDashboard />} />
                 <Route path="/Dashboard" element={<PublicDashboard />} />
@@ -72,19 +73,16 @@ export default function AppRouter() {
                 <Route path="chatbot" element={<Chatbot />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />
-
                 {/* Auth routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
-
+                {/* … public routes … */}
             </Route>
 
-
-
-            {/* Student routes */}
+            {/* Student */}
             <Route element={<ProtectedRoute roles={["STUDENT"]} />}>
-                <Route element={<StudentLayout />}>
+                <Route element={<AuthLayout userRole="STUDENT" />}>
                     <Route path="/student/profile" element={<Profile />} />
                     <Route path="/student/courses" element={<Courses />} />
                     <Route path="/student/schedule" element={<Schedule />} />
@@ -92,42 +90,45 @@ export default function AppRouter() {
                     <Route path="/student/tuition" element={<Tuition />} />
                     <Route path="/student/register-credit" element={<RegisterCredit />} />
                     <Route path="/student/cancel-credit" element={<CancelCredit />} />
+                    {/* …other student pages… */}
                 </Route>
             </Route>
 
-            {/* Teacher routes */}
+            {/* Teacher */}
             <Route element={<ProtectedRoute roles={["TEACHER"]} />}>
-                <Route element={<TeacherLayout />}>
+                <Route element={<AuthLayout userRole="TEACHER" />}>
                     <Route path="/teacher/students" element={<StudentInfo />} />
                     <Route path="/teacher/courses" element={<TeacherCourses />} />
                     <Route path="/teacher/schedule" element={<TeacherSchedule />} />
                     <Route path="/teacher/grades" element={<StudentGrades />} />
                     <Route path="/teacher/update-grades" element={<UpdateGrades />} />
+                    {/* …other teacher pages… */}
                 </Route>
             </Route>
 
-            {/* Accountant routes */}
+            {/* Accountant */}
             <Route element={<ProtectedRoute roles={["ACCOUNTANT"]} />}>
-                <Route element={<AccountantLayout />}>
+                <Route element={<AuthLayout userRole="ACCOUNTANT" />}>
                     <Route path="/accountant/tuition" element={<StudentTuition />} />
                     <Route path="/accountant/create" element={<CreateTuition />} />
                     <Route path="/accountant/update" element={<UpdateTuition />} />
+                    {/* … */}
                 </Route>
             </Route>
 
-            {/* Admin routes */}
+            {/* Admin */}
             <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
-                <Route element={<AdminLayout />}>
-                    {/* tuỳ chọn: admin dashboard */}
-                    <Route path="/admin" element={<AdminDashboard />} />
+                <Route element={<AuthLayout userRole="ADMIN" />}>
                     <Route path="/admin/students" element={<ManageStudents />} />
                     <Route path="/admin/courses" element={<ManageCourses />} />
                     <Route path="/admin/schedule" element={<ManageSchedule />} />
                     <Route path="/admin/grades" element={<ManageGrades />} />
                     <Route path="/admin/tuition" element={<ManageTuition />} />
                     <Route path="/admin/credits" element={<ManageCreditRegister />} />
+                    {/* … */}
                 </Route>
             </Route>
         </Routes>
     );
 }
+

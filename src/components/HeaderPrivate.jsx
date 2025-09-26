@@ -1,7 +1,7 @@
 // HeaderPrivate.jsx
 import { Link } from "react-router-dom";
 import "../styles/layout/base-layout.css";
-import "../styles/components/header.css";
+import "../styles/components/headerPrivate.css";
 import profileImg from "/src/assets/profile.png";
 import anouImg from "/src/assets/anou.jpg";
 

@@ -1,9 +1,13 @@
 // Login.jsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/auth/login.css";
 import umsImage from "/src/assets/ums.png";
+
+
+
+
 
 export default function Login() {
     const navigate = useNavigate();
@@ -12,6 +16,13 @@ export default function Login() {
     const [username, setUsername] = useState("Nguyen Van A");
     const [password, setPassword] = useState("123456");
     const [role, setRole] = useState("student"); // student | teacher | accountant | admin
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePassword = (e) => {
+        e.preventDefault(); // tránh submit form khi nhấn nút
+        setShowPassword(prev => !prev);
+    };
+
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -41,10 +52,8 @@ export default function Login() {
     return (
         <div className="login-container">
             <div className="login-card">
-                <div className="login-links">
-                    <Link to="/">
-                        <img className="logo-img" src={umsImage} alt="Erroll" />
-                    </Link>
+                <div className="login-logo">
+                    <img className="logo-img" src={umsImage} alt="Erroll" />
                 </div>
 
                 <h2 className="login-title">Đăng nhập</h2>
@@ -62,16 +71,19 @@ export default function Login() {
 
                     <div className="login-field">
                         <label className="login-label">Mật khẩu</label>
-                        <input
-                            type="password"
-                            className="login-input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Nhập mật khẩu"
-                        // autoComplete="current-password"
-                        // name="password"
-                        // aria-label="Mật khẩu"
-                        />
+                        <div className="input-wrapper">
+                            <input
+                                className="login-input"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Nhập mật khẩu"
+                            />
+                            <span className="toggle-icon" onClick={togglePassword}>
+                                {showPassword ? '👁️' : '👁️‍🗨️'}
+                            </span>
+                        </div>
+
                     </div>
 
                     <div className="login-field">

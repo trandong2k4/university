@@ -27,9 +27,7 @@
 }
 
 /* Footer */
-.layout-footer {
-    padding-top: 10px;
-}
+.layout-footer {}
 
 /* Chatbot */
 .layout-chatbot {
@@ -42,6 +40,14 @@
 /* Image */
 .layout-img {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* chiếm toàn bộ chiều ngang */
+    height: 100vh;
+    /* chiếm toàn bộ chiều cao */
+    overflow: hidden;
+    /* ẩn phần thừa */
     z-index: -1;
 }
 

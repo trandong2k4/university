@@ -31,10 +31,11 @@ export default function PublicDashboard() {
     };
 
     return (
+
         <div className="dashboard-container">
 
-            {/* Banner / Search */}
-            <section className="dashboard-banner">
+            {/* Blog / Search */}
+            <section className="dashboard-learning">
 
                 <h1 className="dashboard-title">Learning Hub - Public Dashboard</h1>
                 <p className="dashboard-subtitle">Smart Education Platform (Mock)</p>

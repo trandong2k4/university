@@ -11,9 +11,9 @@ export default function Footer() {
                 </h3>
                 <p className="footer-copy">© 2025 Learning Hub. All rights reserved.</p>
                 <div className="footer-links">
-                    <a href="/policy">Chính sách</a>
-                    <a href="/faq">FAQ</a>
-                    <a href="/support">Hỗ trợ</a>
+                    <a href="https://www.learninghub.ac.nz/study-skills/getting-started/independence/">Chính sách</a>
+                    <a href="https://learninghub.sap.com/help-center/faq/queonlhfaqs">FAQ</a>
+                    <a href="https://learninghub.sap.com/help-center">Hỗ trợ</a>
                 </div>
             </footer>
         </div>

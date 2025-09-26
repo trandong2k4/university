@@ -8,7 +8,7 @@
     z-index: 1000;
     /* Luôn trên ảnh nền và content */
     background-image: url("/src/assets/Image-header.jpg");
-    padding: 16px 24px;
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -56,6 +56,7 @@
 }
 
 .nav-login {
+    margin-left: 100px;
     padding: 2px 5px 0 5px;
     background-color: #00ff4c;
     border-radius: 8px;
@@ -63,45 +64,6 @@
 }
 
 .nav-login:hover {
-    color: white !important;
-    background-color: rgba(0, 135, 253, 0.9);
-}
-
-.logo-icon {}
-
-.nav-icon {
-    width: 30px;
-    height: 30px;
-    background-color: #00ff4c;
-    border-radius: 5px;
-}
-
-.nav-icon:hover {
-    padding: 2px;
-    background-color: #00b7ff;
-}
-
-.nav-anou {
-    margin-left: 100px;
-    width: 30px;
-    height: 30px;
-    /* background-color: #00ff4c; */
-    border-radius: 5px;
-}
-
-.nav-anou:hover {
-    padding: 2px;
-    /* background-color: #00b7ff; */
-}
-
-.nav-logout {
-    padding: 2px 5px 0 5px;
-    background-color: #00ff4c;
-    border-radius: 8px;
-    margin-bottom: 6px;
-}
-
-.nav-logout:hover {
     color: white !important;
     background-color: rgba(0, 135, 253, 0.9);
 }
