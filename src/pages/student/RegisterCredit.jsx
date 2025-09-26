@@ -1,10 +1,6 @@
 import React from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/register-credit.css";
-=======
 import "../../styles/student/register-credit.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function RegisterCredit() {
     const credits = mockData.entities.tinChi || [];

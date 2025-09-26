@@ -1,11 +1,7 @@
 // Profile.jsx
 import React from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/profile.css";
-=======
 import "../../styles/student/profile.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function Profile() {
     const sv = mockData.entities.sinhVien?.[0];

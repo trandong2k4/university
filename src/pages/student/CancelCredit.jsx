@@ -1,10 +1,6 @@
 import React from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/cancel-credit.css";
-=======
 import "../../styles/student/cancel-credit.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function CancelCredit() {
     const credits = mockData.entities.tinChi || [];

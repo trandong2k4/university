@@ -1,10 +1,7 @@
 // ProtectedRoute.jsx
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-<<<<<<< HEAD
-=======
 import "../styles/layout/base-layout.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function ProtectedRoute({ roles }) {
     const { user } = useAuth();

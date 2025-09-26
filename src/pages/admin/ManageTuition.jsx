@@ -1,11 +1,7 @@
 // ManageTuition.jsx
 import React, { useMemo, useState } from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/manageTuition.css";
-=======
 import "../../styles/admin/manageTuition.css";
->>>>>>> 3725551 (Publiclayout)
 
 const formatVND = (n) => (typeof n === "number" ? n.toLocaleString("vi-VN") + " ₫" : "-");
 

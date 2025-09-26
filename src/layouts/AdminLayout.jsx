@@ -5,12 +5,8 @@ import HeaderPrivate from "../components/HeaderPrivate";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import Chatbot from "../components/Chatbot";
-<<<<<<< HEAD
-import "../styles/admin-layout.css"; // import CSS riêng
-=======
 import "../styles/layout/base-layout.css"; //Import CSS chung
 import "../styles/layout/admin-layout.css"; // CSS riêng
->>>>>>> 3725551 (Publiclayout)
 
 export default function AdminLayout() {
   const { user } = useAuth();

@@ -2,12 +2,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-<<<<<<< HEAD
-import "../../styles/login.css";
-=======
 import "../../styles/auth/login.css";
 import umsImage from "/src/assets/ums.png";
->>>>>>> 3725551 (Publiclayout)
 
 export default function Login() {
     const navigate = useNavigate();
@@ -46,21 +42,12 @@ export default function Login() {
         <div className="login-container">
             <div className="login-card">
                 <div className="login-links">
-<<<<<<< HEAD
-                    <h1 className="logo-text">
-                        <Link to="/">Learning Hub</Link>
-                    </h1>
-                </div>
-
-                <h2 className="login-title">Đăng nhập (mock)</h2>
-=======
                     <Link to="/">
                         <img className="logo-img" src={umsImage} alt="Erroll" />
                     </Link>
                 </div>
 
                 <h2 className="login-title">Đăng nhập</h2>
->>>>>>> 3725551 (Publiclayout)
 
                 <form onSubmit={onSubmit} className="login-form">
                     <div className="login-field">
@@ -80,17 +67,11 @@ export default function Login() {
                             className="login-input"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-<<<<<<< HEAD
-                            placeholder="••••••••"
-                        />
-=======
                             placeholder="Nhập mật khẩu"
                         // autoComplete="current-password"
                         // name="password"
                         // aria-label="Mật khẩu"
                         />
-
->>>>>>> 3725551 (Publiclayout)
                     </div>
 
                     <div className="login-field">
@@ -110,28 +91,21 @@ export default function Login() {
                         </p>
                     </div>
 
-<<<<<<< HEAD
-=======
                     <div className="user-note">
                         <input type="checkbox" className="user-checkbox" />
                         <p className="user-node-text">Ghi nhớ tài khoản</p>
                     </div>
 
->>>>>>> 3725551 (Publiclayout)
                     <button type="submit" className="login-btn">
                         Đăng nhập
                     </button>
-                </form>
+                </form >
 
                 <div className="login-links">
                     <Link to="/forgot-password">Quên mật khẩu?</Link>
-<<<<<<< HEAD
-                    <Link to="/register">Tạo tài khoản</Link>
-=======
                     {/* <Link to="/register">Tạo tài khoản</Link> */}
->>>>>>> 3725551 (Publiclayout)
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     );
 }

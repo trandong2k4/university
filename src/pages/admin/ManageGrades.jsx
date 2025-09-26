@@ -1,11 +1,7 @@
 // ManageGrades.jsx
 import React, { useMemo, useState } from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/manageGrades.css";
-=======
 import "../../styles/admin/manageGrades.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function ManageGrades() {
     const db = mockData.entities || {};

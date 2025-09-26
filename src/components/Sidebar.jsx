@@ -1,12 +1,8 @@
 // Sidebar.jsx
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-<<<<<<< HEAD
-import "../styles/sidebar.css";
-=======
 import "../styles/layout/base-layout.css";
 import "../styles/components/sidebar.css";
->>>>>>> 3725551 (Publiclayout)
 
 const MENU = {
     STUDENT: [
@@ -49,11 +45,7 @@ export default function Sidebar({ userRole }) {
         `sidebar-link ${isActive ? "active" : ""}`;
 
     return (
-<<<<<<< HEAD
-        <>
-=======
         <div className="layout-sidebar">
->>>>>>> 3725551 (Publiclayout)
             {/* Nút mở sidebar trên mobile */}
             <button className="sidebar-toggle" onClick={() => setOpen((prev) => !prev)}>
                 ☰
@@ -81,10 +73,6 @@ export default function Sidebar({ userRole }) {
                     )}
                 </nav>
             </aside>
-<<<<<<< HEAD
-        </>
-=======
         </div>
->>>>>>> 3725551 (Publiclayout)
     );
 }

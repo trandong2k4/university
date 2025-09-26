@@ -1,11 +1,7 @@
 // ManageCourses.jsx
 import React, { useState } from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/manageCourses.css";
-=======
 import "../../styles/admin/manageCourses.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function ManageCourses() {
     const [courses, setCourses] = useState(mockData.entities.monHoc || []);

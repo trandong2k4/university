@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-// Footer.jsx
-import "../styles/chatbot.css";
 
-export default function Chatbot() {
-    return (
-
-        < button className="chatbot-btn" >🤖</button >
-=======
 // Chatbot.jsx
 import { Link } from "react-router-dom";
 import "../styles/layout/base-layout.css";
@@ -19,6 +11,5 @@ export default function Chatbot() {
                 <button className="chatbot-btn">🤖</button>
             </Link >
         </div >
->>>>>>> 3725551 (Publiclayout)
     );
 }

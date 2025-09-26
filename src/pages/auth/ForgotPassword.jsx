@@ -1,11 +1,7 @@
 // ForgotPassword.jsx - placeholder
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-<<<<<<< HEAD
-import "../../styles/ForgotPassword.css";
-=======
 import "../../styles/auth/ForgotPassword.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");

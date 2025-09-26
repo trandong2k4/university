@@ -2,12 +2,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-<<<<<<< HEAD
-import "../../styles/register.css";
-=======
 import "../../styles/auth/register.css";
->>>>>>> 3725551 (Publiclayout)
-
 export default function Register() {
   const navigate = useNavigate();
   const { login } = useAuth();

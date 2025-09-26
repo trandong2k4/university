@@ -1,11 +1,7 @@
 // StudentInfo.jsx - placeholder
 import React from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/studentInfo.css";
-=======
 import "../../styles/teacher/studentInfo.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function StudentInfo() {
     const students = mockData.entities.sinhVien || [];

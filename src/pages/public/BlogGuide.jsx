@@ -1,10 +1,6 @@
 // BlogGuide.jsx
 import React from "react";
-<<<<<<< HEAD
-import "../../styles/blogGuide.css";
-=======
 import "../../styles/public/blogGuide.css";
->>>>>>> 3725551 (Publiclayout)
 
 const posts = [
     {

@@ -1,9 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-<<<<<<< HEAD
-import "../../styles/chatbot.css";
-=======
 import "../../styles/public/chatbot.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function Chatbot() {
     const [open, setOpen] = useState(false);

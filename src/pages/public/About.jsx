@@ -1,9 +1,5 @@
 import React from "react";
-<<<<<<< HEAD
-import "../../styles/about.css";
-=======
 import "../../styles/public/about.css";
->>>>>>> 3725551 (Publiclayout)
 
 export default function About() {
     return (

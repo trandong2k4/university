@@ -1,10 +1,6 @@
 import React, { useMemo } from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/schedule.css";
-=======
 import "../../styles/student/schedule.css";
->>>>>>> 3725551 (Publiclayout)
 
 const dayNames = { 1: "Thứ 2", 2: "Thứ 3", 3: "Thứ 4", 4: "Thứ 5", 5: "Thứ 6", 6: "Thứ 7", 7: "CN" };
 

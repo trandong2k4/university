@@ -1,11 +1,7 @@
 // ManageSchedule.jsx
 import React, { useMemo, useState } from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/manageSchedule.css";
-=======
 import "../../styles/admin/manageSchedule.css";
->>>>>>> 3725551 (Publiclayout)
 
 const dayNames = { 2: "Thứ 2", 3: "Thứ 3", 4: "Thứ 4", 5: "Thứ 5", 6: "Thứ 6", 7: "Thứ 7" };
 

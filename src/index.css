@@ -1,115 +1,29 @@
 /* ========== RESET CSS CƠ BẢN ========== */
 * {
-<<<<<<< HEAD
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-=======
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
->>>>>>> 3725551 (Publiclayout)
 
 }
 
 html,
 body {
-<<<<<<< HEAD
+
+
   margin: 5px;
   height: 100%;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  /* nền xám nhạt */
-  color: #333;
 }
-
-/* ========== GLOBAL STYLE ========== */
-a {
-  color: #2563eb;
-  /* xanh dương */
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-a:hover {
-  text-decoration: underline;
-  color: #1d4ed8;
-  /* xanh đậm hơn */
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-  background: none;
-  font: inherit;
-}
-
-/* Container căn giữa nội dung */
-.container {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-/* Card chung */
-.card {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-=======
-    margin: 5px;
-    height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-}
-
->>>>>>> 3725551 (Publiclayout)
 
 /* Input chung */
 input,
 select,
 textarea {
-<<<<<<< HEAD
   width: 100%;
   padding: 0.5rem 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 1rem;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #2563eb;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-/* Nút chính */
-.btn-primary {
-  display: inline-block;
-  background: #2563eb;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.btn-primary:hover {
-  background: #1d4ed8;
-=======
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 1rem;
->>>>>>> 3725551 (Publiclayout)
 }

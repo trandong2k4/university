@@ -1,11 +1,7 @@
 // TeacherSchedule.jsx - placeholder
 import React, { useMemo } from "react";
 import mockData from "../../mockData";
-<<<<<<< HEAD
-import "../../styles/teacherSchedule.css";
-=======
 import "../../styles/teacher/teacherSchedule.css";
->>>>>>> 3725551 (Publiclayout)
 
 const dayNames = {
     1: "Thứ 2",
