@@ -1,4 +1,3 @@
-// Sidebar.jsx
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "../styles/layout/base-layout.css";
@@ -9,6 +8,7 @@ const MENU = {
         { to: "/student/profile", label: "Thông tin sinh viên" },
         { to: "/student/courses", label: "Môn học" },
         { to: "/student/schedule", label: "Lịch học" },
+        // { to: "/student/grades", label: "Chương trình học" },
         { to: "/student/grades", label: "Điểm" },
         { to: "/student/tuition", label: "Học phí" },
         { to: "/student/register-credit", label: "Đăng ký tín chỉ" },
@@ -37,7 +37,7 @@ const MENU = {
 };
 
 export default function Sidebar({ userRole }) {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const role = (userRole || "").toUpperCase();
     const items = MENU[role] || [];
 
@@ -45,34 +45,29 @@ export default function Sidebar({ userRole }) {
         `sidebar-link ${isActive ? "active" : ""}`;
 
     return (
-        <div className="layout-sidebar">
-            {/* Nút mở sidebar trên mobile */}
-            <button className="sidebar-toggle" onClick={() => setOpen((prev) => !prev)}>
-                ☰
-            </button>
-
-            <aside className={`sidebar-container ${open ? "open" : ""}`}>
+        <aside className={`sidebar ${open ? "expanded" : "collapsed"}`}>
+            <div className="sidebar-header">
                 <h2 className="sidebar-title">Menu</h2>
-                <div className="sidebar-icon">
-                    <button onClick={() => setOpen(false)}>✕</button>
-                </div>
-                <nav className="sidebar-nav">
-                    {items.map((it) => (
-                        <NavLink
-                            key={it.to}
-                            to={it.to}
-                            className={linkClass}
-                            end
-                            onClick={() => setOpen(false)} // đóng khi chọn
-                        >
-                            {it.label}
-                        </NavLink>
-                    ))}
-                    {items.length === 0 && (
-                        <div className="sidebar-empty">Không có menu cho role này.</div>
-                    )}
-                </nav>
-            </aside>
-        </div>
+                <button className="sidebar-toggle" onClick={() => setOpen(!open)}>
+                    {open ? "«" : "»"}
+                </button>
+            </div>
+
+            <nav className="sidebar-nav">
+                {items.map((it) => (
+                    <NavLink
+                        key={it.to}
+                        to={it.to}
+                        className={linkClass}
+                        end
+                    >
+                        {it.label}
+                    </NavLink>
+                ))}
+                {items.length === 0 && (
+                    <div className="sidebar-empty">Không có menu cho role này.</div>
+                )}
+            </nav>
+        </aside>
     );
 }

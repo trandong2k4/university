@@ -8,7 +8,7 @@ export default function Chatbot() {
     return (
         <div className="layout-chatbot">
             <Link to="/chatbot" aria-label="Mở Chatbot">
-                <button className="chatbot-btn">🤖</button>
+                <button title="🤖 Xin chào" className="chatbot-btn">🤖</button>
             </Link >
         </div >
     );

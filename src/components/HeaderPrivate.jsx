@@ -22,19 +22,20 @@ export default function HeaderPrivate({ userRole }) {
 
                 {userRole === "ADMIN" && <Link to="/admin/students">Quản trị</Link>}
 
-                <div className="logo-icon">
-                    <Link to="Dashboard">
-                        <img className="nav-anou" src={anouImg} alt="" />
-                    </Link>
-                </div>
-                <div className="logo-icon">
-                    <Link to="Dashboard">
-                        <img className="nav-icon" src={profileImg} alt="" />
-                    </Link>
-                </div>
-
-                <Link className="nav-logout" to="Dashboard">Đăng xuất</Link>
             </nav>
+            <div className="logo-icon">
+                <div className="logo-anou">
+                    <Link to="Dashboard">
+                        <img title="Thông báo" className="icon-anou" src={anouImg} alt="" />
+                    </Link>
+                </div>
+                <Link className="btn-logout" to="Dashboard">Đăng xuất</Link>
+                <div className="logo-profile">
+                    <Link to="Dashboard">
+                        <img title="profile" className="nav-profile" src={profileImg} alt="" />
+                    </Link>
+                </div>
+            </div>
         </header>
     );
 }

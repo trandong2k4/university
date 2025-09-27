@@ -7,12 +7,14 @@ import Chatbot from "../components/Chatbot";
 import Footer from "../components/Footer";
 import "../styles/layout/base-layout.css";
 import "../styles/layout/auth-layout.css";
+import Image from "../components/Image";
 
 export default function AuthLayout({ userRole }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
         <div className="auth-layout">
+            {/* <Image className="img" /> */}
             <HeaderPrivate
                 userRole={userRole}
                 onToggleSidebar={() => setSidebarOpen((o) => !o)}
@@ -31,7 +33,7 @@ export default function AuthLayout({ userRole }) {
             </div>
 
             <Chatbot />
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 }

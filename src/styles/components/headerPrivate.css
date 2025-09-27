@@ -67,21 +67,24 @@
     background-color: rgba(0, 135, 253, 0.9);
 }
 
-.logo-icon {}
+.logo-icon {
+    display: flex;
+    gap: 25px;
+}
 
-.nav-icon {
+.nav-profile {
     width: 30px;
     height: 30px;
     background-color: #00ff4c;
     border-radius: 5px;
 }
 
-.nav-icon:hover {
+.nav-profile:hover {
     padding: 2px;
     background-color: #00b7ff;
 }
 
-.nav-anou {
+.icon-anou {
     margin-left: 100px;
     width: 30px;
     height: 30px;
@@ -89,19 +92,20 @@
     border-radius: 5px;
 }
 
-.nav-anou:hover {
+.icon-anou:hover {
     padding: 2px;
     /* background-color: #00b7ff; */
 }
 
-.nav-logout {
-    padding: 2px 5px 0 5px;
+.btn-logout {
+    color: white;
+    padding: 5px 10px;
     background-color: #00ff4c;
     border-radius: 8px;
     margin-bottom: 6px;
+    text-decoration: none;
 }
 
-.nav-logout:hover {
-    color: white !important;
+.btn-logout:hover {
     background-color: rgba(0, 135, 253, 0.9);
 }

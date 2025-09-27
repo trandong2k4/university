@@ -30,13 +30,7 @@
 }
 
 /* Chatbot (nếu muốn luôn nổi trên content) */
-.public-chatbot {
-    position: fixed;
-    bottom: 80px;
-    /* cách trên footer một chút */
-    right: 24px;
-    z-index: 200;
-}
+.public-chatbot {}
 
 /* Footer (nếu muốn footer fixed thì giữ nguyên của bạn),
    hoặc nếu muốn footer ở đáy flex layout thì chuyển sang position: static:

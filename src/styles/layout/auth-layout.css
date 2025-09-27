@@ -1,21 +1,22 @@
 /* auth-layout.css */
 .auth-layout {
-    padding-top: 2rem;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
 .auth-body {
+    top: 40px;
+    left: 0;
     display: flex;
     flex: 1;
 }
 
 .auth-main {
     flex: 1;
-    padding-top: 30px;
-    padding-left: 60px;
-    background: white;
+    padding-top: 50px;
+    padding-left: 200px;
+    background-color: rgb(255, 255, 255);
 }
 
 /* Responsive: sidebar slide-in/out */

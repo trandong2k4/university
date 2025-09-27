@@ -3,29 +3,27 @@
     background-color: rgba(0, 0, 0, 0.3);
     margin-top: 80px;
     border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.678);
+    border: 2px solid rgba(255, 255, 255, 1);
     color: #fff;
     margin: 0 auto;
-    padding: 32px 16px;
+    padding-bottom: 100px;
     font-family: sans-serif;
     border-radius: 10px;
-    padding-bottom: 100px;
-    padding-left: 30px;
-
 }
 
-/* Banner / Search */
+/* Blog / Search */
 .dashboard-learning {
-    width: 80%;
-    background-color: rgba(255, 255, 255, 0.8);
+    width: 90%;
+    background-color: rgba(255, 255, 255, 1);
     color: black;
     text-align: center;
-    margin: 0 auto 40px auto;
+    margin: 30px auto;
     /* căn giữa + cách dưới 40px */
     border-radius: 15px;
 }
 
 .dashboard-title {
+    padding-top: 24px;
     color: #2563eb;
     font-size: 2rem;
     font-weight: bold;
@@ -35,6 +33,7 @@
     color: rgb(0, 212, 96);
     font-size: 1.1rem;
     margin-bottom: 16px;
+    padding-bottom: 10px;
 }
 
 .dashboard-search {
@@ -87,6 +86,7 @@
 
 /* KPI cards */
 .dashboard-kpis {
+    padding-left: 30px;
     margin-bottom: 32px;
     width: 80%;
 }
@@ -106,7 +106,7 @@
 
 .dashboard-kpi-card {
     flex: 1 1 200px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 1);
     border-radius: 12px;
     padding: 16px;
     text-align: center;
@@ -115,7 +115,7 @@
 
 .dashboard-kpi-label {
     font-weight: 500;
-    color: #000000;
+    color: #ff0000;
     margin-bottom: 8px;
 }
 
@@ -126,6 +126,10 @@
 }
 
 /* Majors */
+.dashboard-majors {
+    padding-left: 30px;
+}
+
 .dashboard-majors-list {
     width: 80%;
     display: grid;
@@ -134,7 +138,7 @@
 }
 
 .dashboard-major-item {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 1);
     border-radius: 12px;
     border: 1px solid #ddd;
     padding: 16px;
@@ -165,15 +169,20 @@
 }
 
 /* News */
+.dashboard-news {
+    padding-left: 30px;
+}
+
 .dashboard-news-list {
-    width: 80%;
+
+    width: 90%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
 }
 
 .dashboard-news-item {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 1);
     border-radius: 12px;
     border: 1px solid #ddd;
     padding: 16px;
