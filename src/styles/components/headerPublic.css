@@ -55,15 +55,18 @@
     padding: 2px;
 }
 
-.nav-login {
+
+.btn-login {
     margin-left: 100px;
-    padding: 2px 5px 0 5px;
+    padding: 10px;
     background-color: #00ff4c;
     border-radius: 8px;
     margin-bottom: 6px;
+    text-decoration: none;
 }
 
-.nav-login:hover {
+.btn-login:hover {
     color: white !important;
     background-color: rgba(0, 135, 253, 0.9);
+    margin-bottom: 10px;
 }

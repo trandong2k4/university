@@ -24,7 +24,9 @@ import Contact from "../pages/public/Contact";
 
 // (Tuỳ chọn) Dashboards
 import PublicDashboard from "../pages/dashboard/PublicDashboard";
-import AdminDashboard from "../pages/dashboard/AdminDashboard";
+import ManageDashboard from "../pages/dashboard/ManageDashboard";
+import StudentDashboard from "../pages/dashboard/StudentDashboard";
+import TeacherDashboard from "../pages/dashboard/TeacherDashboard";
 
 // Auth pages
 import Login from "../pages/auth/Login";
@@ -53,6 +55,9 @@ import CreateTuition from "../pages/accountant/CreateTuition";
 import UpdateTuition from "../pages/accountant/UpdateTuition";
 
 // Admin pages
+import ManageAdmin from "../pages/admin/ManageAdmin";
+import ManageReports from "../pages/admin/ManageReports";
+import ManageSetting from "../pages/admin/ManageSetting";
 import ManageStudents from "../pages/admin/ManageStudents";
 import ManageCourses from "../pages/admin/ManageCourses";
 import ManageSchedule from "../pages/admin/ManageSchedule";
@@ -83,6 +88,7 @@ export default function AppRouter() {
             {/* Student */}
             <Route element={<ProtectedRoute roles={["STUDENT"]} />}>
                 <Route element={<AuthLayout userRole="STUDENT" />}>
+                    <Route path="/student/dashboard" element={<StudentDashboard />} />
                     <Route path="/student/profile" element={<Profile />} />
                     <Route path="/student/courses" element={<Courses />} />
                     <Route path="/student/schedule" element={<Schedule />} />
@@ -97,6 +103,7 @@ export default function AppRouter() {
             {/* Teacher */}
             <Route element={<ProtectedRoute roles={["TEACHER"]} />}>
                 <Route element={<AuthLayout userRole="TEACHER" />}>
+                    <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
                     <Route path="/teacher/students" element={<StudentInfo />} />
                     <Route path="/teacher/courses" element={<TeacherCourses />} />
                     <Route path="/teacher/schedule" element={<TeacherSchedule />} />
@@ -119,6 +126,10 @@ export default function AppRouter() {
             {/* Admin */}
             <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
                 <Route element={<AuthLayout userRole="ADMIN" />}>
+                    <Route path="/admin/dashboard" element={<ManageDashboard />} />
+                    <Route path="/admin/manage" element={<ManageAdmin />} />
+                    <Route path="/admin/reports" element={<ManageReports />} />
+                    <Route path="/admin/setting" element={<ManageSetting />} />
                     <Route path="/admin/students" element={<ManageStudents />} />
                     <Route path="/admin/courses" element={<ManageCourses />} />
                     <Route path="/admin/schedule" element={<ManageSchedule />} />
@@ -128,7 +139,7 @@ export default function AppRouter() {
                     {/* … */}
                 </Route>
             </Route>
-        </Routes>
+        </Routes >
     );
 }
 

@@ -1,74 +1,196 @@
-.manage-container {
-    padding: 24px;
+/* Tổng thể trang */
+.page-container {
+    font-family: "Segoe UI", sans-serif;
+    padding: 20px;
+    background: #f4f6f9;
+    min-height: 100vh;
 }
 
-.manage-title {
-    font-size: 1.75rem;
-    font-weight: bold;
-}
-
-.manage-form {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    padding: 16px;
-}
-
-.manage-input,
-.manage-select {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 8px;
-}
-
-.manage-btn-add {
-    background-color: #2563eb;
+/* Banner */
+.banner {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.manage-table-wrapper {
-    overflow-x: auto;
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    margin-top: 16px;
-}
-
-.manage-table {
-    width: 100%;
-    min-width: 900px;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-}
-
-.manage-table-head {
-    background: #f3f4f6;
-    color: #4b5563;
-}
-
-.manage-table-cell {
-    padding: 8px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.manage-table-sub {
-    font-size: 0.75rem;
-    color: #6b7280;
-}
-
-.manage-btn-remove {
-    background-color: #dc2626;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.manage-empty {
     text-align: center;
-    color: #6b7280;
-    padding: 12px;
+    padding: 30px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.banner h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.banner p {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+/* Khu vực content */
+.content {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Hàng nút hành động */
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.actions .flex-grow {
+    flex: 1;
+}
+
+/* Các nút chung */
+.btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Màu nút */
+.btn-blue {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-yellow {
+    background: #facc15;
+    color: #333;
+}
+
+.btn-red {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-gray {
+    background: #9ca3af;
+    color: white;
+}
+
+.btn-green {
+    background: #10b981;
+    color: white;
+}
+
+/* Bảng */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background: #2563eb;
+    color: white;
+}
+
+th,
+td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+tr:hover {
+    background: #f1f5f9;
+    cursor: pointer;
+}
+
+/* Hàng được chọn */
+tr.selected {
+    background: #dbeafe;
+    font-weight: 600;
+}
+
+/* Nút mini trong bảng */
+.btn-mini {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-mini:hover {
+    background: #1d4ed8;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-box h2 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    color: #111827;
+}
+
+.modal-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Hiệu ứng */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

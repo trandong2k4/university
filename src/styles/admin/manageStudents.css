@@ -1,85 +1,190 @@
-.ms-container {
-    padding: 32px 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+/* Tổng thể trang */
+.page-container {
+    font-family: "Segoe UI", sans-serif;
+    padding: 20px;
+    background: #f4f6f9;
+    min-height: 100vh;
 }
 
-.ms-title {
-    font-size: 2rem;
-    font-weight: bold;
-}
-
-.ms-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) 120px;
-    gap: 12px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 16px;
-}
-
-.ms-input {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-}
-
-.ms-btn-add {
-    background: #2563eb;
+/* Banner */
+.banner-section {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    padding: 10px;
-    font-weight: 500;
-}
-
-.ms-table-wrapper {
-    overflow-x: auto;
-    background: white;
-    border: 1px solid #ddd;
+    text-align: center;
+    padding: 30px 20px;
     border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.ms-table {
+.banner-title {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.banner-subtitle {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Nội dung chính */
+.content-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Nút hành động */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+.btn-blue {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-blue:hover {
+    background: #1d4ed8;
+}
+
+.btn-yellow {
+    background: #facc15;
+    color: #333;
+}
+
+.btn-yellow:hover {
+    background: #eab308;
+}
+
+.btn-red {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-red:hover {
+    background: #dc2626;
+}
+
+.btn-green {
+    background: #10b981;
+    color: white;
+}
+
+.btn-green:hover {
+    background: #059669;
+}
+
+.btn-gray {
+    background: #9ca3af;
+    color: white;
+}
+
+.btn-gray:hover {
+    background: #6b7280;
+}
+
+/* Disable */
+.btn-yellow:disabled,
+.btn-red:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Bảng sinh viên */
+.students-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 820px;
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 600px;
 }
 
-.ms-thead {
-    background: #f9fafb;
-    color: #4b5563;
+
+
+
+
+/* Hàng được chọn */
+.selected-row {
+    background-color: #dbeafe !important;
+    border-left: 4px solid #2563eb;
+    font-weight: 600;
 }
 
-.ms-tr {
-    border-top: 1px solid #e5e7eb;
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
 }
 
-.ms-td,
-.ms-td-code {
-    padding: 12px;
+.modal-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    animation: fadeIn 0.3s ease;
 }
 
-.ms-td-code {
-    font-family: monospace;
-}
-
-.ms-btn-remove {
-    background: #dc2626;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
-    cursor: pointer;
-}
-
-.ms-no-data {
+.modal-box h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
     text-align: center;
-    color: #6b7280;
-    padding: 16px;
+}
+
+.modal-box input {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+/* Hiệu ứng */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

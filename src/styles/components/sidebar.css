@@ -1,40 +1,40 @@
 .sidebar {
+    margin: 0;
     position: fixed;
-    top: 20px;
-    left: 0;
-    height: 100%;
+    top: 75px;
+    width: 220px;
+    transition: width 0.3s ease;
     background: #1e293b;
     color: #fff;
-    transition: width 0.3s ease;
-    overflow: hidden;
+    height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-.sidebar.expanded {
-    width: 200px;
-}
-
 .sidebar.collapsed {
     width: 60px;
+    /* chỉ để đủ chứa icon */
 }
 
 .sidebar-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     padding: 12px;
     background: #0f172a;
+    border-bottom: 1px solid #334155;
 }
 
 .sidebar-title {
-    font-size: 16px;
-    margin: 0;
-    white-space: nowrap;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .sidebar-toggle {
-    background: none;
+    background: transparent;
     border: none;
     color: #fff;
     font-size: 18px;
@@ -48,25 +48,30 @@
 }
 
 .sidebar-link {
-    font-size: 18px;
-    padding: 10px;
-    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
     text-decoration: none;
-    border-radius: 4px;
+    color: #cbd5e1;
     transition: background 0.2s;
 }
 
 .sidebar-link:hover {
-    background: #506685;
-}
-
-.sidebar-link.active {
-    background: #6884aa;
+    background: #334155;
     color: #fff;
 }
 
-.sidebar-empty {
-    padding: 10px;
-    font-size: 14px;
-    color: #94a3b8;
+.sidebar-link.active {
+    background: #2563eb;
+    color: #fff;
+}
+
+.sidebar-icon {
+    font-size: 18px;
+}
+
+.sidebar-label {
+    white-space: nowrap;
 }

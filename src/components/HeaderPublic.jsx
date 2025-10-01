@@ -17,9 +17,10 @@ export default function HeaderPublic() {
                 <Link to="/blog">Tin tức</Link>
                 <Link to="/contact">Liên hệ</Link>
 
-                <Link className="nav-login" to="/login">Đăng nhập</Link>
-
             </nav >
+            <div className="text-login">
+                <Link className="btn-login" to="/login">Đăng nhập</Link>
+            </div>
         </header >
     );
 }

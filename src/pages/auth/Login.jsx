@@ -33,16 +33,16 @@ export default function Login() {
 
         switch (role.toLowerCase()) {
             case "student":
-                navigate("/student/profile", { replace: true });
+                navigate("/student/dashboard", { replace: true });
                 break;
             case "teacher":
-                navigate("/teacher/students", { replace: true });
+                navigate("/teacher/dashboard", { replace: true });
                 break;
             case "accountant":
                 navigate("/accountant/tuition", { replace: true });
                 break;
             case "admin":
-                navigate("/admin/students", { replace: true });
+                navigate("/admin/dashboard", { replace: true });
                 break;
             default:
                 navigate("/", { replace: true });
