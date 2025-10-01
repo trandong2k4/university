@@ -21,6 +21,7 @@ import BlogGuide from "../pages/public/BlogGuide";
 import Chatbot from "../pages/public/Chatbot";
 import About from "../pages/public/About";
 import Contact from "../pages/public/Contact";
+import Nganh from "../pages/public/Nganh";
 
 // (Tuỳ chọn) Dashboards
 import PublicDashboard from "../pages/dashboard/PublicDashboard";
@@ -78,6 +79,7 @@ export default function AppRouter() {
                 <Route path="chatbot" element={<Chatbot />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />
+                <Route path="nganh" element={<Nganh />} />
                 {/* Auth routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />

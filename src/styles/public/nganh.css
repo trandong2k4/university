@@ -1,0 +1,141 @@
+.nganh-page {
+    padding: 20px;
+}
+
+/* Banner */
+.banner {
+    background: linear-gradient(to right, #22c55e, #0d9488);
+    color: white;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.banner h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.banner p {
+    margin-top: 10px;
+    font-size: 1.2rem;
+}
+
+/* Course Info */
+.course-info {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-info h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.label {
+    font-weight: 600;
+    margin-left: 6px;
+}
+
+/* Description */
+.course-desc {
+    background: white;
+    margin-top: 20px;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-desc ul {
+    margin-top: 12px;
+    padding-left: 20px;
+    list-style: disc;
+}
+
+/* Accordion */
+.accordion-item {
+    background-color: white;
+    padding: 16px 0;
+    border-bottom: 1px solid #ebe8e7;
+    cursor: pointer;
+
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    background-color: white;
+}
+
+.accordion-content {
+    margin-top: 10px;
+    color: #f46506;
+}
+
+.accordion-item.open .accordion-header {
+    color: #16a34a;
+}
+
+/* Extra Section */
+.course-extra {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.materials,
+.schedule {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.materials ul {
+    list-style: none;
+    padding: 0;
+}
+
+.materials li {
+    margin: 8px 0;
+}
+
+.materials a {
+    color: #16a34a;
+    text-decoration: none;
+}
+
+.materials a:hover {
+    text-decoration: underline;
+}
+
+.schedule table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.schedule th,
+.schedule td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 8px;
+    text-align: left;
+}
+
+.schedule th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6b7280;
+}

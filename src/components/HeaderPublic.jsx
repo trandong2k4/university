@@ -13,7 +13,7 @@ export default function HeaderPublic() {
 
                 <Link to="/Dashboard">Trang chủ</Link>
                 <Link to="/about">Giới thiệu</Link>
-                <Link to="/">Ngành học</Link>
+                <Link to="/nganh">Ngành học</Link>
                 <Link to="/blog">Tin tức</Link>
                 <Link to="/contact">Liên hệ</Link>
 

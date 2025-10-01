@@ -1,100 +1,108 @@
-// PublicDashboard.jsx
-import React, { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import mockData from "../../mockData";
+// src/pages/dashboard/PublicDashboard.jsx
+import React from "react";
 import "../../styles/dashboard/publicDashboard.css";
 
 export default function PublicDashboard() {
-    const navigate = useNavigate();
-    const [q, setQ] = useState("");
-
-    const majors = mockData.entities.nganhHoc || [];
-    const courses = mockData.entities.monHoc || [];
-
-    const kpis = useMemo(() => [
-        { label: "Ngành học", value: majors.length },
-        { label: "Môn học", value: courses.length },
-        { label: "Bài viết (mock)", value: 3 },
-        { label: "Chatbot AI", value: "Demo" },
-    ], [majors.length, courses.length]);
-
-    const news = [
-        { id: 1, title: "Khai giảng kỳ mới 10/10/2025", link: "/blog" },
-        { id: 2, title: "Workshop: Ứng dụng AI trong giáo dục", link: "/blog" },
-        { id: 3, title: "Cuộc thi Lập trình sinh viên 2025", link: "/blog" },
-    ];
-
-    const onSearch = (e) => {
-        e.preventDefault();
-        const s = q.trim();
-        navigate(s ? `/courses?q=${encodeURIComponent(s)}` : "/courses");
-    };
-
     return (
+        <main className="dashboard-container">
+            {/* Banner */}
+            <section className="banner">
+                <h1>Chào mừng đến với Learning Hub!</h1>
+                <p>Nền tảng học tập trực tuyến hàng đầu dành cho bạn.</p>
+                <div className="banner-placeholder"></div>
+            </section>
 
-        <div className="dashboard-container">
+            {/* Giới thiệu + Khóa học nổi bật */}
+            <section className="grid-3">
+                {/* Giới thiệu */}
+                <div className="card intro">
+                    <h2>Giới thiệu</h2>
+                    <p>
+                        Learning Hub là hệ thống học tập trực tuyến toàn diện, cung cấp một
+                        loạt các khóa học đa dạng từ nhiều lĩnh vực. Chúng tôi cam kết mang
+                        đến trải nghiệm học tập tốt nhất, với tài liệu chất lượng cao và đội
+                        ngũ giảng viên chuyên nghiệp, giúp bạn đạt được mục tiêu học vấn và
+                        sự nghiệp.
+                    </p>
+                </div>
 
-            {/* Blog / Search */}
-            <section className="dashboard-learning">
+                {/* Khóa học nổi bật */}
+                <div className="card featured-courses">
+                    <h2>Khóa học nổi bật</h2>
+                    <ul>
+                        <li>
+                            <h3>Lập trình Web nâng cao</h3>
+                            <p>Giảng viên: Lê Văn Cường</p>
+                        </li>
+                        <li>
+                            <h3>Thiết kế đồ họa với Figma</h3>
+                            <p>Giảng viên: Nguyễn Thị Thu</p>
+                        </li>
+                        <li>
+                            <h3>Kế toán doanh nghiệp</h3>
+                            <p>Giảng viên: Phạm Xuân Hòa</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
 
-                <h1 className="dashboard-title">Learning Hub - Public Dashboard</h1>
-                <p className="dashboard-subtitle">Smart Education Platform (Mock)</p>
+            {/* Lịch học + Tin tức */}
+            <section className="grid-2">
+                {/* Lịch học */}
+                <div className="card calendar">
+                    <h2>Lịch học & Lịch thi</h2>
+                    <div className="calendar-header">
+                        <div>T2</div><div>T3</div><div>T4</div><div>T5</div>
+                        <div>T6</div><div className="weekend">T7</div><div className="weekend">CN</div>
+                    </div>
+                    <div className="calendar-grid">
+                        <div></div><div></div><div></div><div>1</div><div>2</div><div>3</div><div>4</div>
+                        <div>5</div><div>6</div><div className="highlight">7</div><div>8</div><div>9</div><div>10</div><div className="holiday">11</div>
+                        <div>12</div><div>13</div><div>14</div><div>15</div><div className="highlight">16</div><div>17</div><div>18</div>
+                        <div>19</div><div>20</div><div>21</div><div>22</div><div>23</div><div>24</div><div>25</div>
+                        <div>26</div><div className="highlight">27</div><div>28</div><div>29</div><div>30</div>
+                    </div>
+                </div>
 
-                <form onSubmit={onSearch} className="dashboard-search">
-                    <input
-                        className="dashboard-search-input"
-                        placeholder="Tìm kiếm ngành học / môn học"
-                        value={q}
-                        onChange={(e) => setQ(e.target.value)}
-                    />
-                    <button className="dashboard-search-btn">Tìm kiếm</button>
+                {/* Tin tức */}
+                <div className="card news">
+                    <h2>Tin tức mới</h2>
+                    <ul>
+                        <li>
+                            <h3>Learning Hub đạt giải thưởng "Nền tảng giáo dục tốt nhất"</h3>
+                            <p>25/08/2025</p>
+                        </li>
+                        <li>
+                            <h3>Khuyến mãi 50% học phí cho khóa học tiếng Anh mới</h3>
+                            <p>22/08/2025</p>
+                        </li>
+                        <li>
+                            <h3>Hội thảo trực tuyến: Tương lai của AI trong giáo dục</h3>
+                            <p>20/08/2025</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            {/* Liên hệ */}
+            <section className="card contact">
+                <h2>Liên hệ với chúng tôi</h2>
+                <form>
+                    <label>
+                        Tên
+                        <input type="text" />
+                    </label>
+                    <label>
+                        Email
+                        <input type="email" />
+                    </label>
+                    <label>
+                        Nội dung
+                        <textarea rows="4"></textarea>
+                    </label>
+                    <button type="submit">Gửi</button>
                 </form>
-
-                <div className="dashboard-links">
-                    <Link to="/blog">Bài viết hướng dẫn</Link>
-                    <Link to="/chatbot">Chatbot tư vấn (mock)</Link>
-                </div>
             </section>
-
-            {/* KPI cards */}
-            <section className="dashboard-kpis">
-                <h2 className="dashboard-section-title">Tổng quan</h2>
-                <div className="dashboard-kpi-list">
-                    {kpis.map(k => (
-                        <div key={k.label} className="dashboard-kpi-card">
-                            <div className="dashboard-kpi-label">{k.label}</div>
-                            <div className="dashboard-kpi-value">{k.value}</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* Majors */}
-            <section className="dashboard-majors">
-                <h2 className="dashboard-section-title">Ngành học nổi bật</h2>
-                <div className="dashboard-majors-list">
-                    {majors.slice(0, 6).map(m => (
-                        <Link key={m.id} to={`/majors/${m.id}`} className="dashboard-major-item">
-                            <div className="dashboard-major-name">{m.tenNganh}</div>
-                            <div className="dashboard-major-code">Mã ngành: {m.maNganh}</div>
-                            <p className="dashboard-major-desc">{m.moTa}</p>
-                        </Link>
-                    ))}
-                </div>
-            </section>
-
-            {/* News */}
-            <section className="dashboard-news">
-                <h2 className="dashboard-section-title">Tin tức - Thông báo</h2>
-                <div className="dashboard-news-list">
-                    {news.map(n => (
-                        <Link key={n.id} to={n.link} className="dashboard-news-item">
-                            <div className="dashboard-news-title">{n.title}</div>
-                            <div className="dashboard-news-link">Xem chi tiết →</div>
-                        </Link>
-                    ))}
-                </div>
-            </section>
-        </div>
+        </main>
     );
 }

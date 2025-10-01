@@ -1,59 +1,158 @@
 .about-page {
-    font-family: 'Roboto', sans-serif;
-    background: #f5f6fa;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+
 }
 
-.about-header {
-    background: #2F80ED;
-    color: #fff;
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.about-header h1 {
-    font-size: 32px;
-    font-weight: 700;
-}
-
+/* Welcome */
 .about-section {
-    background: #fff;
-    margin: 20px auto;
-    padding: 30px;
-    max-width: 900px;
-    border-radius: 10px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    background: #3471ea;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(236, 217, 11, 0.855);
 }
 
-.about-section h2 {
-    font-size: 22px;
-    color: #2F80ED;
-    margin-bottom: 15px;
+.about-logo {
+    width: 6rem;
+    height: 6rem;
+    margin: 0 auto 1rem auto;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.about-section p,
-.about-section ul {
-    font-size: 16px;
-    color: #333;
+.about-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fafbfe;
+    margin-bottom: 1rem;
+}
+
+.about-description {
+    max-width: 700px;
+    margin: 0 auto;
+    color: #f7f4f3;
+    font-size: 1.1rem;
     line-height: 1.6;
 }
 
-.about-section ul {
-    list-style: none;
-    padding-left: 0;
+/* Mission - Vision - Goals */
+.mission-vision {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
 }
 
-.about-section ul li {
-    margin-bottom: 8px;
-}
-
-.about-footer {
-    margin-top: auto;
-    background: #333;
-    color: #fff;
+.card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
-    padding: 15px;
-    font-size: 14px;
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.card.purple {
+    border-top: 4px solid #9333ea;
+    color: #9333ea;
+}
+
+.card.yellow {
+    border-top: 4px solid #f59e0b;
+    color: #f59e0b;
+}
+
+.card.teal {
+    border-top: 4px solid #14b8a6;
+    color: #14b8a6;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Team Section */
+.team-section {
+    margin-top: 2rem;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    text-align: center;
+}
+
+.team-card {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.team-avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    margin-bottom: 0.5rem;
+}
+
+/* Benefits */
+.benefits-section {
+    margin-top: 2rem;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.benefit-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.benefit-icon {
+    font-size: 1.8rem;
+}
+
+.benefit-icon.green {
+    color: #22c55e;
+}
+
+.benefit-icon.blue {
+    color: #3b82f6;
+}
+
+.benefit-icon.indigo {
+    color: #6366f1;
+}
+
+.benefit-icon.yellow {
+    color: #f59e0b;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
 }
