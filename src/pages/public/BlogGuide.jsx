@@ -1,100 +1,161 @@
-// BlogGuide.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "/src/context/AuthContext.jsx";
 import "../../styles/public/blogGuide.css";
 
 const BlogGuide = () => {
-    // Dữ liệu tin tức mẫu
-    const newsData = [
-        {
-            id: 1,
-            category: "academic",
-            date: "28/08/2025",
-            title: "Kỳ học mới và những điều cần biết",
-            content:
-                "Thông báo về kế hoạch học tập, các mốc thời gian quan trọng và quy định mới trong kỳ học sắp tới.",
-            image: "https://placehold.co/600x400/3B82F6/ffffff?text=Học+thuật",
-        },
-        {
-            id: 2,
-            category: "events",
-            date: "27/08/2025",
-            title: "Cuộc thi lập trình Code-A-Thon 2025",
-            content:
-                "Mời các bạn sinh viên tham gia cuộc thi lập trình thường niên với giải thưởng hấp dẫn. Đăng ký ngay!",
-            image: "https://placehold.co/600x400/9CA3AF/ffffff?text=Sự+kiện",
-        },
-        {
-            id: 3,
-            category: "announcements",
-            date: "26/08/2025",
-            title: "Thông báo lịch bảo vệ đồ án tốt nghiệp",
-            content:
-                "Danh sách sinh viên, thời gian và địa điểm bảo vệ đồ án tốt nghiệp đã được công bố chính thức.",
-            image: "https://placehold.co/600x400/EF4444/ffffff?text=Thông+báo",
-        },
-    ];
+    const { isLoggedIn } = useAuth();
+    const [posts, setPosts] = useState([]);
+    const [selectedTypes, setSelectedTypes] = useState([]);
+    const [search, setSearch] = useState("");
+    const [authorFilter, setAuthorFilter] = useState("");
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+    const [loading, setLoading] = useState(true);
 
-    const [filter, setFilter] = useState("all"); // bộ lọc loại tin
-    const [search, setSearch] = useState(""); // từ khóa tìm kiếm
+    const postTypes = ["Thông báo", "Hướng dẫn", "Tài liệu"];
 
-    // Lọc dữ liệu theo search + filter
-    const filteredNews = newsData.filter((item) => {
-        const matchCategory = filter === "all" || item.category === filter;
+    useEffect(() => {
+        fetch("http://localhost:8080/api/baiviets")
+            .then((res) => res.json())
+            .then((data) => {
+                setPosts(data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Lỗi fetch baiviets:", err);
+                setLoading(false);
+            });
+    }, []);
+
+    const filteredPosts = posts.filter((post) => {
+        const matchLoai =
+            selectedTypes.length === 0 || selectedTypes.includes(post.loaiBaiViet);
+
         const matchSearch =
-            item.title.toLowerCase().includes(search.toLowerCase()) ||
-            item.content.toLowerCase().includes(search.toLowerCase());
-        return matchCategory && matchSearch;
+            post.tieuDe?.toLowerCase().includes(search.toLowerCase()) ||
+            post.noiDung?.toLowerCase().includes(search.toLowerCase());
+
+        const matchAuthor =
+            authorFilter === "" || post.tenNguoiDang?.toLowerCase().includes(authorFilter.toLowerCase());
+
+        const postDate = new Date(post.ngayDang);
+        const matchFromDate = fromDate === "" || postDate >= new Date(fromDate);
+        const matchToDate = toDate === "" || postDate <= new Date(toDate);
+
+        const isPrivate = post.trangThai?.toLowerCase() === "riêng tư";
+        const canView = !isPrivate || isLoggedIn;
+
+        return matchLoai && matchSearch && matchAuthor && matchFromDate && matchToDate && canView;
     });
 
     return (
         <div className="blog-container">
-            {/* Banner Section */}
+            {/* Banner */}
             <section className="blog-banner">
-                <h1>Tin tức</h1>
-                <p>Cập nhật những tin tức, thông báo và sự kiện mới nhất.</p>
+                <h1>Bài viết & Tin tức</h1>
+                <p>Cập nhật các thông tin học tập, sự kiện và thông báo mới nhất.</p>
             </section>
 
-            {/* Search and Filter Section */}
+            {/* Filter */}
             <section className="blog-filter">
                 <div className="search-box">
                     <input
                         type="text"
-                        placeholder="Tìm kiếm tin tức..."
+                        placeholder="Tìm kiếm bài viết..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
                     <span className="icon">🔍</span>
                 </div>
-                <div className="filter-box">
-                    <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-                        <option value="all">Tất cả</option>
-                        <option value="academic">Học tập</option>
-                        <option value="events">Sự kiện</option>
-                        <option value="announcements">Thông báo</option>
-                    </select>
+
+                <div className="filter-group">
+                    {/* Lọc theo loại */}
+                    <div className="filter-types">
+                        {postTypes.map((type) => (
+                            <label key={type}>
+                                <input
+                                    type="checkbox"
+                                    value={type}
+                                    checked={selectedTypes.includes(type)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setSelectedTypes((prev) =>
+                                            prev.includes(value)
+                                                ? prev.filter((t) => t !== value)
+                                                : [...prev, value]
+                                        );
+                                    }}
+                                />
+                                {type}
+                            </label>
+                        ))}
+                    </div>
+
+                    {/* Lọc nâng cao */}
+                    <div className="filter-advanced">
+                        <input
+                            type="text"
+                            placeholder="Người đăng..."
+                            value={authorFilter}
+                            onChange={(e) => setAuthorFilter(e.target.value)}
+                        />
+
+                        <div className="date-filter">
+                            <label>
+                                Từ ngày:
+                                <input
+                                    type="date"
+                                    value={fromDate}
+                                    onChange={(e) => setFromDate(e.target.value)}
+                                />
+                            </label>
+                            <label>
+                                Đến ngày:
+                                <input
+                                    type="date"
+                                    value={toDate}
+                                    onChange={(e) => setToDate(e.target.value)}
+                                />
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            {/* News List Section */}
-            <section className="blog-list">
-                {filteredNews.length > 0 ? (
-                    filteredNews.map((item) => (
-                        <div key={item.id} className="news-card" data-category={item.category}>
-                            <img src={item.image} alt={item.title} />
-                            <div className="news-content">
-                                <span>📅 {item.date}</span>
-                                <h4>{item.title}</h4>
-                                <p>{item.content}</p>
-                                <a href="#">Xem chi tiết</a>
+            {/* Loading + List */}
+            {loading ? (
+                <p className="loading">⏳ Đang tải dữ liệu...</p>
+            ) : (
+                <section className="blog-list">
+                    {filteredPosts.length > 0 ? (
+                        filteredPosts.map((post) => (
+                            <div key={post.id} className="news-card" data-category={post.loaiBaiViet}>
+                                {post.hinhAnhUrl && (
+                                    <img src={post.hinhAnhUrl} alt={post.tieuDe} />
+                                )}
+                                <div className="news-content">
+                                    <span>📅 {post.ngayDang}</span>
+                                    <h4>{post.tieuDe}</h4>
+                                    <p>{post.noiDung}</p>
+                                    <p>
+                                        👤 {post.tacGia} | Người đăng: <b>{post.tenNguoiDang}</b>
+                                    </p>
+                                    <p>📌 Trạng thái: {post.trangThai}</p>
+                                    {post.fileDinhKemUrl && (
+                                        <a href={post.fileDinhKemUrl} target="_blank" rel="noreferrer">
+                                            📎 Tệp đính kèm
+                                        </a>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    ))
-                ) : (
-                    <p className="no-results">⚠️ Không tìm thấy kết quả phù hợp.</p>
-                )}
-            </section>
+                        ))
+                    ) : (
+                        <p className="no-results">⚠️ Không tìm thấy kết quả phù hợp.</p>
+                    )}
+                </section>
+            )}
 
-            {/* Load More */}
+            {/* Load more */}
             <div className="blog-loadmore">
                 <button>➕ Xem thêm</button>
             </div>

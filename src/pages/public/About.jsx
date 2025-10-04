@@ -5,9 +5,9 @@ export default function About() {
     return (
         <div className="about-page">
             {/* Welcome Section */}
-            <section className="about-section text-center">
+            <section className="about-section">
                 <img
-                    src="https://placehold.co/150x150/1e40af/ffffff?text=Logo"
+                    src="/src/assets/ums.png"
                     alt="Learning Hub Logo"
                     className="about-logo"
                 />

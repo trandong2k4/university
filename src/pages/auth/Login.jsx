@@ -1,51 +1,71 @@
-// Login.jsx
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/auth/login.css";
 import umsImage from "/src/assets/ums.png";
 
-
-
-
-
 export default function Login() {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login } = useAuth(); // context lưu thông tin user
     const [params] = useSearchParams();
-    const [username, setUsername] = useState("Nguyen Van A");
-    const [password, setPassword] = useState("123456");
-    const [role, setRole] = useState("student"); // student | teacher | accountant | admin
+
+    // state input
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
-    const togglePassword = (e) => {
-        e.preventDefault(); // tránh submit form khi nhấn nút
-        setShowPassword(prev => !prev);
-    };
+    const togglePassword = () => setShowPassword((prev) => !prev);
 
-
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        login({ name: username || "Nguyen Van A", role });
 
-        const redirect = params.get("redirect");
-        if (redirect) return navigate(redirect, { replace: true });
+        try {
+            // gọi API đăng nhập
+            const response = await fetch("http://localhost:8080/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
 
-        switch (role.toLowerCase()) {
-            case "student":
-                navigate("/student/dashboard", { replace: true });
-                break;
-            case "teacher":
-                navigate("/teacher/dashboard", { replace: true });
-                break;
-            case "accountant":
-                navigate("/accountant/tuition", { replace: true });
-                break;
-            case "admin":
-                navigate("/admin/dashboard", { replace: true });
-                break;
-            default:
-                navigate("/", { replace: true });
+            if (!response.ok) {
+                const msg = await response.text();
+                throw new Error(msg || "Đăng nhập thất bại");
+            }
+
+            // dữ liệu server trả về (ví dụ { token, username, role })
+            const data = await response.json();
+
+            console.log("Login response:", data);
+
+            // lưu thông tin vào context + storage
+            login(data, rememberMe);
+
+            // nếu có query redirect thì ưu tiên chuyển về đó
+            const redirect = params.get("redirect");
+            if (redirect) return navigate(redirect, { replace: true });
+
+            // điều hướng theo role
+            const routes = {
+                student: "/student/dashboard",// hoa02
+                teacher: "/teacher/dashboard",// quyen10
+                accountant: "/accountant/tuition",// anh04
+                tt: "/admin/dashboard",//dong01
+                qldt: "/admin/dashboard",
+                qllh: "/admin/dashboard",
+                qlnd: "/admin/dashboard",
+                gvmn: "/admin/dashboard",
+                tvts: "/admin/dashboard",
+                admin: "/admin/dashboard",
+            };
+
+            const roleKey = data.role?.toLowerCase();
+
+            console.log(roleKey);
+            navigate(routes[roleKey] || "/Dashboard", { replace: true });
+        } catch (err) {
+            console.error("Login error:", err);
+            alert("Sai tài khoản hoặc mật khẩu!");
         }
     };
 
@@ -53,7 +73,7 @@ export default function Login() {
         <div className="login-container">
             <div className="login-card">
                 <div className="login-logo">
-                    <img className="logo-img" src={umsImage} alt="Erroll" />
+                    <img className="logo-img" src={umsImage} alt="UMS Logo" />
                 </div>
 
                 <h2 className="login-title">Đăng nhập</h2>
@@ -66,6 +86,7 @@ export default function Login() {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             placeholder="Nhập tên đăng nhập"
+                            required
                         />
                     </div>
 
@@ -74,50 +95,37 @@ export default function Login() {
                         <div className="input-wrapper">
                             <input
                                 className="login-input"
-                                type={showPassword ? 'text' : 'password'}
+                                type={showPassword ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Nhập mật khẩu"
+                                required
                             />
                             <span className="toggle-icon" onClick={togglePassword}>
-                                {showPassword ? '👁️' : '👁️‍🗨️'}
+                                {showPassword ? "👁️" : "👁️‍🗨️"}
                             </span>
                         </div>
-
-                    </div>
-
-                    <div className="login-field">
-                        <label className="login-label">Role (mock)</label>
-                        <select
-                            className="login-input"
-                            value={role}
-                            onChange={(e) => setRole(e.target.value)}
-                        >
-                            <option value="student">Student</option>
-                            <option value="teacher">Teacher</option>
-                            <option value="accountant">Accountant</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                        <p className="login-note">
-                            Chọn role để test route phân quyền.
-                        </p>
                     </div>
 
                     <div className="user-note">
-                        <input type="checkbox" className="user-checkbox" />
+                        <input
+                            type="checkbox"
+                            className="user-checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                        />
                         <p className="user-node-text">Ghi nhớ tài khoản</p>
                     </div>
 
                     <button type="submit" className="login-btn">
                         Đăng nhập
                     </button>
-                </form >
+                </form>
 
                 <div className="login-links">
                     <Link to="/forgot-password">Quên mật khẩu?</Link>
-                    {/* <Link to="/register">Tạo tài khoản</Link> */}
-                </div >
-            </div >
-        </div >
+                </div>
+            </div>
+        </div>
     );
 }

@@ -1,165 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/public/nganh.css";
 
 export default function Nganh() {
+    const [nganhs, setNganhs] = useState([]);
+    const [search, setSearch] = useState("");
+    const [khoaFilter, setKhoaFilter] = useState("");
     const [openWeek, setOpenWeek] = useState(null);
 
     const toggleWeek = (week) => {
         setOpenWeek(openWeek === week ? null : week);
     };
 
+    // Gọi API lấy danh sách ngành
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (search) params.append("tenNganh", search);
+        if (khoaFilter) params.append("tenKhoa", khoaFilter);
+
+        fetch(`http://localhost:8080/api/nganhs?${params.toString()}`)
+            .then((res) => res.json())
+            .then((data) => setNganhs(data))
+            .catch((err) => console.error("Lỗi fetch ngành:", err));
+    }, [search, khoaFilter]);
+
+    // Lọc ngành theo tên và khoa
+    const filteredNganhs = nganhs.filter((nganh) => {
+        const matchName = nganh.tenNganh.toLowerCase().includes(search.toLowerCase());
+        const matchKhoa = khoaFilter ? nganh.tenKhoa === khoaFilter : true;
+        return matchName && matchKhoa;
+    });
+
+    // Lấy danh sách khoa từ ngành (unique)
+    const khoaOptions = [...new Set(nganhs.map((n) => n.tenKhoa))].filter(Boolean);
+
     return (
         <div className="nganh-page">
             {/* Banner */}
             <section className="banner">
-                <h1>Nội dung Khóa học</h1>
-                <p>Khám phá chi tiết về môn học bạn đã chọn.</p>
+                <h1>Ngành học</h1>
+                <p>Khám phá chi tiết về ngành học.</p>
             </section>
 
-            {/* Course Info */}
-            <section className="course-info">
-                <h3>Lập trình Web nâng cao</h3>
-                <div className="course-grid">
-                    <div>
-                        <i className="fas fa-barcode"></i>
-                        <span className="label">Mã môn:</span> IT404
-                    </div>
-                    <div>
-                        <i className="fas fa-user-tie"></i>
-                        <span className="label">Giảng viên:</span> PGS.TS. Lê Văn Khôi
-                    </div>
-                    <div>
-                        <i className="fas fa-credit-card"></i>
-                        <span className="label">Số tín chỉ:</span> 4
-                    </div>
-                    <div>
-                        <i className="fas fa-calendar-alt"></i>
-                        <span className="label">Học kỳ:</span> Học kỳ II, 2024-2025
-                    </div>
-                </div>
+            {/* Search & Filter */}
+            <section className="filter-section">
+                <input
+                    type="text"
+                    placeholder="Tìm theo tên ngành..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+                <select
+                    value={khoaFilter}
+                    onChange={(e) => setKhoaFilter(e.target.value)}
+                >
+                    <option value="">-- Tất cả khoa --</option>
+                    {khoaOptions.map((khoa, idx) => (
+                        <option key={idx} value={khoa}>{khoa}</option>
+                    ))}
+                </select>
             </section>
 
-            {/* Description */}
-            <section className="course-desc">
-                <h3>Mô tả và Mục tiêu Môn học</h3>
-                <p>
-                    Môn học này cung cấp kiến thức chuyên sâu về lập trình web hiện đại,
-                    tập trung vào các công nghệ front-end và back-end tiên tiến. Sinh viên
-                    sẽ học cách xây dựng các ứng dụng web phức tạp, có khả năng mở rộng và
-                    tương tác cao, sử dụng các framework phổ biến và các phương pháp phát
-                    triển tốt nhất.
-                </p>
-                <p>Sau khi hoàn thành môn học, sinh viên sẽ có khả năng:</p>
-                <ul>
-                    <li>Thiết kế và phát triển SPA sử dụng React.js.</li>
-                    <li>Xây dựng API RESTful với Node.js và Express.js.</li>
-                    <li>
-                        Tích hợp cơ sở dữ liệu (ví dụ: MongoDB, PostgreSQL) vào ứng dụng web.
-                    </li>
-                    <li>Triển khai và bảo trì ứng dụng trên các nền tảng đám mây.</li>
-                </ul>
-            </section>
-
-            {/* Accordion */}
-            <section className="syllabus">
-                <div className="accordion">
-                    <h3>Đề cương chi tiết</h3>
-                    <div
-                        className={`accordion-item ${openWeek === 1 ? "open" : ""}`}
-                        onClick={() => toggleWeek(1)}
-                    >
-                        <div className="accordion-header">
-                            <span>Tuần 1: Giới thiệu và tổng quan</span>
-                            <i className="fas fa-chevron-down"></i>
-                        </div>
-                        {openWeek === 1 && (
-                            <div className="accordion-content">
-                                <ul>
-                                    <li>
-                                        Nội dung: Tổng quan về kiến trúc web hiện đại, giới thiệu về
-                                        Front-end và Back-end.
-                                    </li>
-                                    <li>Tài liệu: Slide bài giảng, Chương 1 giáo trình.</li>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-
-                    <div
-                        className={`accordion-item ${openWeek === 2 ? "open" : ""}`}
-                        onClick={() => toggleWeek(2)}
-                    >
-                        <div className="accordion-header">
-                            <span>Tuần 2: Frontend Framework - React.js cơ bản</span>
-                            <i className="fas fa-chevron-down"></i>
-                        </div>
-                        {openWeek === 2 && (
-                            <div className="accordion-content">
-                                <ul>
-                                    <li>Nội dung: Cấu trúc dự án, Component, Props, State.</li>
-                                    <li>Tài liệu: Slide bài giảng, video hướng dẫn.</li>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </section>
-
-            {/* Materials & Schedule */}
-            <section className="course-extra">
-                <div className="materials">
-                    <h3>Tài liệu học tập</h3>
+            {/* Danh sách ngành */}
+            <section className="list-nganh">
+                {filteredNganhs.length > 0 ? (
                     <ul>
-                        <li>
-                            <a href="#">
-                                <i className="fas fa-file-alt"></i> Giáo trình môn học (PDF)
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i className="fas fa-file-powerpoint"></i> Slide bài giảng tuần
-                                1-3
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i className="fas fa-video"></i> Video bài giảng
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://nodejs.org/" target="_blank" rel="noreferrer">
-                                <i className="fas fa-link"></i> Tài liệu tham khảo Node.js
-                            </a>
-                        </li>
+                        {filteredNganhs.map((nganh) => (
+                            <li key={nganh.id} className="nganh-card">
+                                <h3>{nganh.tenNganh}</h3>
+                                <p><strong>Khoa:</strong> {nganh.tenKhoa}</p>
+                                <p><strong>Mô tả:</strong> {nganh.moTa}</p>
+                            </li>
+                        ))}
                     </ul>
-                </div>
-                <div className="schedule">
-                    <h3>Lịch học</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ngày</th>
-                                <th>Giờ</th>
-                                <th>Phòng</th>
-                                <th>Hình thức</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Thứ Ba</td>
-                                <td>08:00 - 11:30</td>
-                                <td>P.A202</td>
-                                <td>Offline</td>
-                            </tr>
-                            <tr>
-                                <td>Thứ Sáu</td>
-                                <td>13:30 - 17:00</td>
-                                <td>Online</td>
-                                <td>Online</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                ) : (
+                    <p>Không tìm thấy ngành phù hợp</p>
+                )}
             </section>
         </div>
     );

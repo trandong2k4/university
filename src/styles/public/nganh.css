@@ -1,141 +1,194 @@
 .nganh-page {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Banner */
 .banner {
-    background: linear-gradient(to right, #22c55e, #0d9488);
-    color: white;
-    border-radius: 12px;
-    padding: 40px 20px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
 }
 
 .banner h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
 }
 
 .banner p {
-    margin-top: 10px;
-    font-size: 1.2rem;
+    color: #7f8c8d;
+    font-size: 1rem;
 }
 
-/* Course Info */
-.course-info {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    margin-top: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.course-info h3 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 16px;
-}
-
-.course-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-}
-
-.label {
-    font-weight: 600;
-    margin-left: 6px;
-}
-
-/* Description */
-.course-desc {
-    background: white;
-    margin-top: 20px;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.course-desc ul {
-    margin-top: 12px;
-    padding-left: 20px;
-    list-style: disc;
-}
-
-/* Accordion */
-.accordion-item {
-    background-color: white;
-    padding: 16px 0;
-    border-bottom: 1px solid #ebe8e7;
-    cursor: pointer;
-
-}
-
-.accordion-header {
+/* Filter section */
+/* Container filter */
+.filter-section {
     display: flex;
-    justify-content: space-between;
-    font-weight: 600;
-    background-color: white;
+    gap: 15px;
+    /* khoảng cách giữa các filter */
+    align-items: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    /* nếu màn nhỏ thì tự xuống hàng */
 }
 
-.accordion-content {
-    margin-top: 10px;
-    color: #f46506;
+/* Input search */
+.filter-section input[type="text"] {
+    flex: 1;
+    /* chiếm hết phần còn lại */
+    min-width: 220px;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
 }
 
-.accordion-item.open .accordion-header {
-    color: #16a34a;
+.filter-section input[type="text"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
-/* Extra Section */
-.course-extra {
+/* Dropdown chọn khoa */
+.filter-section select {
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #fff;
+    outline: none;
+}
+
+.filter-section select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+
+/* List ngành */
+.list-nganh ul {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 20px;
-}
-
-.materials,
-.schedule {
-    background: white;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.materials ul {
-    list-style: none;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
     padding: 0;
+    list-style: none;
 }
 
-.materials li {
-    margin: 8px 0;
+.nganh-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.materials a {
-    color: #16a34a;
-    text-decoration: none;
+.nganh-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.materials a:hover {
-    text-decoration: underline;
+.nganh-card h3 {
+    font-size: 1.2rem;
+    color: #34495e;
+    margin-bottom: 10px;
 }
 
-.schedule table {
-    width: 100%;
-    border-collapse: collapse;
+.nganh-card p {
+    margin: 4px 0;
+    font-size: 0.95rem;
+    color: #555;
 }
 
-.schedule th,
-.schedule td {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 8px;
-    text-align: left;
+.nganh-card strong {
+    color: #2c3e50;
 }
 
-.schedule th {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: #6b7280;
+.nganh-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.banner {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.banner h1 {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.banner p {
+    color: #000000;
+    font-size: 1rem;
+}
+
+/* Filter section */
+.filter-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.filter-section input,
+.filter-section select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.filter-section input:focus,
+.filter-section select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 4px rgba(52, 152, 219, 0.4);
+}
+
+/* List ngành */
+.list-nganh ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 0;
+    list-style: none;
+}
+
+.nganh-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nganh-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nganh-card h3 {
+    font-size: 1.2rem;
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.nganh-card p {
+    margin: 4px 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.nganh-card strong {
+    color: #2c3e50;
 }
