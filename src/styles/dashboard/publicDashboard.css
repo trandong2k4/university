@@ -1,107 +1,166 @@
+/* Layout chính */
 .dashboard-container {
     max-width: 1200px;
-    margin: auto;
-    padding: 2rem;
+    margin: 0 auto;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    color: #000000;
+    /* chữ đen cho toàn trang */
 }
 
 /* Banner */
+/* Banner */
 .banner {
-    background: linear-gradient(to right, #2563eb, #4f46e5);
-    color: white;
-    padding: 2rem;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: #fff;
+    padding: 24px;
+    border-radius: 16px;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /* giữ ảnh không tràn ra ngoài */
 }
 
 .banner h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
+    margin-bottom: 8px;
 }
 
 .banner p {
-    margin-top: 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    opacity: 0.95;
 }
 
-/* Grid Layout */
+/* khung chứa ảnh */
+.banner-placeholder {
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.banner-placeholder img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    /* ảnh fill vừa khung */
+    display: block;
+}
+
+
+/* ========== Card chung ========== */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    color: #000000;
+    font-size: 16px;
+}
+
+.card h2 {
+    margin-bottom: 16px;
+    font-size: 1.25rem;
+    color: #1e3a8a;
+}
+
+/* ========== Grid layout ========== */
 .grid-3 {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
 }
 
 .grid-2 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
 }
 
-/* Card */
-.card {
-    background: white;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.card h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
+/* ========== Giới thiệu & khóa học nổi bật ========== */
+.intro p {
+    line-height: 1.6;
+    font-size: 1.2rem;
     color: #2563eb;
-    margin-bottom: 1rem;
 }
 
-/* Featured courses */
 .featured-courses ul {
     list-style: none;
     padding: 0;
 }
 
 .featured-courses li {
-    background: #f9fafb;
-    padding: 1rem;
-    margin-bottom: 0.8rem;
-    border-radius: 8px;
-    transition: background 0.2s;
+    margin-bottom: 16px;
 }
 
-.featured-courses li:hover {
-    background: #f3f4f6;
+.featured-courses h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: #2563eb;
 }
 
-/* Calendar */
+/* ========== Calendar ========== */
 .calendar-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
     font-weight: bold;
-    color: #6b7280;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
 }
+
+.document-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.document-list li {
+    margin-bottom: 8px;
+}
+
+.document-list a {
+    display: block;
+    background: #f9fafb;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #1e3a8a;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.document-list a:hover {
+    background: #e0e7ff;
+    color: #111827;
+}
+
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 0.3rem;
+    gap: 6px;
     text-align: center;
 }
 
 .calendar-grid div {
-    padding: 0.5rem;
-    border-radius: 50%;
+    padding: 10px 0;
+    border-radius: 6px;
+    background: #f3f4f6;
 }
 
-.highlight {
+.calendar-grid .highlight {
     background: #2563eb;
     color: white;
     font-weight: bold;
 }
 
-.holiday {
-    background: #ef4444;
+.calendar-grid .holiday {
+    background: #f87171;
     color: white;
     font-weight: bold;
 }
@@ -110,57 +169,68 @@
     color: #ef4444;
 }
 
-/* News */
+/* ========== Tin tức ========== */
 .news ul {
     list-style: none;
     padding: 0;
 }
 
 .news li {
-    background: #f9fafb;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 0.8rem;
-    transition: background 0.2s;
+    margin-bottom: 16px;
 }
 
-.news li:hover {
-    background: #f3f4f6;
+.news h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: #2563eb;
 }
 
-/* Contact */
+.news p {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* ========== Contact ========== */
 .contact form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 12px;
 }
 
 .contact label {
     font-size: 0.9rem;
-    color: #374151;
+    font-weight: 500;
     display: flex;
     flex-direction: column;
+    gap: 6px;
 }
 
 .contact input,
 .contact textarea {
-    padding: 0.6rem;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.contact input:focus,
+.contact textarea:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 .contact button {
     background: #2563eb;
     color: white;
-    padding: 0.8rem 1.2rem;
     border: none;
-    border-radius: 999px;
+    border-radius: 8px;
+    padding: 12px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 500;
     transition: background 0.2s;
-    width: fit-content;
 }
 
 .contact button:hover {
-    background: #1d4ed8;
+    background: #1e40af;
 }

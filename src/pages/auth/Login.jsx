@@ -36,32 +36,22 @@ export default function Login() {
             // dữ liệu server trả về (ví dụ { token, username, role })
             const data = await response.json();
 
-            console.log("Login response:", data);
+            // console.log("Login response:", data);
+            // console.log("Keys:", Object.keys(data));
 
             // lưu thông tin vào context + storage
             login(data, rememberMe);
 
-            // nếu có query redirect thì ưu tiên chuyển về đó
-            const redirect = params.get("redirect");
-            if (redirect) return navigate(redirect, { replace: true });
-
             // điều hướng theo role
             const routes = {
-                student: "/student/dashboard",// hoa02
-                teacher: "/teacher/dashboard",// quyen10
-                accountant: "/accountant/tuition",// anh04
-                tt: "/admin/dashboard",//dong01
-                qldt: "/admin/dashboard",
-                qllh: "/admin/dashboard",
-                qlnd: "/admin/dashboard",
-                gvmn: "/admin/dashboard",
-                tvts: "/admin/dashboard",
-                admin: "/admin/dashboard",
+                STUDENT: "/student/dashboard",// 
+                TEACHER: "/teacher/dashboard",// 
+                accountant: "/accountant/tuition",// 
+                ADMIN: "/admin/dashboard",
             };
 
-            const roleKey = data.role?.toLowerCase();
+            const roleKey = data.mrole?.toUpperCase();
 
-            console.log(roleKey);
             navigate(routes[roleKey] || "/Dashboard", { replace: true });
         } catch (err) {
             console.error("Login error:", err);

@@ -21,6 +21,7 @@ export default function Nganh() {
             .then((res) => res.json())
             .then((data) => setNganhs(data))
             .catch((err) => console.error("Lỗi fetch ngành:", err));
+
     }, [search, khoaFilter]);
 
     // Lọc ngành theo tên và khoa

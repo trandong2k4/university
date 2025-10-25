@@ -1,0 +1,65 @@
+.register-schedule-container {
+    padding: 24px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.register-schedule-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background: #fafafa;
+}
+
+.schedule-table th,
+.schedule-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.schedule-table th {
+    background: #34495e;
+    color: #fff;
+}
+
+.status-yes {
+    color: green;
+    font-weight: bold;
+}
+
+.status-no {
+    color: #999;
+}
+
+.btn-register {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-register:hover {
+    background: #27ae60;
+}
+
+.btn-cancel:hover {
+    background: #c0392b;
+}

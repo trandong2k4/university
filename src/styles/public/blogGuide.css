@@ -8,19 +8,22 @@
 .blog-banner {
     text-align: center;
     margin-bottom: 30px;
+    background-color: #0075fa;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 .blog-banner h1 {
     font-size: 2rem;
-    color: #1f2937;
+    color: #ffffff;
 }
 
 .blog-banner p {
-    color: #6b7280;
+    color: #ffffff;
 }
 
 .blog-filter {
-    background: #f9fafb;
+    background-color: rgba(255, 255, 255, 1);
     /* nền xám nhạt */
     border: 1px solid #e5e7eb;
     /* viền nhẹ */

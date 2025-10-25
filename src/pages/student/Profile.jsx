@@ -1,45 +1,62 @@
-// Profile.jsx
-import mockData from "../../mockData";
+import { useEffect, useState } from "react";
 import "../../styles/student/profile.css";
+import { useAuth } from "../../context/AuthContext";
 
+export default function StudentProfile() {
+    const { user } = useAuth(); // ✅ Lấy user từ context
+    const userId = user?.id;    // ✅ Lấy id của user đăng nhập
 
-export default function Profile() {
-    const sv = mockData.entities.sinhVien?.[0];
-    const detail = mockData.entities.chiTietSinhVien?.find(d => d.sinhVienId === sv?.id);
-    const dc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d479.2263626872295!2d108."
-        + "22250022950536!3d16.075299660147333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314219001c"
-        + "106f59%3A0x19a6e3a5faaa4659!2zVMOyYSBuaMOgIER1eSBUw6JuLCDEkOG6oWkgaOG7jWMgRHV5IFTDom4!5e0!3m2!1svi!2"
-        + "sus!4v1758905014421!5m2!1svi!2sus";
+    const [basicInfo, setBasicInfo] = useState(null);
+    const [detailInfo, setDetailInfo] = useState(null);
 
-    if (!sv) return <div className="profile-empty">Chưa có dữ liệu sinh viên.</div>;
+    useEffect(() => {
+        if (!userId) return; // tránh lỗi khi user chưa có
+
+        // 🔹 Gọi API lấy thông tin cơ bản
+        fetch(`http://localhost:8080/api/sinhviens/by-user/${userId}`)
+            .then((res) => res.json())
+            .then(setBasicInfo)
+            .catch(console.error);
+
+        // 🔹 Gọi API lấy thông tin chi tiết
+        fetch(`http://localhost:8080/api/chitietsinhviens/by-user/${userId}`)
+            .then((res) => res.json())
+            .then(setDetailInfo)
+            .catch(console.error);
+
+    }, [userId]);
+
+    if (!basicInfo || !detailInfo)
+        return <p>Đang tải thông tin sinh viên...</p>;
 
     return (
-        <div className="profile-container">
-            <h1 className="profile-title">Thông tin sinh viên</h1>
-            <div className="profile-card">
-                <div className="profile-name">{sv.tenSinhVien}</div>
-                <div className="profile-id">Mã SV: {sv.maSinhVien}</div>
+        <div className="student-profile">
+            <h2>📘 Hồ sơ sinh viên</h2>
 
-                <div className="profile-detail-grid">
-                    <div><span className="profile-label">Địa chỉ:</span> {detail?.diaChi || "—"}</div>
-                    <div><span className="profile-label">SĐT:</span> {detail?.soDienThoai || "—"}</div>
-                    <div><span className="profile-label">Email:</span> {detail?.email || "—"}</div>
-                </div>
-            </div>
-            <div className="diachi" style={{ borderRadius: "40px " }}>
-
-                <iframe src={dc}
-                    width="600"
-                    height="450"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Google Map"
-                >
-                </iframe>
+            <div className="profile-section">
+                <h3>Thông tin cơ bản</h3>
+                <ul>
+                    <li><strong>Mã sinh viên:</strong> {basicInfo.maSinhVien}</li>
+                    <li><strong>Họ tên:</strong> {basicInfo.hoTen}</li>
+                    <li><strong>Email:</strong> {basicInfo.email}</li>
+                    <li><strong>Số điện thoại:</strong> {basicInfo.soDienThoai}</li>
+                    <li><strong>Ngành:</strong> {basicInfo.tenNganh}</li>
+                    <li><strong>Khoa:</strong> {basicInfo.tenKhoa}</li>
+                    <li><strong>Trường:</strong> {basicInfo.tenTruong}</li>
+                </ul>
             </div>
 
+            <div className="profile-section">
+                <h3>Thông tin chi tiết</h3>
+                <ul>
+                    <li><strong>Ngày sinh:</strong> {detailInfo.ngaySinh}</li>
+                    <li><strong>Giới tính:</strong> {detailInfo.gioiTinh}</li>
+                    <li><strong>Địa chỉ:</strong> {detailInfo.diaChi}</li>
+                    <li><strong>Quốc tịch:</strong> {detailInfo.quocTich}</li>
+                    <li><strong>CCCD:</strong> {detailInfo.cccd}</li>
+                    <li><strong>SĐT người thân:</strong> {detailInfo.sdtNguoiThan}</li>
+                </ul>
+            </div>
         </div>
     );
 }

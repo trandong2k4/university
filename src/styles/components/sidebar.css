@@ -1,7 +1,8 @@
 .sidebar {
     margin: 0;
     position: fixed;
-    top: 75px;
+    top: 65px;
+    left: 0px;
     width: 220px;
     transition: width 0.3s ease;
     background: #1e293b;

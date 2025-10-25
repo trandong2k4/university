@@ -1,196 +1,101 @@
-/* Tổng thể trang */
-.page-container {
+.schedule-container {
+    padding: 20px;
+    background: #f9fafb;
     font-family: "Segoe UI", sans-serif;
-    padding: 20px;
-    background: #f4f6f9;
-    min-height: 100vh;
 }
 
-/* Banner */
-.banner {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
+.title {
     text-align: center;
-    padding: 30px 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.banner h1 {
-    font-size: 28px;
-    margin-bottom: 8px;
-}
-
-.banner p {
-    font-size: 16px;
-    opacity: 0.9;
-}
-
-/* Khu vực content */
-.content {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Hàng nút hành động */
-.actions {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-    align-items: center;
-}
-
-.actions .flex-grow {
-    flex: 1;
-}
-
-/* Các nút chung */
-.btn {
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-/* Màu nút */
-.btn-blue {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn-yellow {
-    background: #facc15;
+    font-size: 24px;
     color: #333;
+    margin-bottom: 20px;
 }
 
-.btn-red {
-    background: #ef4444;
-    color: white;
+.section {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
-.btn-gray {
-    background: #9ca3af;
-    color: white;
+.section h2 {
+    margin-bottom: 10px;
 }
 
-.btn-green {
-    background: #10b981;
-    color: white;
-}
-
-/* Bảng */
-.table-container {
-    overflow-x: auto;
+.actions {
+    margin-bottom: 10px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-thead {
-    background: #2563eb;
-    color: white;
+    background: white;
 }
 
 th,
 td {
-    padding: 12px 14px;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
+    border: 1px solid #ddd;
+    padding: 8px;
 }
 
-tr:hover {
-    background: #f1f5f9;
-    cursor: pointer;
+th {
+    background: #f0f4f8;
 }
 
-/* Hàng được chọn */
-tr.selected {
-    background: #dbeafe;
-    font-weight: 600;
-}
-
-/* Nút mini trong bảng */
-.btn-mini {
-    padding: 4px 8px;
-    font-size: 12px;
-    border-radius: 6px;
+.btn {
+    padding: 6px 12px;
+    margin: 2px;
     border: none;
-    background: #3b82f6;
-    color: white;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s ease;
 }
 
-.btn-mini:hover {
-    background: #1d4ed8;
+.btn-blue {
+    background: #3b82f6;
+    color: #fff;
 }
 
-/* Modal */
+.btn-yellow {
+    background: #fbbf24;
+    color: #fff;
+}
+
+.btn-red {
+    background: #ef4444;
+    color: #fff;
+}
+
+.btn-green {
+    background: #22c55e;
+    color: #fff;
+}
+
+.btn-gray {
+    background: #9ca3af;
+    color: #fff;
+}
+
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 1000;
+    align-items: center;
 }
 
 .modal-box {
-    background: white;
-    padding: 24px;
+    background: #fff;
+    padding: 20px;
     border-radius: 12px;
     width: 400px;
-    max-width: 90%;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.2s ease;
-}
-
-.modal-box h2 {
-    margin-bottom: 16px;
-    font-size: 20px;
-    color: #111827;
 }
 
 .modal-box input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-/* Hiệu ứng */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
 }

@@ -5,27 +5,21 @@ import { Routes, Route } from "react-router-dom";
 // Layouts
 import AuthLayout from "../layouts/AuthLayout";
 import PublicLayout from "../layouts/PublicLayout";
-import StudentLayout from "../layouts/StudentLayout";
-import TeacherLayout from "../layouts/TeacherLayout";
-import AccountantLayout from "../layouts/AccountantLayout";
-import AdminLayout from "../layouts/AdminLayout";
 
 // Guards
 import ProtectedRoute from "../components/ProtectedRoute";
 
 // Public pages
-import Home from "../pages/public/Home";
-import SearchCourse from "../pages/public/SearchCourse";
-import MajorDetail from "../pages/public/MajorDetail";
 import BlogGuide from "../pages/public/BlogGuide";
-import Chatbot from "../pages/public/Chatbot";
 import About from "../pages/public/About";
 import Contact from "../pages/public/Contact";
 import Nganh from "../pages/public/Nganh";
+import UnauthorizedPage from "../pages/public/UnauthorizedPage";
 
 // (Tuỳ chọn) Dashboards
 import PublicDashboard from "../pages/dashboard/PublicDashboard";
 import ManageDashboard from "../pages/dashboard/ManageDashboard";
+import AdminDashboard from "../pages/dashboard/AdminDashboard";
 import StudentDashboard from "../pages/dashboard/StudentDashboard";
 import TeacherDashboard from "../pages/dashboard/TeacherDashboard";
 
@@ -42,6 +36,7 @@ import Grades from "../pages/student/Grades";
 import Tuition from "../pages/student/Tuition";
 import RegisterCredit from "../pages/student/RegisterCredit";
 import CancelCredit from "../pages/student/CancelCredit";
+import Chatbot from "../pages/student/ChatbotPage";
 
 // Teacher pages
 import StudentInfo from "../pages/teacher/StudentInfo";
@@ -65,6 +60,13 @@ import ManageSchedule from "../pages/admin/ManageSchedule";
 import ManageGrades from "../pages/admin/ManageGrades";
 import ManageTuition from "../pages/admin/ManageTuition";
 import ManageCreditRegister from "../pages/admin/ManageCreditRegister";
+import ManageMajors from "../pages/admin/ManageMajors";
+import ManageEmpuloyees from "../pages/admin/ManageEmployees";
+import ManageSchools from "../pages/admin/ManageSchools";
+import ManageDepartments from "../pages/admin/ManageDepartments";
+import ManageUsers from "../pages/admin/ManageUsers";
+import ManageRoles from "../pages/admin/ManageRoles";
+
 
 export default function AppRouter() {
     return (
@@ -73,13 +75,11 @@ export default function AppRouter() {
             <Route path="/" element={<PublicLayout />}>
                 <Route index element={<PublicDashboard />} />
                 <Route path="/Dashboard" element={<PublicDashboard />} />
-                <Route path="courses" element={<SearchCourse />} />
-                <Route path="/majors/:id" element={<MajorDetail />} />
                 <Route path="blog" element={<BlogGuide />} />
-                <Route path="chatbot" element={<Chatbot />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />
                 <Route path="nganh" element={<Nganh />} />
+                <Route path="/unauthorized" element={<UnauthorizedPage />} />
                 {/* Auth routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
@@ -98,6 +98,7 @@ export default function AppRouter() {
                     <Route path="/student/tuition" element={<Tuition />} />
                     <Route path="/student/register-credit" element={<RegisterCredit />} />
                     <Route path="/student/cancel-credit" element={<CancelCredit />} />
+                    <Route path="/chatbotpage" element={<Chatbot />} />
                     {/* …other student pages… */}
                 </Route>
             </Route>
@@ -128,7 +129,7 @@ export default function AppRouter() {
             {/* Admin */}
             <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
                 <Route element={<AuthLayout userRole="ADMIN" />}>
-                    <Route path="/admin/dashboard" element={<ManageDashboard />} />
+                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
                     <Route path="/admin/manage" element={<ManageAdmin />} />
                     <Route path="/admin/reports" element={<ManageReports />} />
                     <Route path="/admin/setting" element={<ManageSetting />} />
@@ -138,6 +139,12 @@ export default function AppRouter() {
                     <Route path="/admin/grades" element={<ManageGrades />} />
                     <Route path="/admin/tuition" element={<ManageTuition />} />
                     <Route path="/admin/credits" element={<ManageCreditRegister />} />
+                    <Route path="/admin/nganh" element={<ManageMajors />} />
+                    <Route path="/admin/employees" element={<ManageEmpuloyees />} />
+                    <Route path="/admin/truong" element={<ManageSchools />} />
+                    <Route path="/admin/khoa" element={<ManageDepartments />} />
+                    <Route path="/admin/user" element={<ManageUsers />} />
+                    <Route path="/admin/role" element={<ManageRoles />} />
                     {/* … */}
                 </Route>
             </Route>

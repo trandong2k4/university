@@ -1,50 +1,81 @@
-.profile-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 32px 16px;
+.student-profile {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    font-family: "Segoe UI", sans-serif;
 }
 
-.profile-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 24px;
-    text-align: justify;
+.student-profile h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
 }
 
-.profile-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.profile-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.profile-name {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 4px;
+.profile-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #34495e;
 }
 
-.profile-id {
-    font-size: 0.95rem;
-    color: #6b7280;
-    margin-bottom: 16px;
+.profile-section ul {
+    list-style: none;
+    padding: 0;
 }
 
-.profile-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-}
-
-.profile-label {
-    font-weight: 500;
-    color: #374151;
-}
-
-.profile-empty {
-    text-align: center;
-    padding: 48px 16px;
+.profile-section li {
+    margin-bottom: 0.6rem;
     font-size: 1rem;
-    color: #6b7280;
+    color: #2c3e50;
+}
+
+.profile-section strong {
+    color: #2980b9;
+}
+
+.student-profile {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.student-profile h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.profile-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.profile-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #34495e;
+}
+
+.profile-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.profile-section li {
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.profile-section strong {
+    color: #2980b9;
 }

@@ -1,40 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/admin/manageCourses.css";
+import "../../styles/admin/manageMajors.css";
 
-export default function ManageCourses() {
+export default function ManageMajors() {
     const navigate = useNavigate();
-    const [courses, setCourses] = useState([]);
-    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [majors, setMajors] = useState([]);
+    const [selectedMajor, setSelectedMajor] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState("add"); // add | edit | view
 
     const [formData, setFormData] = useState({
-        maMonHoc: "",
-        tenMonHoc: "",
-        moTa: "",
-        tongSoTinChi: 0,
+        maNganh: "",
+        tenNganh: "",
+        khoaId: "",
     });
 
-    // Lấy danh sách môn học
+    const [khoas, setKhoas] = useState([]);
+
+    // Lấy danh sách ngành và khoa
     useEffect(() => {
-        fetch("http://localhost:8080/api/monhocs")
+        fetch("http://localhost:8080/api/nganhs")
             .then((res) => res.json())
-            .then((data) => setCourses(data))
-            .catch((err) => console.error("Lỗi fetch môn học:", err));
+            .then((data) => setMajors(data))
+            .catch((err) => console.error("Lỗi fetch ngành:", err));
+
+        fetch("http://localhost:8080/api/khoas")
+            .then((res) => res.json())
+            .then((data) => setKhoas(data))
+            .catch((err) => console.error("Lỗi fetch khoa:", err));
     }, []);
 
-    // Mở modal
-    const handleOpenModal = (mode, course = null) => {
+    const handleOpenModal = (mode, major = null) => {
         setModalMode(mode);
-        if ((mode === "edit" || mode === "view") && course) {
-            setFormData(course);
+        if ((mode === "edit" || mode === "view") && major) {
+            setFormData(major);
         } else {
             setFormData({
-                maMonHoc: "CS" + (courses.length + 1) * 100,
-                tenMonHoc: "",
-                moTa: "",
-                tongSoTinChi: 0,
+                maNganh: "NG" + (majors.length + 1) * 100,
+                tenNganh: "",
+                khoaId: "",
             });
         }
         setIsModalOpen(true);
@@ -42,7 +46,7 @@ export default function ManageCourses() {
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setSelectedCourse(null);
+        setSelectedMajor(null);
     };
 
     const handleChange = (e) => {
@@ -51,50 +55,48 @@ export default function ManageCourses() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Lưu môn học (add | edit)
     const handleSave = async (e) => {
         e.preventDefault();
         try {
             if (modalMode === "add") {
-                const res = await fetch("http://localhost:8080/api/monhocs", {
+                const res = await fetch("http://localhost:8080/api/nganhs", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData),
                 });
-                const newCourse = await res.json();
-                setCourses([...courses, newCourse]);
-                alert("Thêm môn học thành công!");
+                const newMajor = await res.json();
+                setMajors([...majors, newMajor]);
+                alert("Thêm ngành thành công!");
             } else if (modalMode === "edit") {
-                const res = await fetch(`http://localhost:8080/api/monhocs/${formData.id}`, {
+                const res = await fetch(`http://localhost:8080/api/nganhs/${formData.id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(formData),
                 });
                 const updated = await res.json();
-                setCourses(courses.map((c) => (c.id === updated.id ? updated : c)));
-                alert("Cập nhật môn học thành công!");
+                setMajors(majors.map((m) => (m.id === updated.id ? updated : m)));
+                alert("Cập nhật ngành thành công!");
             }
             handleCloseModal();
         } catch (err) {
-            console.error("Lỗi lưu môn học:", err);
+            console.error("Lỗi lưu ngành:", err);
             alert("Thao tác thất bại!");
         }
     };
 
-    // Xóa môn học
     const handleDelete = async () => {
-        if (!selectedCourse) return alert("Vui lòng chọn môn học để xóa!");
-        if (!window.confirm("Bạn có chắc muốn xóa môn học này?")) return;
+        if (!selectedMajor) return alert("Vui lòng chọn ngành để xóa!");
+        if (!window.confirm("Bạn có chắc muốn xóa ngành này?")) return;
 
         try {
-            await fetch(`http://localhost:8080/api/monhocs/${selectedCourse.id}`, {
+            await fetch(`http://localhost:8080/api/nganhs/${selectedMajor.id}`, {
                 method: "DELETE",
             });
-            setCourses(courses.filter((c) => c.id !== selectedCourse.id));
-            setSelectedCourse(null);
+            setMajors(majors.filter((m) => m.id !== selectedMajor.id));
+            setSelectedMajor(null);
             alert("Xóa thành công!");
         } catch (err) {
-            console.error("Lỗi xóa môn học:", err);
+            console.error("Lỗi xóa ngành:", err);
             alert("Xóa thất bại!");
         }
     };
@@ -103,25 +105,22 @@ export default function ManageCourses() {
 
     return (
         <main className="container">
-            {/* Banner */}
             <section className="banner-section">
-                <h1 className="banner-title">Quản lý Môn học</h1>
-                <p className="banner-subtitle">Quản lý thông tin chi tiết các môn học trong hệ thống.</p>
+                <h1 className="banner-title">Quản lý Ngành</h1>
+                <p className="banner-subtitle">Quản lý thông tin các ngành đào tạo trong hệ thống.</p>
             </section>
 
-            {/* Content */}
             <section className="mt-8">
                 <div className="content-box">
-                    {/* Buttons */}
                     <div className="action-buttons">
                         <button onClick={() => handleOpenModal("add")} className="btn btn-blue">
-                            <i className="fas fa-plus-circle mr-2"></i> Thêm môn học
+                            <i className="fas fa-plus-circle mr-2"></i> Thêm ngành
                         </button>
                         <button
                             onClick={() =>
-                                selectedCourse
-                                    ? handleOpenModal("edit", selectedCourse)
-                                    : alert("Chọn môn học để sửa!")
+                                selectedMajor
+                                    ? handleOpenModal("edit", selectedMajor)
+                                    : alert("Chọn ngành để sửa!")
                             }
                             className="btn btn-yellow"
                         >
@@ -136,35 +135,32 @@ export default function ManageCourses() {
                         </button>
                     </div>
 
-                    {/* Table */}
                     <div className="overflow-x-auto">
-                        <table className="courses-table">
+                        <table className="majors-table">
                             <thead>
                                 <tr>
-                                    <th>Mã môn</th>
-                                    <th>Tên môn</th>
-                                    <th>Mô tả</th>
-                                    <th>Tổng tín chỉ</th>
+                                    <th>Mã ngành</th>
+                                    <th>Tên ngành</th>
+                                    <th>Khoa</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {courses.map((course) => (
+                                {majors.map((major) => (
                                     <tr
-                                        key={course.id}
-                                        onClick={() => setSelectedCourse(course)}
-                                        className={`cursor-pointer ${selectedCourse?.id === course.id ? "selected-row" : ""
+                                        key={major.id}
+                                        onClick={() => setSelectedMajor(major)}
+                                        className={`cursor-pointer ${selectedMajor?.id === major.id ? "selected-row" : ""
                                             }`}
                                     >
-                                        <td>{course.maMonHoc}</td>
-                                        <td>{course.tenMonHoc}</td>
-                                        <td>{course.moTa}</td>
-                                        <td>{course.tongSoTinChi}</td>
+                                        <td>{major.maNganh}</td>
+                                        <td>{major.tenNganh}</td>
+                                        <td>{major.tenKhoa}</td>
                                         <td>
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleOpenModal("view", course);
+                                                    handleOpenModal("view", major);
                                                 }}
                                                 className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs hover:bg-blue-600"
                                             >
@@ -179,48 +175,45 @@ export default function ManageCourses() {
                 </div>
             </section>
 
-            {/* Modal */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-box">
                         <h2>
                             {modalMode === "edit"
-                                ? "Sửa môn học"
+                                ? "Sửa ngành"
                                 : modalMode === "view"
-                                    ? "Chi tiết môn học"
-                                    : "Thêm môn học"}
+                                    ? "Chi tiết ngành"
+                                    : "Thêm ngành"}
                         </h2>
                         <form onSubmit={handleSave}>
                             <input
                                 type="text"
-                                name="maMonHoc"
-                                value={formData.maMonHoc}
+                                name="maNganh"
+                                value={formData.maNganh}
                                 onChange={handleChange}
                                 readOnly={modalMode !== "add"}
                             />
                             <input
                                 type="text"
-                                name="tenMonHoc"
-                                placeholder="Tên môn"
-                                value={formData.tenMonHoc}
+                                name="tenNganh"
+                                placeholder="Tên ngành"
+                                value={formData.tenNganh}
                                 onChange={handleChange}
                                 readOnly={modalMode === "view"}
                             />
-                            <textarea
-                                name="moTa"
-                                placeholder="Mô tả"
-                                value={formData.moTa}
+                            <select
+                                name="khoaId"
+                                value={formData.khoaId}
                                 onChange={handleChange}
-                                readOnly={modalMode === "view"}
-                            />
-                            <input
-                                type="number"
-                                name="tongSoTinChi"
-                                placeholder="Tổng tín chỉ"
-                                value={formData.tongSoTinChi}
-                                onChange={handleChange}
-                                readOnly={modalMode === "view"}
-                            />
+                                disabled={modalMode === "view"}
+                            >
+                                <option value="">-- Chọn khoa --</option>
+                                {khoas.map((khoa) => (
+                                    <option key={khoa.id} value={khoa.id}>
+                                        {khoa.tenKhoa}
+                                    </option>
+                                ))}
+                            </select>
 
                             <div className="modal-actions">
                                 {modalMode !== "view" && (

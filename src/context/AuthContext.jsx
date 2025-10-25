@@ -1,73 +1,72 @@
-// AuthContext.jsx - placeholder
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-
-/**
- * AuthContext mock cho giai đoạn chưa có backend.
- * - user: { name, role }   // role chấp nhận viết thường, sẽ được chuẩn hoá lên UPPERCASE
- * - login({ name, role })
- * - logout()
- * - switchRole(role)       // đổi role nhanh để test ProtectedRoute
- * - hasRole(...roles)      // tiện kiểm tra trong component
- * - isAuthenticated
- *
- * Mặc định: user = { name: "Nguyen Van A", role: "STUDENT" }
- */
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 const STORAGE_KEY = "learninghub_auth_user";
 const normalizeRole = (r) => (r ? String(r).trim().toUpperCase() : null);
 
-const defaultUser = { name: "Nguyen Van A", role: "STUDENT" };
-
 export const AuthProvider = ({ children }) => {
-    // Khởi tạo từ localStorage (nếu có), không thì dùng defaultUser
     const [user, setUser] = useState(() => {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return defaultUser;
+            if (!raw) return null;
             const parsed = JSON.parse(raw);
             return {
-                name: parsed?.name || defaultUser.name,
-                role: normalizeRole(parsed?.role) || defaultUser.role,
+                id: parsed.id ?? null,
+                name: parsed.name ?? null,
+                role: normalizeRole(parsed.role),
+                token: parsed.token ?? null,
             };
         } catch {
-            return defaultUser;
+            return null;
         }
     });
 
-    const role = user?.role ?? null;
-    const isAuthenticated = Boolean(role);
-
-    const login = ({ name = defaultUser.name, role = defaultUser.role } = {}) => {
-        const normalized = normalizeRole(role);
-        const nextUser = { name, role: normalized };
+    const login = (data, rememberMe = false) => {
+        const nextUser = {
+            id: data.id ?? null,
+            name: data.username ?? data.name ?? null,
+            role: normalizeRole(data.mrole ?? data.role),
+            token: data.token ?? null,
+        };
         setUser(nextUser);
+        if (rememberMe) localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
+    };
+
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem(STORAGE_KEY);
     };
 
     const switchRole = (newRole) => {
-        const normalized = normalizeRole(newRole);
-        setUser((prev) => ({ ...(prev ?? defaultUser), role: normalized }));
+        setUser((prev) => ({ ...(prev ?? {}), role: normalizeRole(newRole) }));
     };
-
-    const logout = () => setUser(null);
 
     const hasRole = (...roles) => {
         const set = roles.map(normalizeRole);
-        return set.includes(role);
+        return set.includes(user?.role);
     };
 
-    // Persist
-    useEffect(() => {
-        if (user) localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-        else localStorage.removeItem(STORAGE_KEY);
-    }, [user]);
+    const getToken = () => user?.token ?? null;
 
-    const value = useMemo(
-        () => ({ user, role, isAuthenticated, login, logout, switchRole, hasRole }),
-        [user, role, isAuthenticated]
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                id: user?.id ?? null,
+                name: user?.name ?? null,
+                role: user?.role ?? null,
+                token: user?.token ?? null,
+                isAuthenticated: Boolean(user?.role),
+                login,
+                logout,
+                switchRole,
+                hasRole,
+                getToken,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
     );
-
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

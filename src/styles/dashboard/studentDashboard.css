@@ -1,0 +1,237 @@
+/* ========== Dashboard tổng thể ========== */
+.dashboard-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #f9fafc;
+    color: #222;
+    padding: 2rem 6%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    font-family: "Inter", sans-serif;
+}
+
+/* ========== Header / Search ========== */
+.dashboard-learning {
+    background: linear-gradient(120deg, #2563eb, #60a5fa);
+    color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+}
+
+/* Search form */
+.dashboard-search {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-search-input {
+    width: 60%;
+    max-width: 400px;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+}
+
+.dashboard-search-btn {
+    background: white;
+    color: #2563eb;
+    border: none;
+    border-radius: 999px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dashboard-search-btn:hover {
+    background: #f3f4f6;
+}
+
+/* Link hướng dẫn / Chatbot */
+.dashboard-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.dashboard-links a {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.dashboard-links a:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ========== KPI Cards ========== */
+.dashboard-section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+.dashboard-kpis {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-kpi-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.dashboard-kpi-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-kpi-card:hover {
+    background: #eff6ff;
+    transform: translateY(-3px);
+}
+
+.dashboard-kpi-label {
+    font-size: 0.95rem;
+    color: #475569;
+}
+
+.dashboard-kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+/* ========== Majors (Ngành học) ========== */
+.dashboard-majors {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-majors-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.dashboard-major-item {
+    background: #f9fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    text-decoration: none;
+    color: #1e293b;
+    transition: 0.3s ease;
+}
+
+.dashboard-major-item:hover {
+    background: #f0f9ff;
+    border-color: #2563eb;
+    transform: translateY(-3px);
+}
+
+.dashboard-major-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-major-code {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-major-desc {
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+/* ========== News Section ========== */
+.dashboard-news {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dashboard-news-item {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    color: #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s ease;
+}
+
+.dashboard-news-item:hover {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.dashboard-news-title {
+    font-weight: 500;
+}
+
+.dashboard-news-link {
+    font-size: 0.9rem;
+    color: #2563eb;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    .dashboard-search-input {
+        width: 80%;
+    }
+
+    .dashboard-container {
+        padding: 1.5rem 4%;
+    }
+
+    .dashboard-section-title {
+        font-size: 1.2rem;
+    }
+}

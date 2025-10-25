@@ -44,7 +44,7 @@ export default function HeaderPrivate({ userRole }) {
                 </div>
                 <Link className="btn-logout" to="Dashboard">Đăng xuất</Link>
                 <div className="logo-profile">
-                    <Link to="Dashboard">
+                    <Link to="/icon/profile">
                         <img title="profile" className="nav-profile" src={profileImg} alt="" />
                     </Link>
                 </div>

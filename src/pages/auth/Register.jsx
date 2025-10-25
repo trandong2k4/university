@@ -1,106 +1,36 @@
-// Register.jsx
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import "../../styles/auth/register.css";
-export default function Register() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const [name, setName] = useState("Nguyen Van A");
-  const [email, setEmail] = useState("a@example.com");
-  const [password, setPassword] = useState("123456");
-  const [role, setRole] = useState("student");
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    login({ name, role });
+export default function ResetPassword() {
+  const [username, setUsername] = useState("");
+  const [message, setMessage] = useState("");
 
-    switch (role.toLowerCase()) {
-      case "student":
-        navigate("/student/profile", { replace: true });
-        break;
-      case "teacher":
-        navigate("/teacher/students", { replace: true });
-        break;
-      case "accountant":
-        navigate("/accountant/tuition", { replace: true });
-        break;
-      case "admin":
-        navigate("/admin/students", { replace: true });
-        break;
-      default:
-        navigate("/", { replace: true });
+  const handleReset = async () => {
+    if (!username.trim()) return;
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/auth/reset-password/${username}`, {
+        method: "PUT",
+      });
+
+      const text = await res.text();
+      setMessage(text);
+    } catch (err) {
+      setMessage("❌ Lỗi khi reset mật khẩu");
+      console.error(err);
     }
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-
-        <div className="login-links">
-          <h1 >
-            <Link to="">Learning Hub</Link>
-          </h1>
-        </div>
-        <h2 className="register-title">Đăng ký (mock)</h2>
-
-        <form onSubmit={onSubmit} className="register-form">
-          <div className="register-field">
-            <label className="register-label">Họ và tên</label>
-            <input
-              className="register-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nguyen Van A"
-            />
-          </div>
-
-          <div className="register-field">
-            <label className="register-label">Email</label>
-            <input
-              type="email"
-              className="register-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div className="register-field">
-            <label className="register-label">Mật khẩu</label>
-            <input
-              type="password"
-              className="register-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-          </div>
-
-          <div className="register-field">
-            <label className="register-label">Role (mock)</label>
-            <select
-              className="register-input"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-              <option value="accountant">Accountant</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <button type="submit" className="register-btn">
-            Đăng ký
-          </button>
-        </form>
-
-        <div className="register-footer">
-          Đã có tài khoản?{" "}
-          <Link to="/login">Đăng nhập</Link>
-        </div>
-      </div>
+    <div className="reset-container">
+      <h2>🔐 Reset mật khẩu</h2>
+      <input
+        type="text"
+        placeholder="Nhập username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <button onClick={handleReset}>Đặt lại về 111</button>
+      {message && <p>{message}</p>}
     </div>
   );
 }
