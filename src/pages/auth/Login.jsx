@@ -22,7 +22,7 @@ export default function Login() {
 
         try {
             // gọi API đăng nhập
-            const response = await fetch("http://localhost:8080/api/auth/login", {
+            const response = await fetch("https://be-university.onrender.com/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
