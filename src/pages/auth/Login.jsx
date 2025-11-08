@@ -22,7 +22,7 @@ export default function Login() {
 
         try {
             // gọi API đăng nhập
-            const response = await fetch("https://be-university.onrender.com/api/auth/login", {
+            const response = await fetch("http://localhost:8080/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
@@ -61,11 +61,15 @@ export default function Login() {
 
     return (
         <div className="login-container">
+            <div className="comeback-links">
+                <Link className="comeback" to="/"><p className="text-comeback">Trang Chủ</p></Link>
+            </div>
             <div className="login-card">
-                <div className="login-logo">
-                    <img className="logo-img" src={umsImage} alt="UMS Logo" />
-                </div>
-
+                <Link to="/">
+                    <div className="login-logo">
+                        <img className="logo-img" src={umsImage} alt="Erroll" />
+                    </div>
+                </Link>
                 <h2 className="login-title">Đăng nhập</h2>
 
                 <form onSubmit={onSubmit} className="login-form">

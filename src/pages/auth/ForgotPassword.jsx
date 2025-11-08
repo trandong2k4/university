@@ -17,11 +17,15 @@ export default function ForgotPassword() {
 
   return (
     <div className="fp-container">
+      <div className="comeback-links">
+        <Link className="comeback" to="/"><p className="text-comeback">Trang Chủ</p></Link>
+      </div>
       <div className="fp-card">
-
-        <div className="login-logo">
-          <img className="logo-img" src={umsImage} alt="Erroll" />
-        </div>
+        <Link to="/">
+          <div className="login-logo">
+            <img className="logo-img" src={umsImage} alt="Erroll" />
+          </div>
+        </Link>
         <h2 className="fp-title">Quên mật khẩu</h2>
 
         <form onSubmit={onSubmit} className="fp-form">

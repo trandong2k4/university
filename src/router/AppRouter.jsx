@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 // Layouts
 import AuthLayout from "../layouts/AuthLayout";
 import PublicLayout from "../layouts/PublicLayout";
+import PrivateLayout from "../layouts/PrivateLayout";
 
 // Guards
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -71,6 +72,14 @@ import ManageRoles from "../pages/admin/ManageRoles";
 export default function AppRouter() {
     return (
         <Routes>
+
+            {/* Auth routes */}
+            <Route element={<AuthLayout />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+            </Route>
+
             {/* Public */}
             <Route path="/" element={<PublicLayout />}>
                 <Route index element={<PublicDashboard />} />
@@ -80,16 +89,12 @@ export default function AppRouter() {
                 <Route path="contact" element={<Contact />} />
                 <Route path="nganh" element={<Nganh />} />
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
-                {/* Auth routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
                 {/* … public routes … */}
             </Route>
 
             {/* Student */}
             <Route element={<ProtectedRoute roles={["STUDENT"]} />}>
-                <Route element={<AuthLayout userRole="STUDENT" />}>
+                <Route element={<PrivateLayout userRole="STUDENT" />}>
                     <Route path="/student/dashboard" element={<StudentDashboard />} />
                     <Route path="/student/profile" element={<Profile />} />
                     <Route path="/student/courses" element={<Courses />} />
@@ -105,7 +110,7 @@ export default function AppRouter() {
 
             {/* Teacher */}
             <Route element={<ProtectedRoute roles={["TEACHER"]} />}>
-                <Route element={<AuthLayout userRole="TEACHER" />}>
+                <Route element={<PrivateLayout userRole="TEACHER" />}>
                     <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
                     <Route path="/teacher/students" element={<StudentInfo />} />
                     <Route path="/teacher/courses" element={<TeacherCourses />} />
@@ -118,7 +123,7 @@ export default function AppRouter() {
 
             {/* Accountant */}
             <Route element={<ProtectedRoute roles={["ACCOUNTANT"]} />}>
-                <Route element={<AuthLayout userRole="ACCOUNTANT" />}>
+                <Route element={<PrivateLayout userRole="ACCOUNTANT" />}>
                     <Route path="/accountant/tuition" element={<StudentTuition />} />
                     <Route path="/accountant/create" element={<CreateTuition />} />
                     <Route path="/accountant/update" element={<UpdateTuition />} />
@@ -128,7 +133,7 @@ export default function AppRouter() {
 
             {/* Admin */}
             <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
-                <Route element={<AuthLayout userRole="ADMIN" />}>
+                <Route element={<PrivateLayout userRole="ADMIN" />}>
                     <Route path="/admin/dashboard" element={<AdminDashboard />} />
                     <Route path="/admin/manage" element={<ManageAdmin />} />
                     <Route path="/admin/reports" element={<ManageReports />} />

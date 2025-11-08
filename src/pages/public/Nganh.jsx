@@ -15,7 +15,6 @@ export default function Nganh() {
     useEffect(() => {
         const params = new URLSearchParams();
         if (search) params.append("tenNganh", search);
-        if (khoaFilter) params.append("tenKhoa", khoaFilter);
 
         fetch(`http://localhost:8080/api/nganhs?${params.toString()}`)
             .then((res) => res.json())
@@ -23,6 +22,18 @@ export default function Nganh() {
             .catch((err) => console.error("Lỗi fetch ngành:", err));
 
     }, [search, khoaFilter]);
+
+    // // Gọi API lấy danh sách Khoa
+    // useEffect(() => {
+    //     const params = new URLSearchParams();
+    //     if (khoaFilter) params.append("tenKhoa", khoaFilter);
+
+    //     fetch(`http://localhost:8080/api/khoas`)
+    //         .then((res) => res.json())
+    //         .then((data) => setKhoaFilter(data))
+    //         .catch((err) => console.error("Lỗi fetch Khoa:", err));
+
+    // });
 
     // Lọc ngành theo tên và khoa
     const filteredNganhs = nganhs.filter((nganh) => {

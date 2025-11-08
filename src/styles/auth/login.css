@@ -2,17 +2,32 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: black;
-    padding-bottom: 80px;
+    color: #000000;
+}
+
+.comeback-links {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+}
+
+.comback {
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.text-comeback {
+    margin: 0;
+    color: #1100ff;
 }
 
 .login-card {
     margin-top: 80px;
-    border: 1px solid #ddd;
     border-radius: 16px;
     padding: 24px;
     width: 100%;
     max-width: 400px;
+    min-width: 400px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     background-color: white;
 }
