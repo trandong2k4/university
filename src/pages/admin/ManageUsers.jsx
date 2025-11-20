@@ -10,6 +10,7 @@ export default function ManageUsers() {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
+        email: "",
         firstName: "",
         lastName: "",
         dateOfBirth: "",
@@ -17,7 +18,7 @@ export default function ManageUsers() {
 
     // 🔹 Lấy danh sách user từ backend
     useEffect(() => {
-        fetch("http://localhost:8080/api/users")
+        fetch("https://be-university.onrender.com/api/users")
             .then((res) => res.json())
             .then(setUsers)
             .catch((err) => console.error("Lỗi fetch users:", err));
@@ -30,6 +31,7 @@ export default function ManageUsers() {
                 id: user.id || "",
                 username: user.username || "",
                 password: "",
+                email: user.email || "",
                 firstName: user.firstName || "",
                 lastName: user.lastName || "",
                 dateOfBirth: user.dateOfBirth || "",
@@ -38,6 +40,7 @@ export default function ManageUsers() {
             setFormData({
                 username: "",
                 password: "",
+                email: "",
                 firstName: "",
                 lastName: "",
                 dateOfBirth: "",
@@ -62,8 +65,8 @@ export default function ManageUsers() {
         const method = modalMode === "add" ? "POST" : "PUT";
         const url =
             modalMode === "add"
-                ? "http://localhost:8080/api/users"
-                : `http://localhost:8080/api/users/${formData.id}`;
+                ? "https://be-university.onrender.com/api/users"
+                : `https://be-university.onrender.com/api/users/${formData.id}`;
 
         const res = await fetch(url, {
             method,
@@ -86,7 +89,7 @@ export default function ManageUsers() {
         if (!selectedUser) return alert("Chọn tài khoản để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa tài khoản này?")) return;
 
-        await fetch(`http://localhost:8080/api/users/${selectedUser.id}`, {
+        await fetch(`https://be-university.onrender.com/api/users/${selectedUser.id}`, {
             method: "DELETE",
         });
 
@@ -99,7 +102,7 @@ export default function ManageUsers() {
             <section className="banner-section">
                 <h1 className="banner-title">👤 Quản lý Tài khoản</h1>
                 <p className="banner-subtitle">
-                    Thêm, sửa, xóa hoặc xem chi tiết tài khoản người dùng trong hệ thống.
+                    quản lý hoạt tài khoản người dùng trong hệ thống.
                 </p>
             </section>
 
@@ -130,6 +133,7 @@ export default function ManageUsers() {
                             <th>Tên đăng nhập</th>
                             <th>Họ</th>
                             <th>Tên</th>
+                            <th>Email</th>
                             <th>Ngày sinh</th>
                             <th>Chi tiết</th>
                         </tr>
@@ -144,6 +148,7 @@ export default function ManageUsers() {
                                 <td>{u.username}</td>
                                 <td>{u.firstName}</td>
                                 <td>{u.lastName}</td>
+                                <td>{u.email}</td>
                                 <td>{u.dateOfBirth || "—"}</td>
                                 <td>
                                     <button
@@ -195,6 +200,15 @@ export default function ManageUsers() {
                             )}
 
                             <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="abc@gmail.com"
+                                readOnly={modalMode === "view"}
+                            />
+
+                            <input
                                 type="text"
                                 name="firstName"
                                 value={formData.firstName}
@@ -213,7 +227,7 @@ export default function ManageUsers() {
                             <input
                                 type="date"
                                 name="dateOfBirth"
-                                value={formData.dateOfBirth || ""}
+                                va222222lue={formData.dateOfBirth || ""}
                                 onChange={handleChange}
                                 readOnly={modalMode === "view"}
                             />

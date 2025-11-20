@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaUserGraduate, FaBook, FaCalendarAlt, FaRegChartBar, FaMoneyBill, FaClipboardList, FaTimesCircle, FaUsers, FaChalkboardTeacher, FaUserCog, FaCog, FaBars } from "react-icons/fa";
+import {
+    FaUserGraduate, FaBook, FaCalendarAlt, FaRegChartBar, FaMoneyBill, FaClipboardList,
+    FaTimesCircle, FaUsers, FaChalkboardTeacher, FaUserCog, FaCog, FaBars
+} from "react-icons/fa";
 import "../styles/layout/base-layout.css";
 import "../styles/components/sidebar.css";
 
@@ -35,14 +38,15 @@ const MENU = {
         { to: "/admin/employees", label: "Quản lý nhân viên", icon: <FaUsers /> },
         { to: "/admin/nganh", label: "Quản lý ngành", icon: <FaClipboardList /> },
         { to: "/admin/khoa", label: "Quản lý khoa", icon: <FaClipboardList /> },
-        // { to: "/admin/truong", label: "Quản lý trường", icon: <FaClipboardList /> },
+        { to: "/admin/truong", label: "Quản lý trường", icon: <FaClipboardList /> },
         { to: "/admin/courses", label: "Quản lý môn học", icon: <FaBook /> },
         { to: "/admin/schedule", label: "Quản lý lịch học", icon: <FaCalendarAlt /> },
-        // { to: "/admin/grades", label: "Quản lý điểm", icon: <FaRegChartBar /> },
-        // { to: "/admin/tuition", label: "Quản lý học phí", icon: <FaMoneyBill /> },
+        { to: "/admin/grades", label: "Quản lý điểm", icon: <FaRegChartBar /> },
+        { to: "/admin/tuition", label: "Quản lý học phí", icon: <FaMoneyBill /> },
         { to: "/admin/credits", label: "Quản lý tín chỉ", icon: <FaClipboardList /> },
         { to: "/admin/user", label: "Quản lý người dùng", icon: <FaClipboardList /> },
-        // { to: "/admin/role", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
+        { to: "/admin/role", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
+        { to: "/admin/permission", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
     ],
 };
 

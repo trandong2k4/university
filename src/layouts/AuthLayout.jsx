@@ -21,7 +21,7 @@ export default function AuthLayout() {
             </div>
 
             <Chatbot />
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 }

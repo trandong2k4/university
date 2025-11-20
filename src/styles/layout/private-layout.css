@@ -1,27 +1,27 @@
-/* auth-layout.css */
-.auth-layout {
+/* private-layout.css */
+.private-layout {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
-.auth-body {
+.private-body {
     top: 40px;
     left: 0;
     display: flex;
     flex: 1;
 }
 
-.auth-main {
+.private-main {
     flex: 1;
     padding-top: 50px;
     padding-left: 230px;
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgb(255, 255, 255);
 }
 
 /* Responsive: sidebar slide-in/out */
 @media (max-width: 768px) {
-    .auth-body .sidebar-container {
+    .private-body .sidebar-container {
         position: fixed;
         top: 0;
         left: 0;
@@ -31,7 +31,7 @@
         z-index: 90;
     }
 
-    .auth-body .sidebar-container.open {
+    .private-body .sidebar-container.open {
         transform: translateX(0);
     }
 }

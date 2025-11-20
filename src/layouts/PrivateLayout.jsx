@@ -13,21 +13,21 @@ export default function PrivateLayout({ userRole }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="auth-layout">
+        <div className="private-layout">
             {/* <Image className="img" /> */}
             <HeaderPrivate
                 userRole={userRole}
                 onToggleSidebar={() => setSidebarOpen((o) => !o)}
             />
 
-            <div className="auth-body">
+            <div className="private-body">
                 <Sidebar
                     userRole={userRole}
                     isOpen={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}
                 />
 
-                <main className="auth-main">
+                <main className="private-main">
                     <Outlet />
                 </main>
             </div>

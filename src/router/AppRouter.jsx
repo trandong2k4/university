@@ -67,7 +67,7 @@ import ManageSchools from "../pages/admin/ManageSchools";
 import ManageDepartments from "../pages/admin/ManageDepartments";
 import ManageUsers from "../pages/admin/ManageUsers";
 import ManageRoles from "../pages/admin/ManageRoles";
-
+import ManagePermission from "../pages/admin/ManagePermission";
 
 export default function AppRouter() {
     return (
@@ -150,6 +150,7 @@ export default function AppRouter() {
                     <Route path="/admin/khoa" element={<ManageDepartments />} />
                     <Route path="/admin/user" element={<ManageUsers />} />
                     <Route path="/admin/role" element={<ManageRoles />} />
+                    <Route path="/admin/permission" element={<ManagePermission />} />
                     {/* … */}
                 </Route>
             </Route>

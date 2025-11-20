@@ -3,73 +3,74 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/auth/login.css";
 import umsImage from "/src/assets/ums.png";
+import apiClient from "/src/api/apiClient"; // ⚠️ Đảm bảo đúng đường dẫn
 
 export default function Login() {
     const navigate = useNavigate();
     const { login } = useAuth(); // context lưu thông tin user
     const [params] = useSearchParams();
 
-    // state input
+    // State input
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const togglePassword = () => setShowPassword((prev) => !prev);
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
         try {
-            // gọi API đăng nhập
-            const response = await fetch("https://be-university.onrender.com/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+            // Gọi API đăng nhập thông qua axios instance
+            const response = await apiClient.post("/auth/login", {
+                username,
+                password,
             });
 
-            if (!response.ok) {
-                const msg = await response.text();
-                throw new Error(msg || "Đăng nhập thất bại");
-            }
+            const data = response.data;
 
-            // dữ liệu server trả về (ví dụ { token, username, role })
-            const data = await response.json();
-
-            // console.log("Login response:", data);
-            // console.log("Keys:", Object.keys(data));
-
-            // lưu thông tin vào context + storage
+            // Lưu thông tin vào context + storage
             login(data, rememberMe);
 
-            // điều hướng theo role
+            // Điều hướng theo role
             const routes = {
-                STUDENT: "/student/dashboard",// 
-                TEACHER: "/teacher/dashboard",// 
-                accountant: "/accountant/tuition",// 
+                STUDENT: "/student/dashboard",
+                TEACHER: "/teacher/dashboard",
+                ACCOUNTANT: "/accountant/tuition",
                 ADMIN: "/admin/dashboard",
             };
 
             const roleKey = data.mrole?.toUpperCase();
-
-            navigate(routes[roleKey] || "/Dashboard", { replace: true });
+            navigate(routes[roleKey] || "/dashboard", { replace: true });
         } catch (err) {
             console.error("Login error:", err);
-            alert("Sai tài khoản hoặc mật khẩu!");
+            alert(
+                err.response?.data?.message ||
+                "Sai tài khoản hoặc mật khẩu. Vui lòng thử lại!"
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className="login-container">
             <div className="comeback-links">
-                <Link className="comeback" to="/"><p className="text-comeback">Trang Chủ</p></Link>
+                <Link className="comeback" to="/">
+                    <p className="text-comeback">Trang Chủ</p>
+                </Link>
             </div>
+
             <div className="login-card">
                 <Link to="/">
                     <div className="login-logo">
                         <img className="logo-img" src={umsImage} alt="Erroll" />
                     </div>
                 </Link>
+
                 <h2 className="login-title">Đăng nhập</h2>
 
                 <form onSubmit={onSubmit} className="login-form">
@@ -111,8 +112,8 @@ export default function Login() {
                         <p className="user-node-text">Ghi nhớ tài khoản</p>
                     </div>
 
-                    <button type="submit" className="login-btn">
-                        Đăng nhập
+                    <button type="submit" className="login-btn" disabled={loading}>
+                        {loading ? "Đang đăng nhập..." : "Đăng nhập"}
                     </button>
                 </form>
 

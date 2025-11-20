@@ -16,7 +16,7 @@ export default function Nganh() {
         const params = new URLSearchParams();
         if (search) params.append("tenNganh", search);
 
-        fetch(`http://localhost:8080/api/nganhs?${params.toString()}`)
+        fetch(`https://be-university.onrender.com/api/nganhs?${params.toString()}`)
             .then((res) => res.json())
             .then((data) => setNganhs(data))
             .catch((err) => console.error("Lỗi fetch ngành:", err));

@@ -20,7 +20,7 @@ export default function ManageSchools() {
         nguoiDaiDien: "",
     });
     useEffect(() => {
-        fetch("http://localhost:8080/api/truongs")
+        fetch("https://be-university.onrender.com/api/truongs")
             .then((res) => res.json())
             .then(setSchools)
             .catch((err) => console.error("Lỗi fetch danh sách trường:", err));
@@ -66,8 +66,8 @@ export default function ManageSchools() {
         const method = modalMode === "add" ? "POST" : "PUT";
         const url =
             modalMode === "add"
-                ? "http://localhost:8080/api/truongs"
-                : `http://localhost:8080/api/truongs/${formData.id}`;
+                ? "https://be-university.onrender.com/api/truongs"
+                : `https://be-university.onrender.com/api/truongs/${formData.id}`;
 
         const res = await fetch(url, {
             method,
@@ -88,7 +88,7 @@ export default function ManageSchools() {
         if (!selectedSchool) return alert("Chọn trường để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa trường này?")) return;
 
-        await fetch(`http://localhost:8080/api/truongs/${selectedSchool.id}`, {
+        await fetch(`https://be-university.onrender.com/api/api/truongs/${selectedSchool.id}`, {
             method: "DELETE",
         });
 
