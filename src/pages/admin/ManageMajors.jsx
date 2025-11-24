@@ -19,16 +19,22 @@ export default function ManageMajors() {
 
     // Lấy danh sách ngành và khoa
     useEffect(() => {
-        fetch("http://localhost:8080/api/nganhs")
-            .then((res) => res.json())
-            .then((data) => setMajors(data))
-            .catch((err) => console.error("Lỗi fetch ngành:", err));
+        const fetchData = async () => {
+            try {
+                const [majorsRes, departmentsRes] = await Promise.all([
+                    apiClient.get("/majors"),
+                    apiClient.get("/departments"),
+                ]);
 
-        fetch("http://localhost:8080/api/khoas")
-            .then((res) => res.json())
-            .then((data) => setKhoas(data))
-            .catch((err) => console.error("Lỗi fetch khoa:", err));
+                setMajors(majorsRes.data);
+                setKhoas(departmentsRes.data);
+            } catch (err) {
+                console.error("Lỗi fetch dữ liệu:", err.response?.data || err);
+            }
+        };
+        fetchData();
     }, []);
+
 
     const handleOpenModal = (mode, major = null) => {
         setModalMode(mode);
@@ -55,48 +61,40 @@ export default function ManageMajors() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Lưu ngành (thêm hoặc sửa)
     const handleSave = async (e) => {
         e.preventDefault();
+
         try {
+            let res;
             if (modalMode === "add") {
-                const res = await fetch("http://localhost:8080/api/nganhs", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
-                });
-                const newMajor = await res.json();
-                setMajors([...majors, newMajor]);
+                res = await apiClient.post("/majors", formData);
+                setMajors([...majors, res.data]);
                 alert("Thêm ngành thành công!");
             } else if (modalMode === "edit") {
-                const res = await fetch(`http://localhost:8080/api/nganhs/${formData.id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
-                });
-                const updated = await res.json();
-                setMajors(majors.map((m) => (m.id === updated.id ? updated : m)));
+                res = await apiClient.put(`/majors/${formData.id}`, formData);
+                setMajors(majors.map((m) => (m.id === res.data.id ? res.data : m)));
                 alert("Cập nhật ngành thành công!");
             }
             handleCloseModal();
         } catch (err) {
-            console.error("Lỗi lưu ngành:", err);
+            console.error("Lỗi lưu ngành:", err.response?.data || err);
             alert("Thao tác thất bại!");
         }
     };
 
+    // Xóa ngành
     const handleDelete = async () => {
         if (!selectedMajor) return alert("Vui lòng chọn ngành để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa ngành này?")) return;
 
         try {
-            await fetch(`http://localhost:8080/api/nganhs/${selectedMajor.id}`, {
-                method: "DELETE",
-            });
+            await apiClient.delete(`/majors/${selectedMajor.id}`);
             setMajors(majors.filter((m) => m.id !== selectedMajor.id));
             setSelectedMajor(null);
             alert("Xóa thành công!");
         } catch (err) {
-            console.error("Lỗi xóa ngành:", err);
+            console.error("Lỗi xóa ngành:", err.response?.data || err);
             alert("Xóa thất bại!");
         }
     };

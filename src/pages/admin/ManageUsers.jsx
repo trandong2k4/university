@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/admin/manageUsers.css";
+import apiClient from "/src/api/apiClient";
 
 export default function ManageUsers() {
     const [users, setUsers] = useState([]);
@@ -9,32 +10,38 @@ export default function ManageUsers() {
 
     const [formData, setFormData] = useState({
         username: "",
-        password: "",
         email: "",
         firstName: "",
         lastName: "",
-        dateOfBirth: "",
+        status: false,
+        createDate: "",
     });
 
     // 🔹 Lấy danh sách user từ backend
     useEffect(() => {
-        fetch("https://be-university.onrender.com/api/users")
-            .then((res) => res.json())
-            .then(setUsers)
-            .catch((err) => console.error("Lỗi fetch users:", err));
+        const fetchUsers = async () => {
+            try {
+                const res = await apiClient.get("/users"); // url sẽ tự cộng baseURL từ apiClient
+                setUsers(res.data);
+            } catch (err) {
+                console.error("Lỗi fetch users:", err.response?.data || err);
+            }
+        };
+        fetchUsers();
     }, []);
 
+    // 🔹 Mở modal (thêm / sửa / xem)
     const openModal = (mode, user = null) => {
         setModalMode(mode);
         if (user) {
             setFormData({
                 id: user.id || "",
                 username: user.username || "",
-                password: "",
                 email: user.email || "",
                 firstName: user.firstName || "",
                 lastName: user.lastName || "",
-                dateOfBirth: user.dateOfBirth || "",
+                status: user.status || "",
+                createDate: user.createDate || "",
             });
         } else {
             setFormData({
@@ -43,7 +50,8 @@ export default function ManageUsers() {
                 email: "",
                 firstName: "",
                 lastName: "",
-                dateOfBirth: "",
+                status: false,
+                createDate: "",
             });
         }
         setIsModalOpen(true);
@@ -62,39 +70,37 @@ export default function ManageUsers() {
     // 🔹 Lưu (thêm / sửa)
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "https://be-university.onrender.com/api/users"
-                : `https://be-university.onrender.com/api/users/${formData.id}`;
-
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-
-        if (modalMode === "add") {
-            setUsers([...users, data]);
-        } else {
-            setUsers(users.map((u) => (u.id === data.id ? data : u)));
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/users", formData);
+                setUsers([...users, res.data]);
+            } else {
+                res = await apiClient.put(`/users/${formData.id}`, formData);
+                setUsers(users.map((u) => (u.id === res.data.id ? res.data : u)));
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu user:", err.response?.data || err);
+            alert("Thao tác thất bại!");
         }
-        closeModal();
     };
+
 
     // 🔹 Xóa
     const handleDelete = async () => {
         if (!selectedUser) return alert("Chọn tài khoản để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa tài khoản này?")) return;
 
-        await fetch(`https://be-university.onrender.com/api/users/${selectedUser.id}`, {
-            method: "DELETE",
-        });
-
-        setUsers(users.filter((u) => u.id !== selectedUser.id));
-        setSelectedUser(null);
+        try {
+            await apiClient.delete(`/users/${selectedUser.id}`);
+            setUsers(users.filter((u) => u.id !== selectedUser.id));
+            setSelectedUser(null);
+            alert("Xóa thành công!");
+        } catch (err) {
+            console.error("Lỗi xóa user:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (
@@ -134,7 +140,7 @@ export default function ManageUsers() {
                             <th>Họ</th>
                             <th>Tên</th>
                             <th>Email</th>
-                            <th>Ngày sinh</th>
+                            <th>Ngày tạo</th>
                             <th>Chi tiết</th>
                         </tr>
                     </thead>
@@ -149,7 +155,7 @@ export default function ManageUsers() {
                                 <td>{u.firstName}</td>
                                 <td>{u.lastName}</td>
                                 <td>{u.email}</td>
-                                <td>{u.dateOfBirth || "—"}</td>
+                                <td>{u.createDate}</td>
                                 <td>
                                     <button
                                         onClick={(ev) => {
@@ -224,10 +230,26 @@ export default function ManageUsers() {
                                 placeholder="Tên"
                                 readOnly={modalMode === "view"}
                             />
+
+                            <select
+                                name="status"
+                                value={formData.status === true ? "true" : "false"}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        status: e.target.value === "true",  // ép kiểu
+                                    })
+                                }
+                                disabled={modalMode === "view"}
+                            >
+                                <option value="true">Kích hoạt</option>
+                                <option value="false">Khoá</option>
+                            </select>
+
                             <input
                                 type="date"
-                                name="dateOfBirth"
-                                va222222lue={formData.dateOfBirth || ""}
+                                name="create_date"
+                                value={formData.createDate || ""}
                                 onChange={handleChange}
                                 readOnly={modalMode === "view"}
                             />

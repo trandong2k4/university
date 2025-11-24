@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/admin/manageSchools.css";
+import apiClient from "/src/api/apiClient"; // import apiClient
 
 export default function ManageSchools() {
     const [schools, setSchools] = useState([]);
@@ -19,11 +20,18 @@ export default function ManageSchools() {
         ngayThanhLap: "",
         nguoiDaiDien: "",
     });
+
+    // ===== FETCH SCHOOLS =====
     useEffect(() => {
-        fetch("https://be-university.onrender.com/api/truongs")
-            .then((res) => res.json())
-            .then(setSchools)
-            .catch((err) => console.error("Lỗi fetch danh sách trường:", err));
+        const fetchSchools = async () => {
+            try {
+                const res = await apiClient.get("/schools");
+                setSchools(res.data);
+            } catch (err) {
+                console.error("Lỗi fetch danh sách trường:", err.response?.data || err);
+            }
+        };
+        fetchSchools();
     }, []);
 
     const openModal = (mode, school = null) => {
@@ -31,7 +39,7 @@ export default function ManageSchools() {
         if (school) {
             setFormData({
                 ...school,
-                ngayThanhLap: school.ngayThanhLap?.slice(0, 10) || "", // format yyyy-MM-dd
+                ngayThanhLap: school.ngayThanhLap?.slice(0, 10) || "",
             });
         } else {
             setFormData({
@@ -61,39 +69,38 @@ export default function ManageSchools() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // ===== SAVE =====
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "https://be-university.onrender.com/api/truongs"
-                : `https://be-university.onrender.com/api/truongs/${formData.id}`;
-
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-        if (modalMode === "add") {
-            setSchools([...schools, data]);
-        } else {
-            setSchools(schools.map((s) => (s.id === data.id ? data : s)));
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/schools", formData);
+                setSchools([...schools, res.data]);
+            } else {
+                res = await apiClient.put(`/schools/${formData.id}`, formData);
+                setSchools(schools.map((s) => (s.id === res.data.id ? res.data : s)));
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu trường:", err.response?.data || err);
+            alert("Thao tác thất bại!");
         }
-        closeModal();
     };
 
+    // ===== DELETE =====
     const handleDelete = async () => {
         if (!selectedSchool) return alert("Chọn trường để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa trường này?")) return;
 
-        await fetch(`https://be-university.onrender.com/api/api/truongs/${selectedSchool.id}`, {
-            method: "DELETE",
-        });
-
-        setSchools(schools.filter((s) => s.id !== selectedSchool.id));
-        setSelectedSchool(null);
+        try {
+            await apiClient.delete(`/schools/${selectedSchool.id}`);
+            setSchools(schools.filter((s) => s.id !== selectedSchool.id));
+            setSelectedSchool(null);
+        } catch (err) {
+            console.error("Lỗi xóa trường:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (

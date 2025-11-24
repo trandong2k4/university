@@ -13,13 +13,13 @@ export default function StudentProfile() {
         if (!userId) return; // tránh lỗi khi user chưa có
 
         // 🔹 Gọi API lấy thông tin cơ bản
-        fetch(`http://localhost:8080/api/sinhviens/by-user/${userId}`)
+        fetch(`http://localhost:8080/students/by-user/${userId}`)
             .then((res) => res.json())
             .then(setBasicInfo)
             .catch(console.error);
 
         // 🔹 Gọi API lấy thông tin chi tiết
-        fetch(`http://localhost:8080/api/chitietsinhviens/by-user/${userId}`)
+        fetch(`http://localhost:8080/student_details/by-user/${userId}`)
             .then((res) => res.json())
             .then(setDetailInfo)
             .catch(console.error);

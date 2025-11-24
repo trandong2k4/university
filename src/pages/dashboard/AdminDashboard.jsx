@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, BarElement, CategoryScale, LinearScale } from "chart.js";
 import "../../styles/dashboard/adminDashboard.css";
+import apiClient from "/src/api/apiClient";
 
 Chart.register(BarElement, CategoryScale, LinearScale);
 
@@ -14,23 +15,51 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         // Thống kê tổng quan
-        fetch("http://localhost:8080/api/admin/stats")
-            .then((res) => res.json())
-            .then((data) => setStats(data))
-            .catch((err) => console.error("Lỗi thống kê:", err));
+        const fetchSummary = async () => {
+            try {
+                const res = await apiClient.get("/admin/stats");
+                const data = Array.isArray(res.data)
+                    ? res.data
+                    : res.data.data || res.data.content || [];
+
+                setStats(data);
+            } catch (err) {
+                console.error("Lỗi khi lấy dữ liệu thống kê:", err.response?.data || err);
+            }
+        };
 
         // Thống kê theo tuần
-        fetch("http://localhost:8080/api/admin/stats/weekly")
-            .then((res) => res.json())
-            .then((data) => setWeekly(data))
-            .catch((err) => console.error("Lỗi biểu đồ:", err));
+        const fetchWeeklyStats = async () => {
+            try {
+                const res = await apiClient.get("/admin/stats/weekly");
+                const data = Array.isArray(res.data)
+                    ? res.data
+                    : res.data.data || res.data.content || [];
+
+                setWeekly(data);
+            } catch (err) {
+                console.error("Lỗi khi lấy dữ liệu biểu đồ:", err.response?.data || err);
+            }
+        };
 
         // Danh sách sinh viên
-        fetch("http://localhost:8080/api/sinhviens")
-            .then((res) => res.json())
-            .then((data) => setStudents(data))
-            .catch((err) => console.error("Lỗi sinh viên:", err))
-            .finally(() => setLoading(false));
+        const fetchStudents = async () => {
+            try {
+                const res = await apiClient.get("/students");
+                const data = Array.isArray(res.data)
+                    ? res.data
+                    : res.data.data || res.data.content || [];
+
+                setStudents(data);
+            } catch (err) {
+                console.error("Lỗi khi lấy danh sách sinh viên:", err.response?.data || err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSummary();
+        fetchWeeklyStats();
+        fetchStudents();
     }, []);
 
     const filteredStudents = students.filter((sv) =>

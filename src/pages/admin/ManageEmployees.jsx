@@ -19,18 +19,24 @@ export default function ManageEmployees() {
         userId: "",
     });
 
+    // Fetch dữ liệu khi component mount
     useEffect(() => {
-        fetch("http://localhost:8080/api/nhanviens")
-            .then((res) => res.json())
-            .then(setEmployees);
+        const fetchData = async () => {
+            try {
+                const [staffsRes, positionsRes, usersRes] = await Promise.all([
+                    apiClient.get("/staffs"),
+                    apiClient.get("/locations"),
+                    apiClient.get("/users"),
+                ]);
 
-        fetch("http://localhost:8080/api/vitris")
-            .then((res) => res.json())
-            .then(setPositions);
-
-        fetch("http://localhost:8080/api/users")
-            .then((res) => res.json())
-            .then(setUsers);
+                setEmployees(staffsRes.data);
+                setPositions(positionsRes.data);
+                setUsers(usersRes.data);
+            } catch (err) {
+                console.error("Lỗi fetch dữ liệu:", err.response?.data || err);
+            }
+        };
+        fetchData();
     }, []);
 
     const openModal = (mode, emp = null) => {
@@ -62,39 +68,42 @@ export default function ManageEmployees() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Lưu nhân viên (thêm hoặc sửa)
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "http://localhost:8080/api/nhanviens"
-                : `http://localhost:8080/api/nhanviens/${formData.id}`;
 
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-        if (modalMode === "add") {
-            setEmployees([...employees, data]);
-        } else {
-            setEmployees(employees.map((e) => (e.id === data.id ? data : e)));
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/staffs", formData);
+                setEmployees([...employees, res.data]);
+                alert("Thêm nhân viên thành công!");
+            } else {
+                res = await apiClient.put(`/staffs/${formData.id}`, formData);
+                setEmployees(employees.map((e) => (e.id === res.data.id ? res.data : e)));
+                alert("Cập nhật nhân viên thành công!");
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu nhân viên:", err.response?.data || err);
+            alert("Thao tác thất bại!");
         }
-        closeModal();
     };
 
+    // Xóa nhân viên
     const handleDelete = async () => {
         if (!selectedEmployee) return alert("Chọn nhân viên để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa nhân viên này?")) return;
 
-        await fetch(`http://localhost:8080/api/nhanviens/${selectedEmployee.id}`, {
-            method: "DELETE",
-        });
-
-        setEmployees(employees.filter((e) => e.id !== selectedEmployee.id));
-        setSelectedEmployee(null);
+        try {
+            await apiClient.delete(`/staffs/${selectedEmployee.id}`);
+            setEmployees(employees.filter((e) => e.id !== selectedEmployee.id));
+            setSelectedEmployee(null);
+            alert("Xóa nhân viên thành công!");
+        } catch (err) {
+            console.error("Lỗi xóa nhân viên:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (

@@ -15,7 +15,7 @@ const BlogGuide = () => {
     const postTypes = ["Thông báo", "Hướng dẫn", "Tài liệu"];
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/baiviets")
+        fetch("http://localhost:8080/posts")
             .then((res) => res.json())
             .then((data) => {
                 setPosts(data);

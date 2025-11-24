@@ -21,10 +21,15 @@ export default function ManageHocPhi() {
 
     // 🔹 Fetch danh sách học phí
     useEffect(() => {
-        fetch("http://localhost:8080/api/hocphis")
-            .then((res) => res.json())
-            .then(setHocPhis)
-            .catch((err) => console.error("Lỗi fetch học phí:", err));
+        const fetchHocPhis = async () => {
+            try {
+                const res = await apiClient.get("/tuition_fees"); // hoặc "/hocphis" tùy backend
+                setHocPhis(res.data);
+            } catch (err) {
+                console.error("Lỗi fetch học phí:", err.response?.data || err);
+            }
+        };
+        fetchHocPhis();
     }, []);
 
     const openModal = (mode, hp = null) => {
@@ -71,23 +76,20 @@ export default function ManageHocPhi() {
     // 🔹 Thêm / sửa
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "http://localhost:8080/api/hocphis"
-                : `http://localhost:8080/api/hocphis/${formData.id}`;
-
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-        const data = await res.json();
-
-        if (modalMode === "add") setHocPhis([...hocPhis, data]);
-        else setHocPhis(hocPhis.map((h) => (h.id === data.id ? data : h)));
-
-        closeModal();
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/hocphis", formData);
+                setHocPhis([...hocPhis, res.data]);
+            } else {
+                res = await apiClient.put(`/hocphis/${formData.id}`, formData);
+                setHocPhis(hocPhis.map((h) => (h.id === res.data.id ? res.data : h)));
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu học phí:", err.response?.data || err);
+            alert("Thao tác thất bại!");
+        }
     };
 
     // 🔹 Xóa
@@ -95,12 +97,15 @@ export default function ManageHocPhi() {
         if (!selectedHocPhi) return alert("Chọn học phí để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa học phí này?")) return;
 
-        await fetch(`http://localhost:8080/api/hocphis/${selectedHocPhi.id}`, {
-            method: "DELETE",
-        });
-
-        setHocPhis(hocPhis.filter((h) => h.id !== selectedHocPhi.id));
-        setSelectedHocPhi(null);
+        try {
+            await apiClient.delete(`/hocphis/${selectedHocPhi.id}`);
+            setHocPhis(hocPhis.filter((h) => h.id !== selectedHocPhi.id));
+            setSelectedHocPhi(null);
+            alert("Xóa thành công!");
+        } catch (err) {
+            console.error("Lỗi xóa học phí:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (

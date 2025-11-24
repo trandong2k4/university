@@ -8,7 +8,7 @@ export default function ResetPassword() {
     if (!username.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/api/auth/reset-password/${username}`, {
+      const res = await fetch(`http://localhost:8080/auth/reset-password/${username}`, {
         method: "PUT",
       });
 

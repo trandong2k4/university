@@ -1,6 +1,7 @@
 // src/components/ProfilePopup.jsx
 import { useEffect, useRef, useState } from "react";
 import "../styles/components/profilePopup.css";
+import apiClient from "/src/api/apiClient";
 
 export default function ProfilePopup({ userId, onClose }) {
     const [userData, setUserData] = useState(null);
@@ -20,18 +21,17 @@ export default function ProfilePopup({ userId, onClose }) {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/user/${userId}`);
-                if (!res.ok) throw new Error("Không thể lấy thông tin người dùng");
-                const data = await res.json();
-                setUserData(data);
+                const res = await apiClient.get(`/user/${userId}`); // res là object của axios
+                setUserData(res.data); // dữ liệu thực sự nằm ở res.data
             } catch (err) {
-                console.error("Lỗi fetch user:", err);
+                console.error("Lỗi fetch user:", err.response?.data || err);
             } finally {
                 setLoading(false);
             }
         };
         if (userId) fetchUser();
     }, [userId]);
+
 
     if (loading) {
         return (

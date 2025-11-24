@@ -8,11 +8,19 @@ export default function ManageRoles() {
     const [modalMode, setModalMode] = useState("add");
     const [formData, setFormData] = useState({ tenViTri: "" });
 
+    // 🔹 Fetch roles khi component mount
     useEffect(() => {
-        fetch("https://be-university.onrender.com/api/vitri")
-            .then((res) => res.json())
-            .then(setRoles);
+        const fetchRoles = async () => {
+            try {
+                const res = await apiClient.get("/roles");
+                setRoles(res.data);
+            } catch (err) {
+                console.error("Lỗi fetch roles:", err.response?.data || err);
+            }
+        };
+        fetchRoles();
     }, []);
+
 
     const openModal = (mode, role = null) => {
         setModalMode(mode);
@@ -33,39 +41,44 @@ export default function ManageRoles() {
         setFormData({ tenViTri: e.target.value });
     };
 
+    // 🔹 Xử lý lưu vai trò (thêm/sửa
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "https://be-university.onrender.com/api/vitri"
-                : `https://be-university.onrender.com/api/vitri/${selectedRole.id}`;
 
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-        if (modalMode === "add") {
-            setRoles([...roles, data]);
-        } else {
-            setRoles(roles.map((r) => (r.id === data.id ? data : r)));
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/roles", formData);
+                setRoles([...roles, res.data]);
+                alert("Thêm vai trò thành công!");
+            } else {
+                res = await apiClient.put(`/roles/${selectedRole.id}`, formData);
+                setRoles(
+                    roles.map((r) => (r.id === res.data.id ? res.data : r))
+                );
+                alert("Cập nhật vai trò thành công!");
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu vai trò:", err.response?.data || err);
+            alert("Thao tác thất bại!");
         }
-        closeModal();
     };
 
+    // 🔹 Xử lý xóa vai trò
     const handleDelete = async () => {
         if (!selectedRole) return alert("Chọn vai trò để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa vai trò này?")) return;
 
-        await fetch(`https://be-university.onrender.com/api/vitri/${selectedRole.id}`, {
-            method: "DELETE",
-        });
-
-        setRoles(roles.filter((r) => r.id !== selectedRole.id));
-        setSelectedRole(null);
+        try {
+            await apiClient.delete(`/roles/${selectedRole.id}`);
+            setRoles(roles.filter((r) => r.id !== selectedRole.id));
+            setSelectedRole(null);
+            alert("Xóa vai trò thành công!");
+        } catch (err) {
+            console.error("Lỗi xóa vai trò:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (

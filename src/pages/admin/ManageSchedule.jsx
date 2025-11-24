@@ -18,27 +18,32 @@ export default function ManageSchedule() {
 
     const [formData, setFormData] = useState({});
 
-    // ======== FETCH DATA ========
+    // 🔹 Fetch tất cả dữ liệu khi component mount
     useEffect(() => {
-        fetch("http://localhost:8080/api/giohocs")
-            .then(res => res.json()).then(setGioHocs);
+        const fetchData = async () => {
+            try {
+                const [timesRes, schedulesRes, sessionsRes, subjectsRes, roomsRes, semestersRes] = await Promise.all([
+                    apiClient.get("/class_times"),
+                    apiClient.get("/schedules"),
+                    apiClient.get("/class_sessions"),
+                    apiClient.get("/subjects"),
+                    apiClient.get("/rooms"),
+                    apiClient.get("/semesters")
+                ]);
 
-        fetch("http://localhost:8080/api/lichhocs")
-            .then(res => res.json()).then(setLichHocs);
-
-        fetch("http://localhost:8080/api/buoihocs")
-            .then(res => res.json()).then(setBuoiHocs);
-
-        // 🔹 Fetch danh sách môn, phòng, kỳ học
-        fetch("http://localhost:8080/api/monhocs")
-            .then(res => res.json()).then(setMonHocs);
-
-        fetch("http://localhost:8080/api/phongs")
-            .then(res => res.json()).then(setPhongs);
-
-        fetch("http://localhost:8080/api/kihocs")
-            .then(res => res.json()).then(setKiHocs);
+                setGioHocs(timesRes.data);
+                setLichHocs(schedulesRes.data);
+                setBuoiHocs(sessionsRes.data);
+                setMonHocs(subjectsRes.data);
+                setPhongs(roomsRes.data);
+                setKiHocs(semestersRes.data);
+            } catch (err) {
+                console.error("Lỗi fetch schedule data:", err.response?.data || err);
+            }
+        };
+        fetchData();
     }, []);
+
 
     // ======== MODAL LOGIC ========
     const openModal = (type, mode, item = null) => {
@@ -59,57 +64,59 @@ export default function ManageSchedule() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // 🔹 Xử lý lưu (thêm/sửa)
     const handleSave = async (e) => {
         e.preventDefault();
-        let url = "", method = modalMode === "add" ? "POST" : "PUT";
-        let list = [], setList;
+        let url = "", list = [], setList;
 
         if (modalType === "giohoc") {
-            url = modalMode === "add"
-                ? "http://localhost:8080/api/giohocs"
-                : `http://localhost:8080/api/giohocs/${formData.id}`;
+            url = modalMode === "add" ? "/class_times" : `/class_times/${formData.id}`;
             list = gioHocs; setList = setGioHocs;
         } else if (modalType === "lichhoc") {
-            url = modalMode === "add"
-                ? "http://localhost:8080/api/lichhocs"
-                : `http://localhost:8080/api/lichhocs/${formData.id}`;
+            url = modalMode === "add" ? "/schedules" : `/schedules/${formData.id}`;
             list = lichHocs; setList = setLichHocs;
         } else if (modalType === "buoihoc") {
-            url = modalMode === "add"
-                ? "http://localhost:8080/api/buoihocs"
-                : `http://localhost:8080/api/buoihocs/${formData.id}`;
+            url = modalMode === "add" ? "/class_sessions" : `/class_sessions/${formData.id}`;
             list = buoiHocs; setList = setBuoiHocs;
         }
 
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        });
-
-        const data = await res.json();
-        if (modalMode === "add") setList([...list, data]);
-        else setList(list.map((i) => (i.id === data.id ? data : i)));
-
-        closeModal();
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post(url, formData);
+                setList([...list, res.data]);
+            } else {
+                res = await apiClient.put(url, formData);
+                setList(list.map((i) => (i.id === res.data.id ? res.data : i)));
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu dữ liệu:", err.response?.data || err);
+            alert("Thao tác thất bại!");
+        }
     };
 
+    // 🔹 Xử lý xóa
     const handleDelete = async (type, id) => {
         const mapApi = {
-            giohoc: "giohocs",
-            lichhoc: "lichhocs",
-            buoihoc: "buoihocs"
+            giohoc: "/class_times",
+            lichhoc: "/schedules",
+            buoihoc: "/class_sessions"
         };
+
         if (!window.confirm("Bạn có chắc muốn xóa mục này?")) return;
-        await fetch(`http://localhost:8080/api/${mapApi[type]}/${id}`, {
-            method: "DELETE",
-        });
-        if (type === "giohoc") setGioHocs(gioHocs.filter((g) => g.id !== id));
-        if (type === "lichhoc") setLichHocs(lichHocs.filter((l) => l.id !== id));
-        if (type === "buoihoc") setBuoiHocs(buoiHocs.filter((b) => b.id !== id));
+
+        try {
+            await apiClient.delete(`${mapApi[type]}/${id}`);
+            if (type === "giohoc") setGioHocs(gioHocs.filter((g) => g.id !== id));
+            if (type === "lichhoc") setLichHocs(lichHocs.filter((l) => l.id !== id));
+            if (type === "buoihoc") setBuoiHocs(buoihocs.filter((b) => b.id !== id));
+        } catch (err) {
+            console.error("Lỗi xóa dữ liệu:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
-    // ========================= UI =========================
     return (
         <main className="schedule-container">
             <h1 className="title">📚 Quản lý Lịch học – Buổi học – Giờ học</h1>

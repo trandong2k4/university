@@ -1,24 +1,43 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../../styles/dashboard/publicDashboard.css";
+import apiClient from "/src/api/apiClient";
 
 export default function PublicDashboard() {
     const [nganhs, setNganhs] = useState([]);
     const [baiviets, setBaiviets] = useState([]);
 
     useEffect(() => {
-        // Lấy ngành
-        fetch("http://localhost:8080/api/nganhs")
-            .then(res => res.json())
-            .then(data => setNganhs(data.slice(0, 3)))
-            .catch(err => console.error("Lỗi khi lấy ngành:", err));
+        const fetchMajors = async () => {
+            try {
+                const res = await apiClient.get("/majors");
+                const data = Array.isArray(res.data)
+                    ? res.data
+                    : res.data.data || res.data.content || [];
 
-        // Lấy bài viết
-        fetch("http://localhost:8080/api/baiviets")
-            .then(res => res.json())
-            .then(data => setBaiviets(data.slice(0, 3)))
-            .catch(err => console.error("Lỗi khi lấy bài viết:", err));
+                setNganhs(data.slice(0, 3)); // Lấy 5 ngành đầu tiên
+            } catch (err) {
+                console.error("Lỗi khi lấy ngành:", err.response?.data || err);
+            }
+        };
+
+        const fetchPosts = async () => {
+            try {
+                const res = await apiClient.get("/posts");
+                const data = Array.isArray(res.data)
+                    ? res.data
+                    : res.data.data || res.data.content || [];
+
+                setBaiviets(data.slice(0, 3)); // Lấy 5 bài viết đầu tiên
+            } catch (err) {
+                console.error("Lỗi khi lấy bài viết:", err.response?.data || err);
+            }
+        };
+
+        fetchMajors();
+        fetchPosts();
     }, []);
+
 
     return (
         <main className="dashboard-container">

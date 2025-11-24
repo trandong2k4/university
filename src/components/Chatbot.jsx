@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import "../styles/layout/base-layout.css";
 import "../styles/components/chatbot.css";
+import apiClient from "/src/api/apiClient";
 
 export default function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
@@ -36,18 +37,16 @@ export default function Chatbot() {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:8080/api/chatbot/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message }),
+            const res = await apiClient.post("/chatbot/chat", {
+                message,
             });
 
-            const reply = await res.text();
+            const reply = await res.data;
             const botMsg = { sender: "bot", text: reply };
             setChatHistory((prev) => [...prev, botMsg]);
         } catch (err) {
             console.error("Chatbot error:", err);
-            setChatHistory((prev) => [
+            setChatHistory((prev) => [  
                 ...prev,
                 { sender: "bot", text: "❌ Lỗi khi gửi yêu cầu. Vui lòng thử lại." },
             ]);

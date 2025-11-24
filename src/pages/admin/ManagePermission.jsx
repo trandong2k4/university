@@ -8,11 +8,19 @@ export default function ManagePermission() {
     const [modalMode, setModalMode] = useState("add");
     const [formData, setFormData] = useState({ maPermission: "" });
 
+    // 🔹 Fetch permissions khi component mount
     useEffect(() => {
-        fetch("https://be-university.onrender.com/api/permissions")
-            .then((res) => res.json())
-            .then(setPermission);
+        const fetchPermissions = async () => {
+            try {
+                const res = await apiClient.get("/permissions");
+                setPermission(res.data);
+            } catch (err) {
+                console.error("Lỗi fetch permissions:", err.response?.data || err);
+            }
+        };
+        fetchPermissions();
     }, []);
+
 
     const openModal = (mode, permissions = null) => {
         setModalMode(mode);
@@ -33,39 +41,44 @@ export default function ManagePermission() {
         setFormData({ maPermission: e.target.value });
     };
 
+    // 🔹 Xử lý lưu (thêm/sửa) quyền
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "https://be-university.onrender.com/api/permissions"
-                : `https://be-university.onrender.com/api/permissions/${selectedPermission.id}`;
 
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-        if (modalMode === "add") {
-            setPermission([...permissions, data]);
-        } else {
-            setPermission(permissions.map((r) => (r.id === data.id ? data : r)));
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/permissions", formData);
+                setPermission([...permissions, res.data]);
+                alert("Thêm quyền thành công!");
+            } else {
+                res = await apiClient.put(`/permissions/${selectedPermission.id}`, formData);
+                setPermission(
+                    permissions.map((r) => (r.id === res.data.id ? res.data : r))
+                );
+                alert("Cập nhật quyền thành công!");
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu quyền:", err.response?.data || err);
+            alert("Thao tác thất bại!");
         }
-        closeModal();
     };
 
+    // 🔹 Xử lý xóa quyền
     const handleDelete = async () => {
         if (!selectedPermission) return alert("Chọn quyền để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa quyền này?")) return;
 
-        await fetch(`https://be-university.onrender.com/api/permissions/${selectedPermission.id}`, {
-            method: "DELETE",
-        });
-
-        setPermission(permissions.filter((r) => r.id !== selectedPermission.id));
-        setSelectedPermission(null);
+        try {
+            await apiClient.delete(`/permissions/${selectedPermission.id}`);
+            setPermission(permissions.filter((r) => r.id !== selectedPermission.id));
+            setSelectedPermission(null);
+            alert("Xóa quyền thành công!");
+        } catch (err) {
+            console.error("Lỗi xóa quyền:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (
@@ -90,7 +103,7 @@ export default function ManagePermission() {
                         </tr>
                     </thead>
                     <tbody>
-                        {roles.map((r) => (
+                        {permissions.map((r) => (
                             <tr key={r.id} onClick={() => setSelectedPermission(r)} className={selectedPermission?.id === r.id ? "selected-row" : ""}>
                                 <td>{r.tenViTri}</td>
                                 <td>

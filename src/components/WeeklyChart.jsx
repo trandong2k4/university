@@ -2,15 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, BarElement, CategoryScale, LinearScale } from "chart.js";
 Chart.register(BarElement, CategoryScale, LinearScale);
+import apiClient from "src/api/apiClient";
 
 export default function WeeklyChart() {
     const [data, setData] = useState({ labels: [], values: [] });
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/admin/stat/weekly")
-            .then((res) => res.json())
-            .then((res) => setData(res))
-            .catch((err) => console.error("Lỗi biểu đồ:", err));
+        const fetchData = async () => {
+            try {
+                const res = await apiClient.get("/admin/stat/weekly");
+                setData(res.data);
+            } catch (err) {
+                console.error("Lỗi biểu đồ:", err);
+            }
+        };
+        fetchData();
     }, []);
 
     const chartData = {

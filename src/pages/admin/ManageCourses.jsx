@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/admin/manageCourses.css";
+import apiClient from "/src/api/apiClient";
 
 export default function ManageCourses() {
     const navigate = useNavigate();
@@ -8,6 +9,7 @@ export default function ManageCourses() {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState("add"); // add | edit | view
+
 
     const [formData, setFormData] = useState({
         maMonHoc: "",
@@ -18,10 +20,15 @@ export default function ManageCourses() {
 
     // Lấy danh sách môn học
     useEffect(() => {
-        fetch("http://localhost:8080/api/monhocs")
-            .then((res) => res.json())
-            .then((data) => setCourses(data))
-            .catch((err) => console.error("Lỗi fetch môn học:", err));
+        const fetchCourses = async () => {
+            try {
+                const res = await apiClient.get("/subjects");
+                setCourses(res.data);
+            } catch (err) {
+                console.error("Lỗi khi lấy môn học:", err.response?.data || err);
+            }
+        };
+        fetchCourses();
     }, []);
 
     // Mở modal
@@ -55,31 +62,27 @@ export default function ManageCourses() {
     const handleSave = async (e) => {
         e.preventDefault();
         try {
+            let updatedCourse;
+
             if (modalMode === "add") {
-                const res = await fetch("http://localhost:8080/api/monhocs", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
-                });
-                const newCourse = await res.json();
-                setCourses([...courses, newCourse]);
+                const res = await apiClient.post("/subjects", formData);
+                updatedCourse = res.data; // dữ liệu mới trả về
+                setCourses([...courses, updatedCourse]);
                 alert("Thêm môn học thành công!");
             } else if (modalMode === "edit") {
-                const res = await fetch(`http://localhost:8080/api/monhocs/${formData.id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
-                });
-                const updated = await res.json();
-                setCourses(courses.map((c) => (c.id === updated.id ? updated : c)));
+                const res = await apiClient.put(`/subjects/${formData.id}`, formData);
+                updatedCourse = res.data;
+                setCourses(courses.map((c) => (c.id === updatedCourse.id ? updatedCourse : c)));
                 alert("Cập nhật môn học thành công!");
             }
+
             handleCloseModal();
         } catch (err) {
-            console.error("Lỗi lưu môn học:", err);
+            console.error("Lỗi lưu môn học:", err.response?.data || err);
             alert("Thao tác thất bại!");
         }
     };
+
 
     // Xóa môn học
     const handleDelete = async () => {
@@ -87,14 +90,12 @@ export default function ManageCourses() {
         if (!window.confirm("Bạn có chắc muốn xóa môn học này?")) return;
 
         try {
-            await fetch(`http://localhost:8080/api/monhocs/${selectedCourse.id}`, {
-                method: "DELETE",
-            });
+            await apiClient.delete(`/subjects/${selectedCourse.id}`);
             setCourses(courses.filter((c) => c.id !== selectedCourse.id));
             setSelectedCourse(null);
             alert("Xóa thành công!");
         } catch (err) {
-            console.error("Lỗi xóa môn học:", err);
+            console.error("Lỗi xóa môn học:", err.response?.data || err);
             alert("Xóa thất bại!");
         }
     };

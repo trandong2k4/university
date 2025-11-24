@@ -1,12 +1,13 @@
 // ForgotPassword.jsx - placeholder
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/auth/ForgotPassword.css";
+import apiClient from "/src/api/apiClient";
 import umsImage from "/src/assets/ums.png";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [sdt, setSdt] = useState("");
+  const [username, setUsername] = useState("");
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -30,6 +31,14 @@ export default function ForgotPassword() {
 
         <form onSubmit={onSubmit} className="fp-form">
           <div className="fp-field" style={{ gap: "4px" }}>
+            <label className="fp-label">Nhập tên đăng nhập</label>
+            <input
+              type="text"
+              className="fp-input"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Tên đăng nhập của bạn"
+            />
             <label className="fp-label">Nhập địa chỉ email</label>
             <input
               type="email"
@@ -37,14 +46,6 @@ export default function ForgotPassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-            />
-            <label className="fp-label">Nhập số điện thoại</label>
-            <input
-              type="text"
-              className="fp-input"
-              value={(s) => setSdt(s.target.value)}
-              // onChange={(e) => setEmail(e.target.value)}
-              placeholder="Số điện thoại của bạn"
             />
           </div>
 

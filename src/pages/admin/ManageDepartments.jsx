@@ -15,13 +15,20 @@ export default function ManageDepartments() {
     });
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/khoas")
-            .then((res) => res.json())
-            .then(setDepartments);
+        const fetchData = async () => {
+            try {
+                const [departmentsRes, schoolsRes] = await Promise.all([
+                    apiClient.get("/departments"),
+                    apiClient.get("/schools"),
+                ]);
 
-        fetch("http://localhost:8080/api/truongs")
-            .then((res) => res.json())
-            .then(setSchools);
+                setDepartments(departmentsRes.data);
+                setSchools(schoolsRes.data);
+            } catch (err) {
+                console.error("Lỗi fetch dữ liệu:", err.response?.data || err);
+            }
+        };
+        fetchData();
     }, []);
 
     const openModal = (mode, dept = null) => {
@@ -49,39 +56,44 @@ export default function ManageDepartments() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Save department (add or edit)
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "http://localhost:8080/api/khoas"
-                : `http://localhost:8080/api/khoas/${formData.id}`;
 
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-        if (modalMode === "add") {
-            setDepartments([...departments, data]);
-        } else {
-            setDepartments(departments.map((d) => (d.id === data.id ? data : d)));
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/departments", formData);
+                setDepartments([...departments, res.data]);
+                alert("Thêm khoa thành công!");
+            } else {
+                res = await apiClient.put(`/departments/${formData.id}`, formData);
+                setDepartments(
+                    departments.map((d) => (d.id === res.data.id ? res.data : d))
+                );
+                alert("Cập nhật khoa thành công!");
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu khoa:", err.response?.data || err);
+            alert("Thao tác thất bại!");
         }
-        closeModal();
     };
 
+    // Delete department
     const handleDelete = async () => {
         if (!selectedDepartment) return alert("Chọn khoa để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa khoa này?")) return;
 
-        await fetch(`http://localhost:8080/api/khoas/${selectedDepartment.id}`, {
-            method: "DELETE",
-        });
-
-        setDepartments(departments.filter((d) => d.id !== selectedDepartment.id));
-        setSelectedDepartment(null);
+        try {
+            await apiClient.delete(`/departments/${selectedDepartment.id}`);
+            setDepartments(departments.filter((d) => d.id !== selectedDepartment.id));
+            setSelectedDepartment(null);
+            alert("Xóa khoa thành công!");
+        } catch (err) {
+            console.error("Lỗi xóa khoa:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (

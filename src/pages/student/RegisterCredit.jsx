@@ -14,8 +14,8 @@ export default function RegisterSchedule() {
         const fetchData = async () => {
             try {
                 const [lichHocRes, dangKyRes] = await Promise.all([
-                    fetch("http://localhost:8080/api/lichhocs").then(r => r.json()),
-                    fetch(`http://localhost:8080/api/dangky/by-sinhvien/${sinhVienId}`).then(r => r.json())
+                    fetch("http://localhost:8080/schedules").then(r => r.json()),
+                    fetch(`http://localhost:8080/schedule_registrations/by-sinhvien/${sinhVienId}`).then(r => r.json())
                 ]);
 
                 setLichHocs(lichHocRes);
@@ -36,7 +36,7 @@ export default function RegisterSchedule() {
         setUpdating(true);
 
         try {
-            const url = `http://localhost:8080/api/dangky/${sinhVienId}/${lichHocId}`;
+            const url = `http://localhost:8080/schedule_registrations/${sinhVienId}/${lichHocId}`;
             const method = isDangKy ? "DELETE" : "POST";
 
             const res = await fetch(url, { method });

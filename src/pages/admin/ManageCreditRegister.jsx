@@ -19,21 +19,24 @@ export default function ManageTinChi() {
 
     // 🔹 Lấy danh sách từ backend
     useEffect(() => {
-        fetch("http://localhost:8080/api/tinchis")
-            .then((res) => res.json())
-            .then(setTinChis)
-            .catch((err) => console.error("Lỗi fetch tín chỉ:", err));
+        const fetchData = async () => {
+            try {
+                const [creditsRes, typesRes, subjectsRes] = await Promise.all([
+                    apiClient.get("/credits"),
+                    apiClient.get("/credit_types"),
+                    apiClient.get("/subjects"),
+                ]);
 
-        fetch("http://localhost:8080/api/loaitinchis")
-            .then((res) => res.json())
-            .then(setLoaiTinChis)
-            .catch((err) => console.error("Lỗi fetch loại tín chỉ:", err));
-
-        fetch("http://localhost:8080/api/monhocs")
-            .then((res) => res.json())
-            .then(setMonHocs)
-            .catch((err) => console.error("Lỗi fetch môn học:", err));
+                setTinChis(creditsRes.data);
+                setLoaiTinChis(typesRes.data);
+                setMonHocs(subjectsRes.data);
+            } catch (err) {
+                console.error("Lỗi fetch dữ liệu:", err.response?.data || err);
+            }
+        };
+        fetchData();
     }, []);
+
 
     const openModal = (mode, tc = null) => {
         setModalMode(mode);
@@ -71,35 +74,39 @@ export default function ManageTinChi() {
     // 🔹 Lưu (thêm / sửa)
     const handleSave = async (e) => {
         e.preventDefault();
-        const method = modalMode === "add" ? "POST" : "PUT";
-        const url =
-            modalMode === "add"
-                ? "http://localhost:8080/api/tinchis"
-                : `http://localhost:8080/api/tinchis/${formData.id}`;
 
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-
-        const data = await res.json();
-        if (modalMode === "add") setTinChis([...tinChis, data]);
-        else setTinChis(tinChis.map((t) => (t.id === data.id ? data : t)));
-
-        closeModal();
+        try {
+            let res;
+            if (modalMode === "add") {
+                res = await apiClient.post("/credits", formData);
+                setTinChis([...tinChis, res.data]);
+                alert("Thêm tín chỉ thành công!");
+            } else {
+                res = await apiClient.put(`/credits/${formData.id}`, formData);
+                setTinChis(tinChis.map((t) => (t.id === res.data.id ? res.data : t)));
+                alert("Cập nhật tín chỉ thành công!");
+            }
+            closeModal();
+        } catch (err) {
+            console.error("Lỗi lưu tín chỉ:", err.response?.data || err);
+            alert("Thao tác thất bại!");
+        }
     };
 
+    // 🔹 Xóa
     const handleDelete = async () => {
         if (!selectedTinChi) return alert("Chọn tín chỉ để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa tín chỉ này?")) return;
 
-        await fetch(`http://localhost:8080/api/tinchis/${selectedTinChi.id}`, {
-            method: "DELETE",
-        });
-
-        setTinChis(tinChis.filter((t) => t.id !== selectedTinChi.id));
-        setSelectedTinChi(null);
+        try {
+            await apiClient.delete(`/credits/${selectedTinChi.id}`);
+            setTinChis(tinChis.filter((t) => t.id !== selectedTinChi.id));
+            setSelectedTinChi(null);
+            alert("Xóa thành công!");
+        } catch (err) {
+            console.error("Lỗi xóa tín chỉ:", err.response?.data || err);
+            alert("Xóa thất bại!");
+        }
     };
 
     return (

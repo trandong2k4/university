@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import apiClient from "/src/api/apiClient";
 import "../../styles/public/nganh.css";
 
 export default function Nganh() {
@@ -15,25 +16,24 @@ export default function Nganh() {
     useEffect(() => {
         const params = new URLSearchParams();
         if (search) params.append("tenNganh", search);
+        if (khoaFilter) params.append("tenKhoa", khoaFilter);
 
-        fetch(`https://be-university.onrender.com/api/nganhs?${params.toString()}`)
-            .then((res) => res.json())
-            .then((data) => setNganhs(data))
-            .catch((err) => console.error("Lỗi fetch ngành:", err));
+        apiClient
+            .get(`/majors?${params.toString()}`)
+            .then((res) => setNganhs(res.data))
+            .catch((err) => console.error("Lỗi lấy ngành:", err));
 
     }, [search, khoaFilter]);
 
-    // // Gọi API lấy danh sách Khoa
+
+    // Gọi API lấy danh sách Khoa
     // useEffect(() => {
-    //     const params = new URLSearchParams();
-    //     if (khoaFilter) params.append("tenKhoa", khoaFilter);
+    //     apiClient
+    //         .get("/departments")
+    //         .then((res) => setKhoas(res.data))   // Đã sửa: không dùng setKhoaFilter
+    //         .catch((err) => console.error("Lỗi lấy khoa:", err));
+    // }, []);
 
-    //     fetch(`http://localhost:8080/api/khoas`)
-    //         .then((res) => res.json())
-    //         .then((data) => setKhoaFilter(data))
-    //         .catch((err) => console.error("Lỗi fetch Khoa:", err));
-
-    // });
 
     // Lọc ngành theo tên và khoa
     const filteredNganhs = nganhs.filter((nganh) => {

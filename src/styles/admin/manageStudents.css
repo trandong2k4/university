@@ -5,6 +5,12 @@
     font-family: "Segoe UI", sans-serif;
 }
 
+.form-center {
+    display: flex;
+    flex-direction: column;
+}
+
+
 /* Banner */
 .banner-section {
     text-align: center;

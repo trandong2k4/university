@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/dashboard/studentDashboard.css";
+import apiClient from "/src/api/apiClient";
 
 export default function PublicDashboard() {
     const navigate = useNavigate();
@@ -14,16 +15,16 @@ export default function PublicDashboard() {
     // 🔹 Gọi API thật từ backend Spring Boot
     useEffect(() => {
         // Lấy danh sách ngành học
-        fetch("http://localhost:8080/api/nganhs")
-            .then((res) => res.json())
-            .then((data) => setMajors(data))
-            .catch((err) => console.error("❌ Lỗi load ngành:", err));
+        apiClient
+            .get("/majors")
+            .then((response) => setMajors(response.data))
+            .catch((error) => console.error("❌ Lỗi load ngành:", error));
 
         // Lấy danh sách môn học
-        fetch("http://localhost:8080/api/monhocs")
-            .then((res) => res.json())
-            .then((data) => setCourses(data))
-            .catch((err) => console.error("❌ Lỗi load môn:", err));
+        apiClient
+            .get("/subjects")
+            .then((response) => setCourses(response.data))
+            .catch((error) => console.error("❌ Lỗi load môn:", error));
     }, []);
 
     // 🔹 KPI hiển thị tổng quan

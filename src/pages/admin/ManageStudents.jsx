@@ -34,16 +34,20 @@ export default function ManageStudents() {
 
     // --- FETCH dữ liệu ---
     useEffect(() => {
-        fetch("http://localhost:8080/api/sinhviens")
-            .then((res) => res.json())
-            .then(setStudents)
-            .catch((err) => console.error("Lỗi fetch sinh viên:", err));
+        const fetchData = async () => {
+            try {
+                const resStudents = await apiClient.get("/students");
+                setStudents(resStudents.data);
 
-        fetch("http://localhost:8080/api/nganhs")
-            .then((res) => res.json())
-            .then(setNganhs)
-            .catch((err) => console.error("Lỗi fetch ngành:", err));
+                const resMajors = await apiClient.get("/majors");
+                setNganhs(resMajors.data);
+            } catch (err) {
+                console.error("Lỗi khi fetch dữ liệu:", err.response?.data || err);
+            }
+        };
+        fetchData();
     }, []);
+
 
     // --- Lọc tìm kiếm ---
     const filteredStudents = students.filter(
@@ -95,37 +99,28 @@ export default function ManageStudents() {
     const handleSave = async (e) => {
         e.preventDefault();
         setLoading(true);
-        try {
-            console.log("📦 Dữ liệu gửi sinh viên:", svData);
 
-            // 1️⃣ Gửi thông tin sinh viên
-            const res1 = await fetch("http://localhost:8080/api/sinhviens", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(svData),
-            });
-            const svResult = await res1.json();
+        try {
+            // Thêm sinh viên
+            const resSv = await apiClient.post("/students", svData);
+            const svResult = resSv.data;
             if (!svResult.id) throw new Error("Không tạo được sinh viên");
 
-            // 2️⃣ Gửi thông tin chi tiết sinh viên
-            const res2 = await fetch("http://localhost:8080/api/chitietsinhviens", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...ctsvData, sinhVienId: svResult.id }),
-            });
-            if (!res2.ok) throw new Error("Không tạo được chi tiết sinh viên");
+            // Thêm chi tiết sinh viên
+            await apiClient.post("/student_details", { ...ctsvData, sinhVienId: svResult.id });
 
-            // 3️⃣ Cập nhật danh sách
+            // Cập nhật danh sách
             setStudents([...students, svResult]);
-            alert("✅ Thêm sinh viên thành công!");
+            alert("Thêm sinh viên thành công!");
             setIsModalOpen(false);
         } catch (err) {
-            console.error("❌ Lỗi thêm sinh viên:", err);
-            alert("❌ Lỗi khi thêm sinh viên hoặc chi tiết sinh viên!");
+            console.error("Lỗi thêm sinh viên:", err.response?.data || err);
+            alert("Lỗi khi thêm sinh viên hoặc chi tiết sinh viên!");
         } finally {
             setLoading(false);
         }
     };
+
 
     // --- Xóa sinh viên ---
     const handleDelete = async () => {
@@ -133,13 +128,12 @@ export default function ManageStudents() {
         if (!window.confirm("Bạn có chắc muốn xóa sinh viên này?")) return;
 
         try {
-            await fetch(`http://localhost:8080/api/sinhviens/${selectedStudent.id}`, {
-                method: "DELETE",
-            });
+            await apiClient.delete(`/students/${selectedStudent.id}`);
             setStudents(students.filter((s) => s.id !== selectedStudent.id));
+            setSelectedStudent(null);
             alert("🗑️ Xóa thành công!");
         } catch (err) {
-            console.error("Lỗi xóa:", err);
+            console.error("❌ Lỗi xóa:", err.response?.data || err);
             alert("❌ Xóa thất bại!");
         }
     };
@@ -205,108 +199,110 @@ export default function ManageStudents() {
                         <h2>➕ Thêm sinh viên mới</h2>
                         <form onSubmit={handleSave}>
                             <h3>📘 Thông tin sinh viên</h3>
-                            <div className="form-grid">
-                                <input
-                                    name="maSinhVien"
-                                    value={svData.maSinhVien}
-                                    onChange={handleChangeSv}
-                                    placeholder="Mã sinh viên"
-                                    required
-                                />
-                                <input
-                                    name="hoTen"
-                                    value={svData.hoTen}
-                                    onChange={handleChangeSv}
-                                    placeholder="Họ tên"
-                                    required
-                                />
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={svData.email}
-                                    onChange={handleChangeSv}
-                                    placeholder="Email"
-                                />
-                                <input
-                                    name="soDienThoai"
-                                    value={svData.soDienThoai}
-                                    onChange={handleChangeSv}
-                                    placeholder="Số điện thoại"
-                                />
-                                <span>Ngày nhập học</span>
-                                <input
-                                    type="date"
-                                    name="ngayNhapHoc"
-                                    value={svData.ngayNhapHoc}
-                                    onChange={handleChangeSv}
-                                />
-                                <span>Ngày tốt nghiệp</span>
-                                <input
-                                    type="date"
-                                    name="ngayTotNghiep"
-                                    value={svData.ngayTotNghiep}
-                                    onChange={handleChangeSv}
-                                />
-                                {/* {console.log("📚 Danh sách ngành:", nganhs)} */}
-                                <select
-                                    name="nganhId"   // ✅ phải trùng với key trong state svData
-                                    value={svData.nganhId}
-                                    onChange={handleChangeSv}
-                                    required
-                                >
-                                    <option value="">-- Chọn ngành --</option>
-                                    {nganhs.map((nganh) => (
-                                        <option key={nganh.id} value={nganh.id}>
-                                            {nganh.tenNganh}
-                                        </option>
-                                    ))}
-                                </select>
 
+                            <div className="form-center">
+                                <div className="form-grid">
+                                    <input
+                                        name="maSinhVien"
+                                        value={svData.maSinhVien}
+                                        onChange={handleChangeSv}
+                                        placeholder="Mã sinh viên"
+                                        required
+                                    />
+                                    <input
+                                        name="hoTen"
+                                        value={svData.hoTen}
+                                        onChange={handleChangeSv}
+                                        placeholder="Họ tên"
+                                        required
+                                    />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={svData.email}
+                                        onChange={handleChangeSv}
+                                        placeholder="Email"
+                                    />
+                                    <input
+                                        name="soDienThoai"
+                                        value={svData.soDienThoai}
+                                        onChange={handleChangeSv}
+                                        placeholder="Số điện thoại"
+                                    />
+                                    <span>Ngày nhập học</span>
+                                    <input
+                                        type="date"
+                                        name="ngayNhapHoc"
+                                        value={svData.ngayNhapHoc}
+                                        onChange={handleChangeSv}
+                                    />
+                                    <span>Ngày tốt nghiệp</span>
+                                    <input
+                                        type="date"
+                                        name="ngayTotNghiep"
+                                        value={svData.ngayTotNghiep}
+                                        onChange={handleChangeSv}
+                                    />
+                                    {/* {console.log("📚 Danh sách ngành:", nganhs)} */}
+                                    <select
+                                        name="nganhId"   // ✅ phải trùng với key trong state svData
+                                        value={svData.nganhId}
+                                        onChange={handleChangeSv}
+                                        required
+                                    >
+                                        <option value="">-- Chọn ngành --</option>
+                                        {nganhs.map((nganh) => (
+                                            <option key={nganh.id} value={nganh.id}>
+                                                {nganh.tenNganh}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                </div>
+
+                                <h3>🏠 Thông tin chi tiết</h3>
+                                <div className="form-grid">
+                                    <input
+                                        name="diaChi"
+                                        value={ctsvData.diaChi}
+                                        onChange={handleChangeCtsv}
+                                        placeholder="Địa chỉ"
+                                    />
+                                    <span>Ngày sinh</span>
+                                    <input
+                                        type="date"
+                                        name="ngaySinh"
+                                        value={ctsvData.ngaySinh}
+                                        onChange={handleChangeCtsv}
+                                    />
+                                    <select
+                                        name="gioiTinh"
+                                        value={ctsvData.gioiTinh}
+                                        onChange={handleChangeCtsv}
+                                    >
+                                        <option value="NAM">Nam</option>
+                                        <option value="NU">Nữ</option>
+                                    </select>
+                                    <input
+                                        name="quocTich"
+                                        value={ctsvData.quocTich}
+                                        onChange={handleChangeCtsv}
+                                        placeholder="Quốc tịch"
+                                    />
+                                    <input
+                                        name="cccd"
+                                        value={ctsvData.cccd}
+                                        onChange={handleChangeCtsv}
+                                        placeholder="CCCD"
+                                    />
+                                    <input
+                                        name="sdtNguoiThan"
+                                        value={ctsvData.sdtNguoiThan}
+                                        onChange={handleChangeCtsv}
+                                        placeholder="SĐT người thân"
+                                    />
+                                </div>
                             </div>
-
-                            <h3>🏠 Thông tin chi tiết</h3>
-                            <div className="form-grid">
-                                <input
-                                    name="diaChi"
-                                    value={ctsvData.diaChi}
-                                    onChange={handleChangeCtsv}
-                                    placeholder="Địa chỉ"
-                                />
-                                <span>Ngày sinh</span>
-                                <input
-                                    type="date"
-                                    name="ngaySinh"
-                                    value={ctsvData.ngaySinh}
-                                    onChange={handleChangeCtsv}
-                                />
-                                <select
-                                    name="gioiTinh"
-                                    value={ctsvData.gioiTinh}
-                                    onChange={handleChangeCtsv}
-                                >
-                                    <option value="NAM">Nam</option>
-                                    <option value="NU">Nữ</option>
-                                </select>
-                                <input
-                                    name="quocTich"
-                                    value={ctsvData.quocTich}
-                                    onChange={handleChangeCtsv}
-                                    placeholder="Quốc tịch"
-                                />
-                                <input
-                                    name="cccd"
-                                    value={ctsvData.cccd}
-                                    onChange={handleChangeCtsv}
-                                    placeholder="CCCD"
-                                />
-                                <input
-                                    name="sdtNguoiThan"
-                                    value={ctsvData.sdtNguoiThan}
-                                    onChange={handleChangeCtsv}
-                                    placeholder="SĐT người thân"
-                                />
-                            </div>
-
                             <div className="modal-actions">
                                 <button type="submit" className="btn btn-green" disabled={loading}>
                                     {loading ? "Đang lưu..." : "💾 Lưu"}
@@ -316,6 +312,7 @@ export default function ManageStudents() {
                                 </button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             )}
