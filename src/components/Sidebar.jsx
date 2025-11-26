@@ -10,43 +10,48 @@ import "../styles/components/sidebar.css";
 // Menu có icon
 const MENU = {
     STUDENT: [
-        { to: "/student/profile", label: "Thông tin sinh viên", icon: <FaUserGraduate /> },
-        { to: "/student/courses", label: "Môn học", icon: <FaBook /> },
         { to: "/student/schedule", label: "Lịch học", icon: <FaCalendarAlt /> },
-        { to: "/student/grades", label: "Điểm", icon: <FaRegChartBar /> },
+        { to: "/student/profile", label: "Thông tin cá nhân", icon: <FaUserGraduate /> },
         { to: "/student/tuition", label: "Học phí", icon: <FaMoneyBill /> },
+        { to: "/student/grades", label: "Điểm", icon: <FaRegChartBar /> },
+        { to: "/student/subjects", label: "Môn học", icon: <FaBook /> },
         { to: "/student/register-credit", label: "Đăng ký tín chỉ", icon: <FaClipboardList /> },
+        { to: "/student/", label: "Chương trình đào tạo", icon: <FaClipboardList /> },
         // { to: "/student/cancel-credit", label: "Hủy tín chỉ", icon: <FaTimesCircle /> },
     ],
 
     TEACHER: [
-        { to: "/teacher/students", label: "Danh sách sinh viên", icon: <FaUsers /> },
-        { to: "/teacher/courses", label: "Môn giảng dạy", icon: <FaBook /> },
         { to: "/teacher/schedule", label: "Lịch dạy", icon: <FaCalendarAlt /> },
-        { to: "/teacher/grades", label: "Xem điểm", icon: <FaRegChartBar /> },
-        { to: "/teacher/update-grades", label: "Nhập điểm", icon: <FaClipboardList /> },
+        { to: "/teacher/profile", label: "Thông tin cá nhân", icon: <FaUserGraduate /> },
+        { to: "/teacher/students", label: "Sinh viên học tập", icon: <FaUsers /> },
+        { to: "/teacher/students", label: "Lớp học phần", icon: <FaUsers /> },
+        { to: "/teacher/documents", label: "Tài liệu môn học", icon: <FaBook /> },
+         { to: "/teacher/grades", label: "Điểm học tập", icon: <FaRegChartBar /> },
+        { to: "/teacher/courses", label: "Môn giảng dạy", icon: <FaBook /> },
+       
     ],
 
     ACCOUNTANT: [
         { to: "/accountant/tuition", label: "Xem học phí", icon: <FaMoneyBill /> },
         { to: "/accountant/create", label: "Tạo học phí", icon: <FaClipboardList /> },
         { to: "/accountant/update", label: "Cập nhật học phí", icon: <FaCog /> },
+        { to: "/accountant/repost", label: "Báo cáo thống kê", icon: <FaCog /> },
     ],
 
     ADMIN: [
-        { to: "/admin/students", label: "Quản lý sinh viên", icon: <FaUsers /> },
-        { to: "/admin/employees", label: "Quản lý nhân viên", icon: <FaUsers /> },
-        { to: "/admin/nganh", label: "Quản lý ngành", icon: <FaClipboardList /> },
-        { to: "/admin/khoa", label: "Quản lý khoa", icon: <FaClipboardList /> },
-        { to: "/admin/truong", label: "Quản lý trường", icon: <FaClipboardList /> },
-        { to: "/admin/courses", label: "Quản lý môn học", icon: <FaBook /> },
-        { to: "/admin/schedule", label: "Quản lý lịch học", icon: <FaCalendarAlt /> },
-        { to: "/admin/grades", label: "Quản lý điểm", icon: <FaRegChartBar /> },
-        { to: "/admin/tuition", label: "Quản lý học phí", icon: <FaMoneyBill /> },
-        { to: "/admin/credits", label: "Quản lý tín chỉ", icon: <FaClipboardList /> },
-        { to: "/admin/user", label: "Quản lý người dùng", icon: <FaClipboardList /> },
-        { to: "/admin/role", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
-        { to: "/admin/permission", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
+        { to: "/admin/manage_students", label: "Quản lý sinh viên", icon: <FaUsers /> },
+        { to: "/admin/manage_employees", label: "Quản lý nhân viên", icon: <FaUsers /> },
+        { to: "/admin/manage_nganh", label: "Quản lý ngành", icon: <FaClipboardList /> },
+        { to: "/admin/manage_khoa", label: "Quản lý khoa", icon: <FaClipboardList /> },
+        { to: "/admin/manage_truong", label: "Quản lý trường", icon: <FaClipboardList /> },
+        { to: "/admin/manage_courses", label: "Quản lý môn học", icon: <FaBook /> },
+        { to: "/admin/manage_schedule", label: "Quản lý lịch học", icon: <FaCalendarAlt /> },
+        { to: "/admin/manage_grades", label: "Quản lý điểm", icon: <FaRegChartBar /> },
+        { to: "/admin/manage_tuition", label: "Quản lý học phí", icon: <FaMoneyBill /> },
+        { to: "/admin/manage_credits", label: "Quản lý tín chỉ", icon: <FaClipboardList /> },
+        { to: "/admin/manage_user", label: "Quản lý người dùng", icon: <FaClipboardList /> },
+        { to: "/admin/manage_role", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
+        { to: "/admin/manage_permission", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
     ],
 };
 

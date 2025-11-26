@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "/src/context/AuthContext.jsx";
 import "../../styles/public/blogGuide.css";
+import apiClient from "/src/api/apiClient";
 
 const BlogGuide = () => {
     const { isLoggedIn } = useAuth();
@@ -15,14 +16,13 @@ const BlogGuide = () => {
     const postTypes = ["Thông báo", "Hướng dẫn", "Tài liệu"];
 
     useEffect(() => {
-        fetch("http://localhost:8080/posts")
-            .then((res) => res.json())
-            .then((data) => {
-                setPosts(data);
+        apiClient.get("/posts")
+            .then((response) => {   
+                setPosts(response.data);
                 setLoading(false);
             })
-            .catch((err) => {
-                console.error("Lỗi fetch baiviets:", err);
+            .catch((error) => {
+                console.error("Lỗi fetch baiviets:", error);
                 setLoading(false);
             });
     }, []);
@@ -42,7 +42,7 @@ const BlogGuide = () => {
         const matchFromDate = fromDate === "" || postDate >= new Date(fromDate);
         const matchToDate = toDate === "" || postDate <= new Date(toDate);
 
-        const isPrivate = post.trangThai?.toLowerCase() === "riêng tư";
+        const isPrivate = post.trangThai?.toUpperCase() === "RIENG_TU";
         const canView = !isPrivate || isLoggedIn;
 
         return matchLoai && matchSearch && matchAuthor && matchFromDate && matchToDate && canView;

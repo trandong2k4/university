@@ -35,12 +35,26 @@ export default function Schedule() {
           startAccessor="start"
           endAccessor="end"
           style={{ height: 550 }}
-          min={new Date(2025, 8, 29, 7, 0)}   // Giờ bắt đầu (7h sáng)
-          max={new Date(2025, 8, 29, 22, 0)}  // Giờ kết thúc (21h tối)
-          step={30} // Mỗi ô 30 phút (có thể chỉnh 15/60 tùy ý)
-          timeslots={2} // Chia nhỏ trong 1h (vd: 2 = 30 phút)
-          defaultView="week" // mặc định hiển thị theo tuần (có thể là "day", "month")
+          min={new Date(2025, 8, 29, 7, 0)}
+          max={new Date(2025, 8, 29, 22, 0)}
+          step={30}
+          timeslots={2}
+          defaultView="week"
+          messages={{
+            today: "Hôm nay",
+            previous: "Trước",
+            next: "Tiếp",
+            month: "Tháng",
+            week: "Tuần",
+            day: "Ngày",
+            agenda: "Lịch biểu",
+            date: "Ngày",
+            time: "Giờ",
+            event: "Sự kiện",
+            noEventsInRange: "Không có sự kiện trong khoảng thời gian này."
+          }}
         />
+
       </div>
     </div>
   );

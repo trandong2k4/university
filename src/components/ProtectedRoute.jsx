@@ -1,17 +1,20 @@
-// ProtectedRoute.jsx
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/layout/base-layout.css";
 
 export default function ProtectedRoute({ roles }) {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
 
+    // ⭐ ĐANG LOAD → KHÔNG redirect
+    if (loading) return <div className="loading">Đang tải...</div>;
+
+    // Sau khi load xong → kiểm tra đăng nhập
     if (!user) return <Navigate to="/login" replace />;
 
+    // Kiểm tra role
     if (roles && roles.length > 0) {
         const hasRole = roles.includes(user.role?.toUpperCase());
         if (!hasRole) return <Navigate to="/unauthorized" replace />;
     }
 
-    return <Outlet />; // render các route con
+    return <Outlet />;
 }

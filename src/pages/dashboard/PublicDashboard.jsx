@@ -115,8 +115,10 @@ export default function PublicDashboard() {
                     <ul>
                         {baiviets.map((bv, index) => (
                             <li key={index}>
-                                <h3>{bv.tieuDe}</h3>
-                                <p>{bv.ngayDang || "Đang cập nhật"}</p>
+                                <a href="{bv.file_dinh_kem_url}">
+                                    <h3>{bv.tieuDe}</h3>
+                                    <p>{bv.ngayDang || "Đang cập nhật"}</p>
+                                </a>
                             </li>
                         ))}
                     </ul>

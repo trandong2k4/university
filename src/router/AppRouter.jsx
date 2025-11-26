@@ -136,21 +136,21 @@ export default function AppRouter() {
                 <Route element={<PrivateLayout userRole="ADMIN" />}>
                     <Route path="/admin/dashboard" element={<AdminDashboard />} />
                     <Route path="/admin/manage" element={<ManageAdmin />} />
-                    <Route path="/admin/reports" element={<ManageReports />} />
-                    <Route path="/admin/setting" element={<ManageSetting />} />
-                    <Route path="/admin/students" element={<ManageStudents />} />
-                    <Route path="/admin/courses" element={<ManageCourses />} />
-                    <Route path="/admin/schedule" element={<ManageSchedule />} />
-                    <Route path="/admin/grades" element={<ManageGrades />} />
-                    <Route path="/admin/tuition" element={<ManageTuition />} />
-                    <Route path="/admin/credits" element={<ManageCreditRegister />} />
-                    <Route path="/admin/nganh" element={<ManageMajors />} />
-                    <Route path="/admin/employees" element={<ManageEmpuloyees />} />
-                    <Route path="/admin/truong" element={<ManageSchools />} />
-                    <Route path="/admin/khoa" element={<ManageDepartments />} />
-                    <Route path="/admin/user" element={<ManageUsers />} />
-                    <Route path="/admin/role" element={<ManageRoles />} />
-                    <Route path="/admin/permission" element={<ManagePermission />} />
+                    <Route path="/admin/manage_reports" element={<ManageReports />} />
+                    <Route path="/admin/manage_setting" element={<ManageSetting />} />
+                    <Route path="/admin/manage_students" element={<ManageStudents />} />
+                    <Route path="/admin/manage_courses" element={<ManageCourses />} />
+                    <Route path="/admin/manage_schedule" element={<ManageSchedule />} />
+                    <Route path="/admin/manage_grades" element={<ManageGrades />} />
+                    <Route path="/admin/manage_tuition" element={<ManageTuition />} />
+                    <Route path="/admin/manage_credits" element={<ManageCreditRegister />} />
+                    <Route path="/admin/manage_nganh" element={<ManageMajors />} />
+                    <Route path="/admin/manage_employees" element={<ManageEmpuloyees />} />
+                    <Route path="/admin/manage_truong" element={<ManageSchools />} />
+                    <Route path="/admin/manage_khoa" element={<ManageDepartments />} />
+                    <Route path="/admin/manage_user" element={<ManageUsers />} />
+                    <Route path="/admin/manage_role" element={<ManageRoles />} />
+                    <Route path="/admin/manage_permission" element={<ManagePermission />} />
                     {/* … */}
                 </Route>
             </Route>

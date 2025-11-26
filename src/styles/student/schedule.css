@@ -50,3 +50,31 @@
     /* gray-500 */
     padding: 1rem 0;
 }
+
+/* Tăng chiều cao ô thời gian */
+.rbc-time-slot {
+    min-height: 40px !important;
+}
+
+/* Sự kiện không bị quá nhỏ */
+.rbc-day-slot .rbc-event {
+    min-height: 40px;
+}
+
+/* Hiển thị chữ đẹp & ô đầy */
+.rbc-event {
+    padding: 4px;
+    font-size: 13px;
+    border-radius: 6px;
+    height: 100% !important;
+}
+
+/* Fix text wrap */
+.rbc-event-content {
+    white-space: normal !important;
+}
+
+/* Không để khoảng trắng ở lề phải sự kiện */
+.rbc-events-container {
+    margin-right: 0 !important;
+}
