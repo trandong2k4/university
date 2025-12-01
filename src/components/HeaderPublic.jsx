@@ -7,7 +7,7 @@ export default function HeaderPublic() {
     return (
         <header className="header">
             <div className="header-logo">
-                <Link className="header-logo-text" to="/">Learning Hub</Link>
+                <Link className="header-logo-text" to="/Dashboard">Learning Hub</Link>
             </div>
             <nav className="header-nav">
 

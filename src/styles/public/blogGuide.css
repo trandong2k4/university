@@ -14,7 +14,7 @@
     margin-bottom: -60px;
     position: relative;
     overflow: hidden;
-    border-radius: 0;
+    border-radius: 40px 0 0 10px;
     /* Override default radius for full-width banner feel */
 }
 

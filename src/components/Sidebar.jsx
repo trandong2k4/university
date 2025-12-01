@@ -26,17 +26,8 @@ const MENU = {
         { to: "/student/schedule", label: "Lịch học", icon: <FaCalendarAlt /> },
         { to: "/student/profile", label: "Thông tin cá nhân", icon: <FaUserGraduate /> },
         { to: "/student/tuition", label: "Học phí", icon: <FaMoneyBill /> },
-        { to: "/student/grades", label: "Kết quả học tập", icon: <FaRegChartBar /> },
-        { to: "/student/subjects", label: "Môn học", icon: <FaBook /> },
-        { to: "/student/register-credit", label: "Đăng ký tín chỉ", icon: <FaClipboardList /> },
-        { to: "/student/curriculum", label: "Chương trình đào tạo", icon: <FaClipboardList /> },
-    ],
-    STUDENT: [
-        { to: "/student/schedule", label: "Lịch học", icon: <FaCalendarAlt /> },
-        { to: "/student/profile", label: "Thông tin cá nhân", icon: <FaUserGraduate /> },
-        { to: "/student/tuition", label: "Học phí", icon: <FaMoneyBill /> },
         { to: "/student/grades", label: "Điểm", icon: <FaRegChartBar /> },
-        { to: "/student/subjects", label: "Môn học", icon: <FaBook /> },
+        // { to: "/student/subjects", label: "Môn học", icon: <FaBook /> },
         { to: "/student/register-credit", label: "Đăng ký tín chỉ", icon: <FaClipboardList /> },
         { to: "/student/", label: "Chương trình đào tạo", icon: <FaClipboardList /> },
         // { to: "/student/cancel-credit", label: "Hủy tín chỉ", icon: <FaTimesCircle /> },
@@ -77,7 +68,7 @@ const MENU = {
 
     ADMIN: [
         { to: "/admin/dashboard", label: "Tổng quan", icon: <FaRegChartBar /> },
-        { to: "/admin/manage_truong", label: "Quản lý trường", icon: <FaClipboardList /> },
+        // { to: "/admin/manage_truong", label: "Quản lý trường", icon: <FaClipboardList /> },
         { to: "/admin/manage_khoa", label: "Quản lý khoa", icon: <FaClipboardList /> },
         { to: "/admin/manage_nganh", label: "Quản lý ngành", icon: <FaClipboardList /> },
         { to: "/admin/manage_courses", label: "Quản lý môn học", icon: <FaBook /> },

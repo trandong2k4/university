@@ -17,7 +17,7 @@ const BlogGuide = () => {
     // Hiển thị ban đầu 6 bài
     const [visibleCount, setVisibleCount] = useState(6);
 
-    const postTypes = ["Thông báo", "Hướng dẫn", "Tài liệu"];
+    const postTypes = ["Thông báo", "Hướng dẫn", "Tài liệu", "Cảnh báo"];
 
     useEffect(() => {
         apiClient
@@ -51,7 +51,7 @@ const BlogGuide = () => {
         const matchTo = !toDate || postDate <= new Date(toDate + "T23:59:59");
 
         const isPrivate = String(post.trangThai || "").toUpperCase() === "RIENG_TU";
-        const isAdmin = user?.role === "ADMIN";
+        const isAdmin = user?.role === "ADMIN" || user?.role === "STUDENT" || user?.role === "TEACHER";
         const canViewPrivate = isAuthenticated || isAdmin;
 
         return (
@@ -82,7 +82,6 @@ const BlogGuide = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <span className="icon">Tìm kiếm</span>
                 </div>
 
                 <div className="filter-group">
