@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import apiClient from "/src/api/apiClient";
 import "../../styles/admin/manageDepartments.css";
 
 export default function ManageDepartments() {
@@ -9,9 +10,11 @@ export default function ManageDepartments() {
     const [modalMode, setModalMode] = useState("add");
 
     const [formData, setFormData] = useState({
+        id: "",
         maKhoa: "",
         tenKhoa: "",
         truongId: "",
+        tenTruong: "",
     });
 
     useEffect(() => {
@@ -21,7 +24,6 @@ export default function ManageDepartments() {
                     apiClient.get("/departments"),
                     apiClient.get("/schools"),
                 ]);
-
                 setDepartments(departmentsRes.data);
                 setSchools(schoolsRes.data);
             } catch (err) {
@@ -34,12 +36,20 @@ export default function ManageDepartments() {
     const openModal = (mode, dept = null) => {
         setModalMode(mode);
         if (dept) {
-            setFormData(dept);
+            setFormData({
+                id: dept.id,
+                maKhoa: dept.maKhoa,
+                tenKhoa: dept.tenKhoa,
+                truongId: dept.truongId || "",
+                tenTruong: dept.tenTruong || "",
+            });
         } else {
             setFormData({
+                id: "",
                 maKhoa: "KH" + (departments.length + 1) * 100,
                 tenKhoa: "",
                 truongId: "",
+                tenTruong: "",
             });
         }
         setIsModalOpen(true);
@@ -56,10 +66,8 @@ export default function ManageDepartments() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Save department (add or edit)
     const handleSave = async (e) => {
         e.preventDefault();
-
         try {
             let res;
             if (modalMode === "add") {
@@ -80,7 +88,6 @@ export default function ManageDepartments() {
         }
     };
 
-    // Delete department
     const handleDelete = async () => {
         if (!selectedDepartment) return alert("Chọn khoa để xóa!");
         if (!window.confirm("Bạn có chắc muốn xóa khoa này?")) return;
@@ -107,7 +114,12 @@ export default function ManageDepartments() {
                 <div className="content-box">
                     <div className="action-buttons">
                         <button onClick={() => openModal("add")} className="btn btn-blue">Thêm</button>
-                        <button onClick={() => selectedDepartment ? openModal("edit", selectedDepartment) : alert("Chọn khoa để sửa")} className="btn btn-yellow">Sửa</button>
+                        <button
+                            onClick={() => selectedDepartment ? openModal("edit", selectedDepartment) : alert("Chọn khoa để sửa")}
+                            className="btn btn-yellow"
+                        >
+                            Sửa
+                        </button>
                         <button onClick={handleDelete} className="btn btn-red">Xóa</button>
                     </div>
 
@@ -116,18 +128,25 @@ export default function ManageDepartments() {
                             <tr>
                                 <th>Mã khoa</th>
                                 <th>Tên khoa</th>
-                                <th>Trường</th>
                                 <th>Chi tiết</th>
                             </tr>
                         </thead>
                         <tbody>
                             {departments.map((d) => (
-                                <tr key={d.id} onClick={() => setSelectedDepartment(d)} className={selectedDepartment?.id === d.id ? "selected-row" : ""}>
+                                <tr
+                                    key={d.id}
+                                    onClick={() => setSelectedDepartment(d)}
+                                    className={selectedDepartment?.id === d.id ? "selected-row" : ""}
+                                >
                                     <td>{d.maKhoa}</td>
                                     <td>{d.tenKhoa}</td>
-                                    <td>{d.tenTruong}</td>
                                     <td>
-                                        <button onClick={(ev) => { ev.stopPropagation(); openModal("view", d); }} className="btn btn-gray">Xem</button>
+                                        <button
+                                            onClick={(ev) => { ev.stopPropagation(); openModal("view", d); }}
+                                            className="btn btn-gray"
+                                        >
+                                            Xem
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -139,17 +158,44 @@ export default function ManageDepartments() {
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-box">
-                        <h2>{modalMode === "add" ? "Thêm khoa" : modalMode === "edit" ? "Sửa khoa" : "Chi tiết khoa"}</h2>
+                        <h2>
+                            {modalMode === "add" ? "Thêm khoa" : modalMode === "edit" ? "Sửa khoa" : "Chi tiết khoa"}
+                        </h2>
                         <form onSubmit={handleSave}>
-                            <input name="maKhoa" value={formData.maKhoa} onChange={handleChange} placeholder="Mã khoa" readOnly={modalMode !== "add"} />
-                            <input name="tenKhoa" value={formData.tenKhoa} onChange={handleChange} placeholder="Tên khoa" readOnly={modalMode === "view"} />
+                            <input
+                                name="maKhoa"
+                                value={formData.maKhoa}
+                                onChange={handleChange}
+                                placeholder="Mã khoa"
+                                readOnly={modalMode !== "add"}
+                            />
 
-                            <select name="truongId" value={formData.truongId} onChange={handleChange} disabled={modalMode === "view"}>
-                                <option value="">-- Chọn trường --</option>
-                                {schools.map((s) => (
-                                    <option key={s.id} value={s.id}>{s.tenTruong}</option>
-                                ))}
-                            </select>
+                            <input
+                                name="tenKhoa"
+                                value={formData.tenKhoa}
+                                onChange={handleChange}
+                                placeholder="Tên khoa"
+                                readOnly={modalMode === "view"}
+                            />
+
+                            {modalMode === "view" ? (
+                                <input
+                                    value={formData.tenTruong || ""}
+                                    readOnly
+                                    placeholder="Tên trường"
+                                />
+                            ) : (
+                                <select
+                                    name="truongId"
+                                    value={formData.truongId}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">-- Chọn trường --</option>
+                                    {schools.map((s) => (
+                                        <option key={s.id} value={s.id}>{s.tenTruong}</option>
+                                    ))}
+                                </select>
+                            )}
 
                             <div className="modal-actions">
                                 {modalMode !== "view" && <button type="submit" className="btn btn-green">Lưu</button>}

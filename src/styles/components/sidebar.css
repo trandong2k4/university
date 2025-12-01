@@ -1,78 +1,250 @@
 .sidebar {
-    margin: 0;
     position: fixed;
-    top: 65px;
-    left: 0px;
-    width: 220px;
-    transition: width 0.3s ease;
-    background: #1e293b;
-    color: #fff;
-    height: 100vh;
+    top: 68px;
+    /* Chừa header */
+    left: 0;
+    height: calc(100vh - 68px);
+    width: 260px;
+    /* Mở rộng: đúng 260px */
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+    z-index: 999;
     display: flex;
     flex-direction: column;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Mượt như bơ */
+    overflow: hidden;
+    border-right: 1px solid #334155;
 }
 
+/* Khi thu gọn */
 .sidebar.collapsed {
-    width: 60px;
-    /* chỉ để đủ chứa icon */
+    width: 70px;
 }
 
+/* Header (Logo + Toggle) */
 .sidebar-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    background: #0f172a;
+    justify-content: space-between;
+    padding: 1.4rem 1.2rem;
+    min-height: 68px;
     border-bottom: 1px solid #334155;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
 }
 
 .sidebar-title {
-    font-size: 18px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #60a5fa;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 1;
+    transition: all 0.4s ease;
 }
 
+.sidebar.collapsed .sidebar-title {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+/* Nút toggle – đẹp như Vercel */
 .sidebar-toggle {
-    background: transparent;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.12);
     border: none;
+    border-radius: 12px;
     color: #fff;
-    font-size: 18px;
+    font-size: 1.3rem;
     cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    backdrop-filter: blur(8px);
 }
 
+.sidebar-toggle:hover {
+    background: #3b82f6;
+    transform: scale(1.12) rotate(180deg);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+/* Navigation */
 .sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    padding: 8px;
+    flex: 1;
+    padding: 0.8rem 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
+/* Scrollbar siêu mỏng & đẹp */
+.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.5);
+    border-radius: 2px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: #60a5fa;
+}
+
+/* Menu Item – Animation cực đỉnh */
 .sidebar-link {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: 6px;
+    padding: 0.9rem 1.4rem;
+    color: #94a3b8;
     text-decoration: none;
-    color: #cbd5e1;
-    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hiệu ứng ripple khi hover */
+.sidebar-link::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.sidebar-link:hover::before {
+    left: 100%;
 }
 
 .sidebar-link:hover {
-    background: #334155;
-    color: #fff;
+    background: rgba(59, 130, 246, 0.15);
+    color: #ffffff;
+    padding-left: 2rem;
+    transform: translateX(8px);
 }
 
+/* Active state – cực chất */
 .sidebar-link.active {
-    background: #2563eb;
-    color: #fff;
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: 600;
+    border-radius: 0 12px 12px 0;
+    margin: 0.4rem 0.8rem;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    transform: translateX(12px);
 }
 
+/* Icon */
 .sidebar-icon {
-    font-size: 18px;
+    font-size: 1.45rem;
+    min-width: 44px;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    transition: all 0.3s ease;
 }
 
+.sidebar-link.active .sidebar-icon {
+    transform: scale(1.2);
+}
+
+/* Label */
 .sidebar-label {
+    margin-left: 1rem;
+    font-size: 0.98rem;
+    font-weight: 500;
+    opacity: 1;
+    transition: all 0.35s ease;
     white-space: nowrap;
+}
+
+/* Khi collapsed: ẩn chữ + tooltip siêu đẹp */
+.sidebar.collapsed .sidebar-label {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.sidebar.collapsed .sidebar-link {
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* TOOLTIP SIÊU ĐẸP khi collapsed */
+.sidebar.collapsed .sidebar-link:hover {
+    background: #3b82f6;
+    border-radius: 12px;
+    margin: 0 0.8rem;
+}
+
+.sidebar.collapsed .sidebar-link::after {
+    content: attr(aria-label);
+    position: absolute;
+    left: 85px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1e293b;
+    color: #fff;
+    padding: 0.7rem 1.3rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+    z-index: 9999;
+}
+
+.sidebar.collapsed .sidebar-link:hover::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(10px);
+}
+
+.sidebar.collapsed .sidebar-link::before {
+    content: "";
+    position: absolute;
+    left: 75px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 8px solid transparent;
+    border-right-color: #1e293b;
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.sidebar.collapsed .sidebar-link:hover::before {
+    opacity: 1;
+    transform: translateY(-50%) translateX(5px);
+}
+
+/* Empty state */
+.sidebar-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #64748b;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.expanded {
+        transform: translateX(0);
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
 }

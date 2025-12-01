@@ -1,204 +1,448 @@
 .blog-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: "Segoe UI", sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+    padding-top: 90px;
+    padding-bottom: 100px;
 }
 
+/* Hero Banner */
 .blog-banner {
+    background: linear-gradient(135deg, #1e40af 0%, #3730a3 50%, #6d28d9 100%);
+    color: white;
     text-align: center;
-    margin-bottom: 30px;
-    background-color: #0075fa;
-    border-radius: 10px;
-    padding: 10px;
+    padding: 100px 20px 120px;
+    margin-bottom: -60px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+    /* Override default radius for full-width banner feel */
+}
+
+.blog-banner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.08" d="M0,96L48,112C96,128,192,160,288,176C384,192,480,192,576,186.7C672,181,768,171,864,154.7C960,139,1056,117,1152,112C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') bottom no-repeat;
+    background-size: cover;
+    z-index: 1;
+}
+
+.blog-banner h1,
+.blog-banner p {
+    position: relative;
+    z-index: 2;
+    /* Ensure text is above the wave effect */
 }
 
 .blog-banner h1 {
-    font-size: 2rem;
-    color: #ffffff;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 16px;
+    animation: fadeInUp 1s ease-out;
 }
 
 .blog-banner p {
-    color: #ffffff;
+    font-size: 1.4rem;
+    opacity: 0.95;
+    max-width: 700px;
+    margin: 0 auto;
+    animation: fadeInUp 1.2s ease-out;
 }
 
+/* Card lọc tìm kiếm */
 .blog-filter {
-    background-color: rgba(255, 255, 255, 1);
-    /* nền xám nhạt */
-    border: 1px solid #e5e7eb;
-    /* viền nhẹ */
-    border-radius: 12px;
-    padding: 15px 20px;
-    margin-bottom: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    /* khoảng cách giữa search và filter-group */
+    background: white;
+    border-radius: 28px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    margin: -80px auto 60px;
+    max-width: 1200px;
+    position: relative;
+    z-index: 10;
+    border: 1px solid #e0e7ff;
 }
 
-/* Ô tìm kiếm */
 .search-box {
     position: relative;
-    width: 100%;
+    margin-bottom: 24px;
 }
 
 .search-box input {
     width: 100%;
-    padding: 10px 40px 10px 15px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
+    padding: 18px 20px 18px 56px;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
     outline: none;
-    font-size: 0.95rem;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.2);
 }
 
 .search-box .icon {
     position: absolute;
-    right: 12px;
+    left: 20px;
     top: 50%;
     transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: #94a3b8;
+    /* Tông màu icon xám nhẹ */
 }
 
-/* Nhóm filter */
 .filter-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    /* khoảng cách giữa các nhóm */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: end;
 }
 
-/* Checkbox loại bài viết */
-/* Checkbox loại bài viết */
 .filter-types {
     display: flex;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 16px;
 }
 
 .filter-types label {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
+    gap: 8px;
+    font-weight: 600;
     color: #374151;
-    background: #fff;
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
     cursor: pointer;
-    transition: background 0.2s;
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    transition: all 0.3s;
 }
 
 .filter-types label:hover {
-    background: #f3f4f6;
+    background: #e0e7ff;
+    transform: translateY(-2px);
 }
 
-.filter-types input[type="checkbox"] {
-    width: 14px;
-    /* thu nhỏ checkbox */
-    height: 14px;
-    cursor: pointer;
+/* Tùy chỉnh Checkbox mặc định (dựa trên JSX cũ, nên dùng thuộc tính mặc định) */
+.checkbox-label input[type="checkbox"] {
+    accent-color: #3b82f6;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    /* Reset margin */
 }
 
-/* Nhóm lọc nâng cao */
+/* Đảm bảo style cho input và date filter */
 .filter-advanced {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     flex-wrap: wrap;
-    align-items: center;
 }
 
-.filter-advanced input[type="text"],
-.filter-advanced input[type="date"] {
-    padding: 6px 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.9rem;
+.filter-advanced input {
+    flex-grow: 1;
+    /* Cho phép input lấp đầy khoảng trống */
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    font-size: 1rem;
+    color: #374151;
+}
+
+.filter-advanced input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .date-filter {
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+    gap: 12px;
 }
 
-.date-filter label {
-    font-size: 0.85rem;
-    color: #374151;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.date-filter input {
+    flex-basis: 50%;
 }
 
 
-
+/* Danh sách bài viết – Card siêu đẹp */
 .blog-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 32px;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+    /* Thêm padding ngang cho list */
 }
 
 .news-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    background: white;
+    border-radius: 28px;
     overflow: hidden;
-    background: #fff;
-    transition: transform 0.2s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #e0e7ff;
 }
 
 .news-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-16px);
+    box-shadow: 0 30px 80px rgba(59, 130, 246, 0.25);
 }
 
 .news-card img {
     width: 100%;
-    height: 180px;
+    height: 220px;
     object-fit: cover;
+    transition: transform 0.7s;
+}
+
+.news-card:hover img {
+    transform: scale(1.1);
 }
 
 .news-content {
-    padding: 15px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
-.news-content h4 {
-    margin: 8px 0;
-    font-size: 1.2rem;
-    color: #111827;
+.news-content .news-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.news-content span:first-child {
+    background: #f8fafc;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* Badge loại bài */
+/* Giả định JSX thêm thuộc tính data-category vào thẻ span đầu tiên trong news-meta */
+.news-meta>span:first-child[data-category="Thông báo"],
+.news-card[data-category="Thông báo"] .news-meta>span:first-child {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+}
+
+.news-meta>span:first-child[data-category="Hướng dẫn"],
+.news-card[data-category="Hướng dẫn"] .news-meta>span:first-child {
+    background: #fef3c7 !important;
+    color: #92400e !important;
+}
+
+.news-meta>span:first-child[data-category="Tài liệu"],
+.news-card[data-category="Tài liệu"] .news-meta>span:first-child {
+    background: #d1fae5 !important;
+    color: #065f46 !important;
+}
+
+
+/* Badge riêng tư */
+.badge.private {
+    /* Đảm bảo style này áp dụng cho badge riêng tư, không phải loại bài */
+    background: #e9d5ff;
+    color: #6b21a8;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 6px 14px !important;
+    border-radius: 20px;
+}
+
+.news-content h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 12px 0 16px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .news-content p {
-    margin: 4px 0;
-    font-size: 0.95rem;
-    color: #374151;
+    color: #64748b;
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 20px;
+    flex-grow: 1;
+    /* Cho phép đoạn trích giãn nở */
 }
 
-.news-content a {
-    display: inline-block;
-    margin-top: 8px;
-    color: #2563eb;
+.news-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #64748b;
+    padding-top: 20px;
+    border-top: 1px dashed #f1f5f9;
+}
+
+.news-footer a {
+    color: #3b82f6;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: 500;
+}
+
+.news-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Loading & Empty state */
+.loading,
+.no-results {
+    text-align: center;
+    padding: 80px 20px;
+    font-size: 1.5rem;
+    color: #64748b;
+}
+
+.loading::after {
+    content: "";
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border: 6px solid #e0e7ff;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 20px;
 }
 
 .no-results {
-    text-align: center;
-    color: #9ca3af;
-    font-style: italic;
+    background: white;
+    border-radius: 28px;
+    padding: 100px 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    max-width: 900px;
+    margin: 40px auto;
 }
 
+/* Nút Xem thêm */
 .blog-loadmore {
     text-align: center;
-    margin-top: 25px;
+    margin-top: 80px;
 }
 
 .blog-loadmore button {
-    padding: 10px 20px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
     border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: #fff;
+    padding: 18px 48px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 50px;
     cursor: pointer;
+    box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+    transition: all 0.4s;
 }
 
 .blog-loadmore button:hover {
-    background: #1d4ed8;
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 25px 60px rgba(59, 130, 246, 0.6);
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1250px) {
+
+    /* Điều chỉnh blog-filter để nó không vượt quá 100% viewport */
+    .blog-filter {
+        margin: -80px 20px 60px;
+    }
+}
+
+@media (max-width: 992px) {
+    .blog-filter {
+        padding: 24px;
+        margin: -80px 15px 50px;
+    }
+
+    .filter-group {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .filter-advanced {
+        flex-direction: column;
+    }
+
+    .filter-advanced input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .blog-banner {
+        padding: 80px 15px 100px;
+    }
+
+    .blog-banner h1 {
+        font-size: 2.5rem;
+    }
+
+    .blog-banner p {
+        font-size: 1.2rem;
+    }
+
+    .blog-list {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+        gap: 24px;
+    }
+
+    .news-card {
+        margin: 0;
+    }
+
+    .news-card img {
+        height: 180px;
+    }
+
+    .news-content h3 {
+        font-size: 1.3rem;
+    }
+
+    .news-content {
+        padding: 20px;
+    }
+
+    .blog-loadmore button {
+        padding: 14px 36px;
+        font-size: 1.1rem;
+    }
 }

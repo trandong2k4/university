@@ -1,42 +1,29 @@
 import React, { useState, useEffect } from "react";
+import apiClient from "/src/api/apiClient";
 import "../../styles/admin/manageSchedule.css";
 
 export default function ManageSchedule() {
-    // ========== GIỜ HỌC ==========
     const [gioHocs, setGioHocs] = useState([]);
     const [lichHocs, setLichHocs] = useState([]);
-    const [buoiHocs, setBuoiHocs] = useState([]);
-    const [monHocs, setMonHocs] = useState([]);
-    const [phongs, setPhongs] = useState([]);
-    const [kiHocs, setKiHocs] = useState([]);
     const [selected, setSelected] = useState(null);
 
     // Modal control
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalMode, setModalMode] = useState("add");
-    const [modalType, setModalType] = useState(""); // "giohoc" | "lichhoc" | "buoihoc"
+    const [modalMode, setModalMode] = useState("add"); // add | edit | view
+    const [modalType, setModalType] = useState(""); // "giohoc" | "lichhoc"
 
     const [formData, setFormData] = useState({});
 
-    // 🔹 Fetch tất cả dữ liệu khi component mount
+    // Fetch dữ liệu
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [timesRes, schedulesRes, sessionsRes, subjectsRes, roomsRes, semestersRes] = await Promise.all([
+                const [timesRes, schedulesRes] = await Promise.all([
                     apiClient.get("/class_times"),
                     apiClient.get("/schedules"),
-                    apiClient.get("/class_sessions"),
-                    apiClient.get("/subjects"),
-                    apiClient.get("/rooms"),
-                    apiClient.get("/semesters")
                 ]);
-
-                setGioHocs(timesRes.data);
-                setLichHocs(schedulesRes.data);
-                setBuoiHocs(sessionsRes.data);
-                setMonHocs(subjectsRes.data);
-                setPhongs(roomsRes.data);
-                setKiHocs(semestersRes.data);
+                setGioHocs(timesRes.data);        // GioHocResponseDTO[]
+                setLichHocs(schedulesRes.data);   // LichHocResponseDTO[]
             } catch (err) {
                 console.error("Lỗi fetch schedule data:", err.response?.data || err);
             }
@@ -44,13 +31,11 @@ export default function ManageSchedule() {
         fetchData();
     }, []);
 
-
-    // ======== MODAL LOGIC ========
+    // Modal logic
     const openModal = (type, mode, item = null) => {
         setModalType(type);
         setModalMode(mode);
-        if (item) setFormData(item);
-        else setFormData({});
+        setFormData(item ? item : {});
         setIsModalOpen(true);
     };
 
@@ -64,10 +49,12 @@ export default function ManageSchedule() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // 🔹 Xử lý lưu (thêm/sửa)
+    // Lưu (thêm/sửa)
     const handleSave = async (e) => {
         e.preventDefault();
-        let url = "", list = [], setList;
+        let url = "";
+        let list = [];
+        let setList;
 
         if (modalType === "giohoc") {
             url = modalMode === "add" ? "/class_times" : `/class_times/${formData.id}`;
@@ -75,9 +62,6 @@ export default function ManageSchedule() {
         } else if (modalType === "lichhoc") {
             url = modalMode === "add" ? "/schedules" : `/schedules/${formData.id}`;
             list = lichHocs; setList = setLichHocs;
-        } else if (modalType === "buoihoc") {
-            url = modalMode === "add" ? "/class_sessions" : `/class_sessions/${formData.id}`;
-            list = buoiHocs; setList = setBuoiHocs;
         }
 
         try {
@@ -96,21 +80,15 @@ export default function ManageSchedule() {
         }
     };
 
-    // 🔹 Xử lý xóa
+    // Xóa
     const handleDelete = async (type, id) => {
-        const mapApi = {
-            giohoc: "/class_times",
-            lichhoc: "/schedules",
-            buoihoc: "/class_sessions"
-        };
-
+        const mapApi = { giohoc: "/class_times", lichhoc: "/schedules" };
         if (!window.confirm("Bạn có chắc muốn xóa mục này?")) return;
 
         try {
             await apiClient.delete(`${mapApi[type]}/${id}`);
             if (type === "giohoc") setGioHocs(gioHocs.filter((g) => g.id !== id));
             if (type === "lichhoc") setLichHocs(lichHocs.filter((l) => l.id !== id));
-            if (type === "buoihoc") setBuoiHocs(buoihocs.filter((b) => b.id !== id));
         } catch (err) {
             console.error("Lỗi xóa dữ liệu:", err.response?.data || err);
             alert("Xóa thất bại!");
@@ -119,20 +97,18 @@ export default function ManageSchedule() {
 
     return (
         <main className="schedule-container">
-            <h1 className="title">📚 Quản lý Lịch học – Buổi học – Giờ học</h1>
+            <h1 className="title">📚 Quản lý Lịch học & Giờ học</h1>
 
-            {/* === GIỜ HỌC === */}
+            {/* Giờ học */}
             <section className="section">
                 <h2>🕒 Giờ học</h2>
-                <div className="actions">
-                    <button className="btn btn-blue" onClick={() => openModal("giohoc", "add")}>Thêm</button>
-                </div>
+                <button className="btn btn-blue" onClick={() => openModal("giohoc", "add")}>Thêm</button>
                 <table>
                     <thead>
                         <tr><th>Mã</th><th>Tên giờ</th><th>Bắt đầu</th><th>Kết thúc</th><th>Hành động</th></tr>
                     </thead>
                     <tbody>
-                        {gioHocs.map((g) => (
+                        {gioHocs.map(g => (
                             <tr key={g.id}>
                                 <td>{g.maGioHoc}</td>
                                 <td>{g.tenGioHoc}</td>
@@ -148,52 +124,22 @@ export default function ManageSchedule() {
                 </table>
             </section>
 
-            {/* === BUỔI HỌC === */}
+            {/* Lịch học */}
             <section className="section">
-                <h2>📆 Buổi học</h2>
-                <div className="actions">
-                    <button className="btn btn-blue" onClick={() => openModal("buoihoc", "add")}>Thêm</button>
-                </div>
+                <h2>📘 Lịch học</h2>
+                <button className="btn btn-blue" onClick={() => openModal("lichhoc", "add")}>Thêm</button>
                 <table>
                     <thead>
                         <tr><th>Ngày</th><th>Thứ</th><th>Giờ học</th><th>Môn học</th><th>Ghi chú</th><th>Hành động</th></tr>
                     </thead>
                     <tbody>
-                        {buoiHocs.map((b) => (
-                            <tr key={b.id}>
-                                <td>{b.ngayHoc}</td>
-                                <td>{b.thuTrongTuan}</td>
-                                <td>{b.tenGioHoc}</td>
-                                <td>{b.tenMonHoc}</td>
-                                <td>{b.ghiChu}</td>
-                                <td>
-                                    <button className="btn btn-yellow" onClick={() => openModal("buoihoc", "edit", b)}>Sửa</button>
-                                    <button className="btn btn-red" onClick={() => handleDelete("buoihoc", b.id)}>Xóa</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
-
-            {/* === LỊCH HỌC === */}
-            <section className="section">
-                <h2>📘 Lịch học</h2>
-                <div className="actions">
-                    <button className="btn btn-blue" onClick={() => openModal("lichhoc", "add")}>Thêm</button>
-                </div>
-                <table>
-                    <thead>
-                        <tr><th>Môn học</th><th>Phòng học</th><th>Kỳ học</th><th>Bắt đầu</th><th>Kết thúc</th><th>Hành động</th></tr>
-                    </thead>
-                    <tbody>
-                        {lichHocs.map((l) => (
+                        {lichHocs.map(l => (
                             <tr key={l.id}>
+                                <td>{l.ngayHoc}</td>
+                                <td>{l.thuTrongTuan}</td>
+                                <td>{l.tenGioHoc}</td>
                                 <td>{l.tenMonHoc}</td>
-                                <td>{l.tenPhongHoc}</td>
-                                <td>{l.tenKiHoc}</td>
-                                <td>{l.ngayBatDau}</td>
-                                <td>{l.ngayKetThuc}</td>
+                                <td>{l.ghiChu}</td>
                                 <td>
                                     <button className="btn btn-yellow" onClick={() => openModal("lichhoc", "edit", l)}>Sửa</button>
                                     <button className="btn btn-red" onClick={() => handleDelete("lichhoc", l.id)}>Xóa</button>
@@ -204,7 +150,7 @@ export default function ManageSchedule() {
                 </table>
             </section>
 
-            {/* ======= MODAL ======= */}
+            {/* Modal */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-box">
@@ -220,68 +166,6 @@ export default function ManageSchedule() {
                             )}
 
                             {modalType === "lichhoc" && (
-                                <>
-                                    <select
-                                        name="monHocId"
-                                        value={formData.monHocId || ""}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">-- Chọn môn học --</option>
-                                        {monHocs.map((m) => (
-                                            <option key={m.id} value={m.id}>
-                                                {m.tenMonHoc}
-                                            </option>
-                                        ))}
-                                    </select>
-
-                                    <select
-                                        name="phongId"
-                                        value={formData.phongId || ""}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">-- Chọn phòng học --</option>
-                                        {phongs.map((p) => (
-                                            <option key={p.id} value={p.id}>
-                                                {p.tenPhongHoc}
-                                            </option>
-                                        ))}
-                                    </select>
-
-                                    <select
-                                        name="kiHocId"
-                                        value={formData.kiHocId || ""}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">-- Chọn kỳ học --</option>
-                                        {kiHocs.map((k) => (
-                                            <option key={k.id} value={k.id}>
-                                                {k.tenKiHoc}
-                                            </option>
-                                        ))}
-                                    </select>
-
-                                    <input
-                                        type="date"
-                                        name="ngayBatDau"
-                                        value={formData.ngayBatDau || ""}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                    <input
-                                        type="date"
-                                        name="ngayKetThuc"
-                                        value={formData.ngayKetThuc || ""}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </>
-                            )}
-
-
-                            {modalType === "buoihoc" && (
                                 <>
                                     <input type="date" name="ngayHoc" value={formData.ngayHoc || ""} onChange={handleChange} />
                                     <input name="thuTrongTuan" placeholder="Thứ trong tuần" value={formData.thuTrongTuan || ""} onChange={handleChange} />

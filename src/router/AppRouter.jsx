@@ -68,6 +68,7 @@ import ManageDepartments from "../pages/admin/ManageDepartments";
 import ManageUsers from "../pages/admin/ManageUsers";
 import ManageRoles from "../pages/admin/ManageRoles";
 import ManagePermission from "../pages/admin/ManagePermission";
+import ManagePartialClass from "../pages/admin/ManagePartialClass";
 
 export default function AppRouter() {
     return (
@@ -141,6 +142,7 @@ export default function AppRouter() {
                     <Route path="/admin/manage_students" element={<ManageStudents />} />
                     <Route path="/admin/manage_courses" element={<ManageCourses />} />
                     <Route path="/admin/manage_schedule" element={<ManageSchedule />} />
+                    <Route path="/admin/manage_partial_class" element={<ManagePartialClass />} />
                     <Route path="/admin/manage_grades" element={<ManageGrades />} />
                     <Route path="/admin/manage_tuition" element={<ManageTuition />} />
                     <Route path="/admin/manage_credits" element={<ManageCreditRegister />} />

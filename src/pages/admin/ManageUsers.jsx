@@ -11,8 +11,6 @@ export default function ManageUsers() {
     const [formData, setFormData] = useState({
         username: "",
         email: "",
-        firstName: "",
-        lastName: "",
         status: false,
         createDate: "",
     });
@@ -38,8 +36,6 @@ export default function ManageUsers() {
                 id: user.id || "",
                 username: user.username || "",
                 email: user.email || "",
-                firstName: user.firstName || "",
-                lastName: user.lastName || "",
                 status: user.status || "",
                 createDate: user.createDate || "",
             });
@@ -48,8 +44,6 @@ export default function ManageUsers() {
                 username: "",
                 password: "",
                 email: "",
-                firstName: "",
-                lastName: "",
                 status: false,
                 createDate: "",
             });
@@ -137,8 +131,8 @@ export default function ManageUsers() {
                     <thead>
                         <tr>
                             <th>Tên đăng nhập</th>
-                            <th>Họ</th>
-                            <th>Tên</th>
+                            {/* <th>Họ</th>
+                            <th>Tên</th> */}
                             <th>Email</th>
                             <th>Ngày tạo</th>
                             <th>Chi tiết</th>
@@ -152,8 +146,6 @@ export default function ManageUsers() {
                                 className={selectedUser?.id === u.id ? "selected-row" : ""}
                             >
                                 <td>{u.username}</td>
-                                <td>{u.firstName}</td>
-                                <td>{u.lastName}</td>
                                 <td>{u.email}</td>
                                 <td>{u.createDate}</td>
                                 <td>
@@ -211,23 +203,6 @@ export default function ManageUsers() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="abc@gmail.com"
-                                readOnly={modalMode === "view"}
-                            />
-
-                            <input
-                                type="text"
-                                name="firstName"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                placeholder="Họ"
-                                readOnly={modalMode === "view"}
-                            />
-                            <input
-                                type="text"
-                                name="lastName"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                placeholder="Tên"
                                 readOnly={modalMode === "view"}
                             />
 

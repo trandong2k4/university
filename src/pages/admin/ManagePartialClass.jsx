@@ -109,9 +109,9 @@ export default function ManageMajors() {
     return (
         <main className="container">
             <section className="banner-section">
-                <h1 className="banner-title">Quản lý Ngành</h1>
+                <h1 className="banner-title">Quản lý Lớp học phần</h1>
                 <p className="banner-subtitle">
-                    Quản lý thông tin các ngành đào tạo trong hệ thống.
+                    Quản lý lớp đào tạo trong hệ thống.
                 </p>
             </section>
 
