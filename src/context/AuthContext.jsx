@@ -26,13 +26,13 @@ export const AuthProvider = ({ children }) => {
         // ⭐ Luôn lưu token để F5 không bị mất login
         const nextUser = {
             id: data.id ?? null,
+            maid: data.maid,
             name: data.username ?? data.name ?? null,
             role: normalizeRole(data.mrole ?? data.role),
             token: data.token ?? null,
         };
 
         setUser(nextUser);
-
         // ⭐ Luôn lưu vào localStorage (hoặc dùng rememberMe nếu bạn muốn)
         localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
     };

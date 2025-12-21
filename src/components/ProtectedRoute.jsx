@@ -8,7 +8,7 @@ export default function ProtectedRoute({ roles }) {
     if (loading) return <div className="loading">Đang tải...</div>;
 
     // Sau khi load xong → kiểm tra đăng nhập
-    if (!user) return <Navigate to="/login" replace />;
+    if (!user) return <Navigate to="/auth/login" replace />;
 
     // Kiểm tra role
     if (roles && roles.length > 0) {

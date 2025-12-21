@@ -41,7 +41,7 @@ export default function ManageCourses() {
                 maMonHoc: "CS" + (courses.length + 1) * 100,
                 tenMonHoc: "",
                 moTa: "",
-                tongSoTinChi: 0,
+                tongSoTinChi: 1,
             });
         }
         setIsModalOpen(true);

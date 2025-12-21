@@ -29,7 +29,7 @@ const MENU = {
         { to: "/student/grades", label: "Điểm", icon: <FaRegChartBar /> },
         // { to: "/student/subjects", label: "Môn học", icon: <FaBook /> },
         { to: "/student/register-credit", label: "Đăng ký tín chỉ", icon: <FaClipboardList /> },
-        { to: "/student/", label: "Chương trình đào tạo", icon: <FaClipboardList /> },
+        { to: "/student/training-program", label: "Chương trình đào tạo", icon: <FaClipboardList /> },
         // { to: "/student/cancel-credit", label: "Hủy tín chỉ", icon: <FaTimesCircle /> },
     ],
 
@@ -96,7 +96,7 @@ export default function Sidebar({ userRole }) {
         <aside className={`sidebar ${open ? "expanded" : "collapsed"}`}>
             <div className="sidebar-header">
                 <h2 className="sidebar-title">
-                    {open ? "Learning Hub" : <FaBars />}
+                    {open ? "Learning" : <FaBars />}
                 </h2>
                 <button
                     className="sidebar-toggle"

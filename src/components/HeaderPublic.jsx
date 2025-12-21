@@ -7,11 +7,11 @@ export default function HeaderPublic() {
     return (
         <header className="header">
             <div className="header-logo">
-                <Link className="header-logo-text" to="/Dashboard">Learning Hub</Link>
+                <Link className="header-logo-text" to="/">Learning Hub</Link>
             </div>
             <nav className="header-nav">
 
-                <Link to="/Dashboard">Trang chủ</Link>
+                <Link to="/">Trang chủ</Link>
                 <Link to="/about">Giới thiệu</Link>
                 <Link to="/nganh">Ngành học</Link>
                 <Link to="/blog">Tin tức</Link>
@@ -19,7 +19,7 @@ export default function HeaderPublic() {
 
             </nav >
             <div className="text-login">
-                <Link className="btn-login" to="/login">Đăng nhập</Link>
+                <Link className="btn-login" to="/auth/login">Đăng nhập</Link>
             </div>
         </header >
     );

@@ -1,5 +1,5 @@
 .nganh-page {
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 20px;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -22,48 +22,62 @@
 }
 
 /* Filter section */
-/* Container filter */
 .filter-section {
-    display: flex;
-    gap: 15px;
-    /* khoảng cách giữa các filter */
+    display: flex !important;
+    /* Kích hoạt Flexbox để xếp ngang */
+    justify-content: center;
+    /* Căn giữa 2 phần tử (hoặc dùng flex-start để căn trái) */
     align-items: center;
+    /* Căn giữa theo trục dọc (tránh cái cao cái thấp) */
+    gap: 20px;
+    /* Khoảng cách giữa input và select */
     margin: 20px 0;
+    /* Khoảng cách với banner và danh sách bên dưới */
     flex-wrap: wrap;
-    /* nếu màn nhỏ thì tự xuống hàng */
+    /* Tự động xuống dòng khi màn hình quá nhỏ (điện thoại) */
 }
 
-/* Input search */
-.filter-section input[type="text"] {
-    flex: 1;
-    /* chiếm hết phần còn lại */
-    min-width: 220px;
-    padding: 10px 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    outline: none;
-}
-
-.filter-section input[type="text"]:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-/* Dropdown chọn khoa */
+/* Style chung cho cả input và select */
+.filter-section input,
 .filter-section select {
-    min-width: 200px;
-    padding: 10px 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background: #fff;
+    padding: 10px 15px;
+    /* Tạo độ thoáng bên trong */
+    font-size: 16px;
+    /* Cỡ chữ dễ đọc */
+    border: 1px solid #ccc;
+    /* Viền xám nhẹ */
+    border-radius: 6px;
+    /* Bo tròn góc */
     outline: none;
+    /* Bỏ viền xanh mặc định khi click */
+    min-width: 250px;
+    /* Đảm bảo độ rộng tối thiểu */
+    transition: all 0.3s ease;
+    /* Hiệu ứng mượt khi hover/focus */
 }
 
+/* Hiệu ứng khi người dùng click vào */
+.filter-section input:focus,
 .filter-section select:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    border-color: #007bff;
+    /* Đổi màu viền khi nhập liệu (màu xanh dương) */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    /* Đổ bóng nhẹ */
+}
+
+/* Responsive: Trên điện thoại thì cho full chiều rộng */
+@media (max-width: 768px) {
+    .filter-section {
+        flex-direction: column;
+        /* Xếp dọc trên mobile */
+    }
+
+    .filter-section input,
+    .filter-section select {
+        width: 100%;
+        /* Full màn hình */
+        min-width: unset;
+    }
 }
 
 
@@ -155,6 +169,12 @@
 }
 
 /* List ngành */
+.list-nganh {
+    background: #ffffff50;
+    padding: 20px;
+    border-radius: 10px;
+}
+
 .list-nganh ul {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -178,7 +198,7 @@
 }
 
 .nganh-card h3 {
-    font-size: 1.2rem;
+    font-size: 1.2rem;  
     color: #34495e;
     margin-bottom: 10px;
 }

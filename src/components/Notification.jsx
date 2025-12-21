@@ -1,11 +1,10 @@
-
-
+// src/components/NotificationFloating.jsx
 import { useState, useEffect } from "react";
 import { Bell, X, Clock, ChevronRight } from "lucide-react";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import apiClient from "/src/api/apiClient";
-import "../styles/components/notification.css"
+import "../styles/components/notification.css";
 
 export default function NotificationFloating({ userRole }) {
     const path = userRole?.toLowerCase();
@@ -13,46 +12,50 @@ export default function NotificationFloating({ userRole }) {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchNoti = async () => {
+    const fetchNotifications = async () => {
         try {
             setLoading(true);
             const res = await apiClient.get("/posts");
             const filtered = (res.data || [])
                 .filter(p => p.loaiBaiViet === "THONG_BAO" && p.trangThai === "CONG_KHAI")
                 .sort((a, b) => new Date(b.ngayDang) - new Date(a.ngayDang))
-                .slice(0, 8); // Tối đa 8 cái
+                .slice(0, 10);
+
             setNotifications(filtered);
         } catch (err) {
-            console.error(err);
+            console.error("Lỗi tải thông báo:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    const toggleChat = () => setIsOpen(!isOpen);
-
     useEffect(() => {
-        fetchNoti();
-        const interval = setInterval(fetchNoti, 3 * 60 * 1000); // Refresh mỗi 3 phút
+        fetchNotifications();
+        const interval = setInterval(fetchNotifications, 3 * 60 * 1000); // 3 phút/lần
         return () => clearInterval(interval);
     }, []);
 
     const formatTime = (dateStr) => {
-        const date = new Date(dateStr);
-        const now = new Date();
-        const diff = now - date;
-        const minutes = Math.floor(diff / 60000);
-        if (minutes < 1) return "Vừa xong";
-        if (minutes < 60) return `${minutes} phút trước`;
-        if (minutes < 1440) return `${Math.floor(minutes / 60)} giờ trước`;
-        return format(date, "dd/MM", { locale: vi });
+        if (!dateStr) return "Vừa xong";
+        try {
+            return formatDistanceToNow(new Date(dateStr), {
+                addSuffix: true,
+                locale: vi,
+            });
+        } catch {
+            return "Không xác định";
+        }
     };
 
     return (
         <div className="noti-container">
-            {/* Nút nổi */}
-            <button title="Thông báo" onClick={() => setIsOpen(!isOpen)} className="noti-toggle">
-                <Bell size={24} />
+            {/* Nút chuông nổi */}
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="noti-toggle"
+                title="Thông báo"
+            >
+                <Bell size={24} strokeWidth={2} />
                 {notifications.length > 0 && (
                     <span className="noti-badge">
                         {notifications.length > 9 ? "9+" : notifications.length}
@@ -60,15 +63,15 @@ export default function NotificationFloating({ userRole }) {
                 )}
             </button>
 
-            {/* Popup nhỏ gọn */}
+            {/* Panel thông báo */}
             {isOpen && (
                 <>
                     <div className="noti-overlay" onClick={() => setIsOpen(false)} />
                     <div className="noti-panel">
                         <div className="noti-header">
-                            <h3>Thông báo</h3>
+                            <h3>Thông báo mới</h3>
                             <button onClick={() => setIsOpen(false)} className="noti-close">
-                                <X size={18} />Đóng
+                                <X size={18} />
                             </button>
                         </div>
 
@@ -76,21 +79,22 @@ export default function NotificationFloating({ userRole }) {
                             {loading ? (
                                 <div className="noti-loading">Đang tải...</div>
                             ) : notifications.length === 0 ? (
-                                <div className="noti-empty">Chưa có thông báo mới</div>
+                                <div className="noti-empty">Chưa có thông báo nào</div>
                             ) : (
-                                notifications.slice(0, 3).map((n) => (
+                                notifications.slice(0, 5).map((n) => (
                                     <div
                                         key={n.id}
                                         className="noti-item"
                                         onClick={() => {
-                                            window.location.href = `/${path}/notifications/${n.id}`;
+                                            window.location.href = `/${path}/notifications`;// /${n.id}
+                                            setIsOpen(false);
                                         }}
                                     >
-                                        <div className="noti-icon">
+                                        <div className="noti-avatar">
                                             {n.hinhAnhUrl ? (
-                                                <img src={n.hinhAnhUrl} alt="" />
+                                                <img src={n.hinhAnhUrl} alt="thumb" />
                                             ) : (
-                                                <div className="noti-icon-placeholder" />
+                                                <div className="noti-avatar-placeholder" />
                                             )}
                                         </div>
                                         <div className="noti-content">
@@ -106,7 +110,7 @@ export default function NotificationFloating({ userRole }) {
                             )}
                         </div>
 
-                        {notifications.length > 3 && (
+                        {notifications.length > 5 && (
                             <div className="noti-footer">
                                 <button
                                     onClick={() => {

@@ -25,16 +25,6 @@ export default function Nganh() {
 
     }, [search, khoaFilter]);
 
-
-    // Gọi API lấy danh sách Khoa
-    // useEffect(() => {
-    //     apiClient
-    //         .get("/departments")
-    //         .then((res) => setKhoas(res.data))   // Đã sửa: không dùng setKhoaFilter
-    //         .catch((err) => console.error("Lỗi lấy khoa:", err));
-    // }, []);
-
-
     // Lọc ngành theo tên và khoa
     const filteredNganhs = nganhs.filter((nganh) => {
         const matchName = nganh.tenNganh.toLowerCase().includes(search.toLowerCase());
@@ -51,6 +41,7 @@ export default function Nganh() {
             <section className="banner">
                 <h1>Ngành học</h1>
                 <p>Khám phá về ngành học.</p>
+
             </section>
 
             {/* Search & Filter */}

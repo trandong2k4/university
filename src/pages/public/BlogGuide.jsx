@@ -17,7 +17,7 @@ const BlogGuide = () => {
     // Hiển thị ban đầu 6 bài
     const [visibleCount, setVisibleCount] = useState(6);
 
-    const postTypes = ["Thông báo", "Hướng dẫn", "Tài liệu", "Cảnh báo"];
+    const postTypes = ["THONG_BAO", "HUONG_DAN", "TAI_LIEU", "CANH_BAO"];
 
     useEffect(() => {
         apiClient

@@ -53,7 +53,7 @@ export default function ForgotPassword() {
         </form>
 
         <div className="fp-footer">
-          <Link to="/login" className="fp-link">
+          <Link to="/auth/login" className="fp-link">
             Quay lại đăng nhập
           </Link>
         </div>

@@ -27,6 +27,7 @@ import TeacherDashboard from "../pages/dashboard/TeacherDashboard";
 
 // Auth pages
 import Login from "../pages/auth/Login";
+import AdminLogin from "../pages/auth/AdminLogin";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 
@@ -35,10 +36,12 @@ import Profile from "../pages/student/Profile";
 import Courses from "../pages/student/Courses";
 import Schedule from "../pages/student/Schedule";
 import Grades from "../pages/student/Grades";
+import BlogStudent from "../pages/student/BlogStudent";
 import Tuition from "../pages/student/Tuition";
 import RegisterCredit from "../pages/student/RegisterCredit";
 import CancelCredit from "../pages/student/CancelCredit";
 import ChatbotStudent from "../pages/student/ChatbotPage";
+import Chuongtrinhdaotao from "../pages/student/Chuongtrinhdaotao";
 
 // Teacher pages
 import StudentInfo from "../pages/teacher/StudentInfo";
@@ -71,13 +74,14 @@ import ManageRoles from "../pages/admin/ManageRoles";
 import ManagePermission from "../pages/admin/ManagePermission";
 import ManagePartialClass from "../pages/admin/ManagePartialClass";
 
-export default function AppRouter() {
+export default function AppRouter(id) {
     return (
         <Routes>
 
             {/* Auth routes */}
             <Route element={<AuthLayout />}>
-                <Route path="/login" element={<Login />} />
+                <Route path="auth/login" element={<Login />} />
+                <Route path="auth/admin/login" element={<AdminLogin />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
             </Route>
@@ -85,7 +89,6 @@ export default function AppRouter() {
             {/* Public */}
             <Route path="/" element={<PublicLayout />}>
                 <Route index element={<PublicDashboard />} />
-                <Route path="/Dashboard" element={<PublicDashboard />} />
                 <Route path="blog" element={<BlogGuide />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />
@@ -105,10 +108,13 @@ export default function AppRouter() {
                     <Route path="/student/tuition" element={<Tuition />} />
                     <Route path="/student/register-credit" element={<RegisterCredit />} />
                     <Route path="/student/cancel-credit" element={<CancelCredit />} />
-                    <Route path="/chatbotpage" element={<ChatbotStudent />} />
-                    <Route path="/student/blog" element={<BlogGuide />} />
+                    <Route path="/student/chatbot" element={<ChatbotStudent />} />
+                    <Route path="/student/blog" element={<BlogStudent />} />
+                    <Route path={`/student/blog/${id}`} element={<BlogStudent />} />
                     <Route path="/student/nganh" element={<Nganh />} />
-                    <Route path="/student/notification" element={<Notification />} />
+                    <Route path="/student/training-program" element={<Chuongtrinhdaotao />} />
+                    <Route path="/student/notifications" element={<Notification />} />
+                    <Route path={`/student/notifications/${id}`} element={<Notification />} />
                     {/* …other student pages… */}
                 </Route>
             </Route>
@@ -122,7 +128,7 @@ export default function AppRouter() {
                     <Route path="/teacher/schedule" element={<TeacherSchedule />} />
                     <Route path="/teacher/grades" element={<StudentGrades />} />
                     <Route path="/teacher/update-grades" element={<UpdateGrades />} />
-                    <Route path="/teacher/notification" element={<Notification />} />
+                    <Route path="/teacher/notifications" element={<Notification />} />
                     {/* …other teacher pages… */}
                 </Route>
             </Route>
@@ -133,7 +139,7 @@ export default function AppRouter() {
                     <Route path="/accountant/tuition" element={<StudentTuition />} />
                     <Route path="/accountant/create" element={<CreateTuition />} />
                     <Route path="/accountant/update" element={<UpdateTuition />} />
-                    <Route path="/accountant/notification" element={<Notification />} />
+                    <Route path="/accountant/notifications" element={<Notification />} />
                     {/* … */}
                 </Route>
             </Route>
@@ -159,7 +165,7 @@ export default function AppRouter() {
                     <Route path="/admin/manage_user" element={<ManageUsers />} />
                     <Route path="/admin/manage_role" element={<ManageRoles />} />
                     <Route path="/admin/manage_permission" element={<ManagePermission />} />
-                    <Route path="/admin/notification" element={<Notification />} />
+                    <Route path="/admin/notifications" element={<Notification />} />
                     {/* … */}
                 </Route>
             </Route>

@@ -36,8 +36,8 @@ export default function ManageStudents() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const resStudents = await apiClient.get("/students");
-                setStudents(resStudents.data);
+                const res = await apiClient.get("/students");
+                setStudents(res.data);
 
                 const resMajors = await apiClient.get("/majors");
                 setNganhs(resMajors.data);

@@ -45,12 +45,12 @@ export default function HeaderPrivate({ userRole }) {
             </nav>
             <div className="logo-icon">
 
-                <Notification />
+                {/* <Notification /> */}
                 {/* <Link to={`/${path}/notification`}>
                     <img title="Thông báo" className="icon-anou" src={anouImg} alt="" />
                 </Link> */}
 
-                <Link className="btn-logout" to="Dashboard">Đăng xuất</Link>
+                <Link className="btn-logout" to="/auth/login">Đăng xuất</Link>
                 <div className="logo-profile">
                     <Link to="/icon/profile">
                         <img title="profile" className="nav-profile" src={profileImg} alt="" />

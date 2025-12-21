@@ -3,8 +3,13 @@ import { Bell, AlertCircle, Calendar, FileText, Image, Clock } from 'lucide-reac
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import apiClient from "/src/api/apiClient";
+import { useAuth } from "../../context/AuthContext";
 
 const NotificationDropdown = () => {
+    const { user } = useAuth();
+    const role = user?.role;
+    const path = role?.toLowerCase();
+
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -175,7 +180,7 @@ const NotificationDropdown = () => {
                                 <button
                                     onClick={() => {
                                         // Điều hướng đến trang danh sách thông báo
-                                        window.location.href = '/notifications';
+                                        window.location.href = `${path}/blog`;
                                     }}
                                     className="text-sm font-medium text-blue-600 hover:text-blue-700"
                                 >

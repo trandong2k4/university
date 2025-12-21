@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "../../styles/auth/login.css";
+import "../../styles/auth/login.css"; // Có thể tạo file CSS riêng cho admin nếu cần khác biệt
 import umsImage from "/src/assets/ums.png";
 import apiClient from "/src/api/apiClient"; // ⚠️ Đảm bảo đúng đường dẫn
 
-export default function Login() {
+export default function AdminLogin() {
     const navigate = useNavigate();
     const { login } = useAuth(); // context lưu thông tin user
     const [params] = useSearchParams();
@@ -32,18 +32,17 @@ export default function Login() {
 
             const data = response.data;
 
+            // Kiểm tra vai trò có phải ADMIN không
+            if (data.mrole?.toUpperCase() !== "ADMIN") {
+                alert("Tài khoản này không phải là quản trị viên. Vui lòng sử dụng trang đăng nhập chính.");
+                return;
+            }
+
             // Lưu thông tin vào context + storage
             login(data, rememberMe);
 
-            // Điều hướng theo role
-            const routes = {
-                STUDENT: "/student/dashboard",
-                TEACHER: "/teacher/dashboard",
-                ACCOUNTANT: "/accountant/tuition",
-            };
-
-            const roleKey = data.mrole?.toUpperCase();
-            navigate(routes[roleKey] || "/dashboard", { replace: true });
+            // Điều hướng đến dashboard admin
+            navigate("/admin/dashboard", { replace: true });
         } catch (err) {
             console.error("Login error:", err);
             alert(
@@ -56,7 +55,7 @@ export default function Login() {
     };
 
     return (
-        <div className="login-container">
+        <div className="login-container"> {/* Có thể thay bằng class riêng như admin-login-container */}
             <div className="comeback-links">
                 <Link className="comeback" to="/">
                     <p className="text-comeback">Trang Chủ</p>
@@ -70,7 +69,7 @@ export default function Login() {
                     </div>
                 </Link>
 
-                <h2 className="login-title">Đăng nhập</h2>
+                <h2 className="login-title">Đăng nhập Quản trị viên</h2>
 
                 <form onSubmit={onSubmit} className="login-form">
                     <div className="login-field">
@@ -116,9 +115,9 @@ export default function Login() {
                     </button>
                 </form>
 
-                <div className="login-links">
+                {/* <div className="login-links">
                     <Link to="/forgot-password">Quên mật khẩu?</Link>
-                </div>
+                </div> */}
             </div>
         </div>
     );
