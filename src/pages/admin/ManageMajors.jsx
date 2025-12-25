@@ -6,235 +6,196 @@ import "../../styles/admin/manageMajors.css";
 export default function ManageMajors() {
     const navigate = useNavigate();
     const [majors, setMajors] = useState([]);
+    const [khoas, setKhoas] = useState([]); // Danh mục khoa cho Dropdown
     const [selectedMajor, setSelectedMajor] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalMode, setModalMode] = useState("add"); // add | edit | view
-    const [khoas, setKhoas] = useState([]);
+    const [modalMode, setModalMode] = useState("add");
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     const [formData, setFormData] = useState({
         id: "",
         maNganh: "",
         tenNganh: "",
         khoaId: "",
-        tenKhoa: "",
     });
 
-    // Fetch danh sách ngành và khoa
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [majorsRes, departmentsRes] = await Promise.all([
-                    apiClient.get("/majors"),
-                    apiClient.get("/departments"),
-                ]);
-                setMajors(majorsRes.data);
-                setKhoas(departmentsRes.data);
-            } catch (err) {
-                console.error("Lỗi fetch dữ liệu:", err.response?.data || err);
-            }
-        };
         fetchData();
     }, []);
 
+    const fetchData = async () => {
+        try {
+            const [resMajors, resKhoas] = await Promise.all([
+                apiClient.get("/majors"),
+                apiClient.get("/departments") // Giả định endpoint lấy danh sách khoa
+            ]);
+            setMajors(resMajors.data);
+            setKhoas(resKhoas.data);
+        } catch (err) {
+            console.error("Lỗi tải dữ liệu:", err);
+        }
+    };
+
+    // Tìm kiếm theo keyword (gọi API search của Controller)
+    const handleSearch = async () => {
+        try {
+            const res = await apiClient.get(`/majors/search?keyword=${searchKeyword}`);
+            setMajors(res.data);
+        } catch (err) {
+            console.error("Lỗi tìm kiếm:", err);
+        }
+    };
+
     const handleOpenModal = (mode, major = null) => {
         setModalMode(mode);
-        if ((mode === "edit" || mode === "view") && major) {
+        if (major) {
             setFormData({
                 id: major.id,
                 maNganh: major.maNganh,
                 tenNganh: major.tenNganh,
                 khoaId: major.khoaId || "",
-                tenKhoa: major.tenKhoa || "",
             });
         } else {
-            setFormData({
-                id: "",
-                maNganh: "NG" + (majors.length + 1) * 100,
-                tenNganh: "",
-                khoaId: "",
-                tenKhoa: "",
-            });
+            setFormData({ id: "", maNganh: "", tenNganh: "", khoaId: "" });
         }
         setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setSelectedMajor(null);
-    };
-
-    const handleChange = (e) => {
-        if (modalMode === "view") return;
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSave = async (e) => {
         e.preventDefault();
         try {
-            let res;
             if (modalMode === "add") {
-                res = await apiClient.post("/majors", formData);
-                setMajors([...majors, res.data]);
-                alert("Thêm ngành thành công!");
-            } else if (modalMode === "edit") {
-                res = await apiClient.put(`/majors/${formData.id}`, formData);
-                setMajors(majors.map((m) => (m.id === res.data.id ? res.data : m)));
-                alert("Cập nhật ngành thành công!");
+                await apiClient.post("/majors", formData);
+            } else {
+                await apiClient.put(`/majors/${formData.id}`, formData);
             }
-            handleCloseModal();
+            fetchData();
+            setIsModalOpen(false);
+            setSelectedMajor(null);
+            alert("Thao tác thành công!");
         } catch (err) {
-            console.error("Lỗi lưu ngành:", err.response?.data || err);
             alert("Thao tác thất bại!");
         }
     };
 
     const handleDelete = async () => {
-        if (!selectedMajor) return alert("Vui lòng chọn ngành để xóa!");
-        if (!window.confirm("Bạn có chắc muốn xóa ngành này?")) return;
-
+        if (!selectedMajor) return alert("Vui lòng chọn một ngành!");
+        if (!window.confirm(`Xóa ngành: ${selectedMajor.tenNganh}?`)) return;
         try {
             await apiClient.delete(`/majors/${selectedMajor.id}`);
-            setMajors(majors.filter((m) => m.id !== selectedMajor.id));
+            setMajors(majors.filter(m => m.id !== selectedMajor.id));
             setSelectedMajor(null);
             alert("Xóa thành công!");
         } catch (err) {
-            console.error("Lỗi xóa ngành:", err.response?.data || err);
             alert("Xóa thất bại!");
         }
     };
 
-    const handleBack = () => navigate("/admin/dashboard");
-
     return (
-        <main className="container">
-            <section className="banner-section">
-                <h1 className="banner-title">Quản lý Ngành</h1>
-                <p className="banner-subtitle">
-                    Quản lý thông tin các ngành đào tạo trong hệ thống.
-                </p>
+        <main className="manage-majors-container">
+            {/* Banner Section */}
+            <section className="banner-header">
+                <h1 className="banner-title">Quản lý Ngành học</h1>
+                <p className="banner-subtitle">Cấu hình danh mục ngành và thông tin đào tạo</p>
             </section>
 
-            <section className="mt-8">
-                <div className="content-box">
-                    <div className="action-buttons">
-                        <button onClick={() => handleOpenModal("add")} className="btn btn-blue">
-                            Thêm ngành
-                        </button>
-                        <button
-                            onClick={() =>
-                                selectedMajor ? handleOpenModal("edit", selectedMajor) : alert("Chọn ngành để sửa!")
-                            }
-                            className="btn btn-yellow"
-                        >
-                            Sửa
-                        </button>
-                        <button onClick={handleDelete} className="btn btn-red">
-                            Xóa
-                        </button>
-                        <div className="flex-grow"></div>
-                        <button onClick={handleBack} className="btn btn-gray">
-                            Quay lại
-                        </button>
+            <section className="content-wrapper">
+                {/* Thanh công cụ: Tìm kiếm + Nút chức năng ngang hàng */}
+                <div className="toolbar-area">
+                    <div className="search-box">
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm ngành..."
+                            value={searchKeyword}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                        />
+                        <button onClick={handleSearch} className="btn-search">Tìm</button>
                     </div>
 
-                    <div className="overflow-x-auto">
-                        <table className="majors-table">
-                            <thead>
-                                <tr>
-                                    <th>Mã ngành</th>
-                                    <th>Tên ngành</th>
-                                    {/* <th>Khoa</th> */}
-                                    <th>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {majors.map((major) => (
-                                    <tr
-                                        key={major.id}
-                                        onClick={() => setSelectedMajor(major)}
-                                        className={selectedMajor?.id === major.id ? "selected-row" : ""}
-                                    >
-                                        <td>{major.maNganh}</td>
-                                        <td>{major.tenNganh}</td>
-                                        {/* <td>{major.tenKhoa}</td> */}
-                                        <td>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleOpenModal("view", major);
-                                                }}
-                                                className="btn btn-gray"
-                                            >
-                                                Xem chi tiết
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                    <div className="group-buttons">
+                        <button onClick={() => handleOpenModal("add")} className="btn btn-blue">
+                            ➕ Thêm mới
+                        </button>
+                        <button
+                            onClick={() => selectedMajor ? handleOpenModal("edit", selectedMajor) : alert("Chọn ngành để sửa")}
+                            className="btn btn-yellow"
+                        >
+                            ✏️ Sửa
+                        </button>
+                        <button onClick={handleDelete} className="btn btn-red">
+                            🗑️ Xóa
+                        </button>
+                        <button onClick={() => navigate("/admin/dashboard")} className="btn btn-gray">
+                            🔙 Quay lại
+                        </button>
                     </div>
+                </div>
+
+                {/* Table Section */}
+                <div className="table-card">
+                    <table className="majors-table">
+                        <thead>
+                            <tr>
+                                <th>Mã Ngành</th>
+                                <th>Tên Ngành</th>
+                                <th>Khoa Trực Thuộc</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {majors.map((m) => (
+                                <tr
+                                    key={m.id}
+                                    onClick={() => setSelectedMajor(m)}
+                                    className={selectedMajor?.id === m.id ? "active-row" : ""}
+                                >
+                                    <td>{m.maNganh}</td>
+                                    <td>{m.tenNganh}</td>
+                                    <td>{m.tenKhoa || "Chưa xác định"}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
+            {/* Modal Form */}
             {isModalOpen && (
                 <div className="modal-overlay">
-                    <div className="modal-box">
-                        <h2>
-                            {modalMode === "edit"
-                                ? "Sửa ngành"
-                                : modalMode === "view"
-                                    ? "Chi tiết ngành"
-                                    : "Thêm ngành"}
-                        </h2>
+                    <div className="modal-content">
+                        <h3>{modalMode === "add" ? "Thêm Ngành Mới" : "Cập nhật Thông tin"}</h3>
                         <form onSubmit={handleSave}>
-                            <input
-                                type="text"
-                                name="maNganh"
-                                value={formData.maNganh}
-                                onChange={handleChange}
-                                readOnly={modalMode !== "add"}
-                            />
-                            <input
-                                type="text"
-                                name="tenNganh"
-                                value={formData.tenNganh}
-                                onChange={handleChange}
-                                readOnly={modalMode === "view"}
-                                placeholder="Tên ngành"
-                            />
-                            {modalMode === "view" ? (
+                            <div className="form-item">
+                                <label>Mã Ngành</label>
                                 <input
-                                    type="text"
-                                    value={formData.tenKhoa || ""}
-                                    readOnly
-                                    placeholder="Tên khoa"
+                                    value={formData.maNganh}
+                                    onChange={(e) => setFormData({ ...formData, maNganh: e.target.value })}
+                                    required
+                                    placeholder="Mã ngành"
                                 />
-                            ) : (
+                            </div>
+                            <div className="form-item">
+                                <label>Tên Ngành</label>
+                                <input
+                                    value={formData.tenNganh}
+                                    onChange={(e) => setFormData({ ...formData, tenNganh: e.target.value })}
+                                    required
+                                    placeholder="Tên ngành"
+                                />
+                            </div>
+                            <div className="form-item">
+                                <label>Khoa</label>
                                 <select
-                                    name="khoaId"
                                     value={formData.khoaId}
-                                    onChange={handleChange}
+                                    onChange={(e) => setFormData({ ...formData, khoaId: e.target.value })}
                                     required
                                 >
                                     <option value="">-- Chọn khoa --</option>
-                                    {khoas.map((khoa) => (
-                                        <option key={khoa.id} value={khoa.id}>
-                                            {khoa.tenKhoa}
-                                        </option>
-                                    ))}
+                                    {khoas.map(k => <option key={k.id} value={k.id}>{k.tenKhoa}</option>)}
                                 </select>
-                            )}
-
-                            <div className="modal-actions">
-                                {modalMode !== "view" && (
-                                    <button type="submit" className="btn btn-green">
-                                        Lưu
-                                    </button>
-                                )}
-                                <button type="button" onClick={handleCloseModal} className="btn btn-gray">
-                                    Đóng
-                                </button>
+                            </div>
+                            <div className="modal-btns">
+                                <button type="submit" className="btn-submit">Lưu</button>
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-close">Hủy</button>
                             </div>
                         </form>
                     </div>

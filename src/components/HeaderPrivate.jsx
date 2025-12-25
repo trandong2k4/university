@@ -9,7 +9,7 @@ import anouImg from "/src/assets/anou.jpg";
 
 export default function HeaderPrivate({ userRole }) {
     const path = userRole?.toLowerCase();
-
+    const link = userRole == "ADMIN" ? "admin/login" : "login";
     return (
         <header className="header">
             <div className="header-logo">
@@ -50,7 +50,7 @@ export default function HeaderPrivate({ userRole }) {
                     <img title="Thông báo" className="icon-anou" src={anouImg} alt="" />
                 </Link> */}
 
-                <Link className="btn-logout" to="/auth/login">Đăng xuất</Link>
+                <Link className="btn-logout" to={`/auth/${link}`}>Đăng xuất</Link>
                 <div className="logo-profile">
                     <Link to="/icon/profile">
                         <img title="profile" className="nav-profile" src={profileImg} alt="" />

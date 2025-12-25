@@ -1,6 +1,6 @@
 .sidebar {
     position: fixed;
-    top: 68px;
+    top: 58px;
     /* Chừa header */
     left: 0;
     height: calc(100vh - 68px);
@@ -20,7 +20,7 @@
 
 /* Khi thu gọn */
 .sidebar.collapsed {
-    width: 70px;
+    width: 80px;
 }
 
 /* Header (Logo + Toggle) */

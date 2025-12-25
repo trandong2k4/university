@@ -2,50 +2,58 @@ import React, { useState, useEffect } from "react";
 import "../../styles/admin/manageUsers.css";
 import apiClient from "/src/api/apiClient";
 
+const INITIAL_FORM_STATE = {
+    id: "",
+    username: "",
+    password: "",
+    email: "",
+    status: true,
+    createDate: "",
+    updateDate: "",
+    note: "",
+    roleId: "",
+};
+
 export default function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalMode, setModalMode] = useState("add");
+    const [modalMode, setModalMode] = useState("view"); // add, edit, view
+    const [formData, setFormData] = useState(INITIAL_FORM_STATE);
 
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        status: false,
-        createDate: "",
-    });
+    // 1. Lấy danh sách user
+    const fetchUsers = async () => {
+        try {
+            const res = await apiClient.get("/users");
+            setUsers(res.data);
+        } catch (err) {
+            console.error("Lỗi fetch users:", err.response?.data || err);
+        }
+    };
 
-    // 🔹 Lấy danh sách user từ backend
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const res = await apiClient.get("/users"); // url sẽ tự cộng baseURL từ apiClient
-                setUsers(res.data);
-            } catch (err) {
-                console.error("Lỗi fetch users:", err.response?.data || err);
-            }
-        };
         fetchUsers();
     }, []);
 
-    // 🔹 Mở modal (thêm / sửa / xem)
+    // 2. Logic Mở Modal
     const openModal = (mode, user = null) => {
         setModalMode(mode);
-        if (user) {
+        if (mode === "add") {
             setFormData({
-                id: user.id || "",
-                username: user.username || "",
-                email: user.email || "",
-                status: user.status || "",
-                createDate: user.createDate || "",
+                ...INITIAL_FORM_STATE,
+                createDate: new Date().toISOString().split("T")[0], // Mặc định ngày hiện tại
             });
-        } else {
+        } else if (user) {
             setFormData({
-                username: "",
-                password: "",
-                email: "",
-                status: false,
-                createDate: "",
+                id: user.id,
+                username: user.username || "",
+                password: "", // Không hiện mật khẩu cũ
+                email: user.email || "",
+                status: user.status ?? true,
+                createDate: user.createDate || "",
+                updateDate: user.updateDate || "",
+                note: user.note || "",
+                roleId: user.roleId || "",
             });
         }
         setIsModalOpen(true);
@@ -53,7 +61,8 @@ export default function ManageUsers() {
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setSelectedUser(null);
+        setFormData(INITIAL_FORM_STATE);
+        // Lưu ý: Không nên reset selectedUser ở đây nếu bạn muốn giữ dòng được chọn sau khi đóng modal xem
     };
 
     const handleChange = (e) => {
@@ -61,30 +70,34 @@ export default function ManageUsers() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // 🔹 Lưu (thêm / sửa)
+    // 3. Lưu (Thêm / Sửa)
     const handleSave = async (e) => {
         e.preventDefault();
+        console.log("Dữ liệu gửi đi:", formData); // Kiểm tra xem có trường 'id' không
+        if (modalMode === "edit" && !formData.id) {
+            alert("Không tìm thấy ID của người dùng!");
+            return;
+        }
         try {
-            let res;
             if (modalMode === "add") {
-                res = await apiClient.post("/users", formData);
+                const res = await apiClient.post("/users", formData);
                 setUsers([...users, res.data]);
-            } else {
-                res = await apiClient.put(`/users/${formData.id}`, formData);
-                setUsers(users.map((u) => (u.id === res.data.id ? res.data : u)));
+                alert("Thêm thành công!");
+            } else if (modalMode === "edit") {
+                const res = await apiClient.put(`/users/${formData.id}`, formData);
+                setUsers(users.map((u) => (u.id === formData.id ? res.data : u)));
+                alert("Cập nhật thành công!");
             }
             closeModal();
         } catch (err) {
-            console.error("Lỗi lưu user:", err.response?.data || err);
-            alert("Thao tác thất bại!");
+            alert("Thao tác thất bại! Vui lòng kiểm tra lại.");
         }
     };
 
-
-    // 🔹 Xóa
+    // 4. Xóa
     const handleDelete = async () => {
-        if (!selectedUser) return alert("Chọn tài khoản để xóa!");
-        if (!window.confirm("Bạn có chắc muốn xóa tài khoản này?")) return;
+        if (!selectedUser) return alert("Vui lòng chọn 1 tài khoản từ bảng trước!");
+        if (!window.confirm(`Bạn có chắc muốn xóa tài khoản ${selectedUser.username}?`)) return;
 
         try {
             await apiClient.delete(`/users/${selectedUser.id}`);
@@ -92,7 +105,6 @@ export default function ManageUsers() {
             setSelectedUser(null);
             alert("Xóa thành công!");
         } catch (err) {
-            console.error("Lỗi xóa user:", err.response?.data || err);
             alert("Xóa thất bại!");
         }
     };
@@ -100,42 +112,30 @@ export default function ManageUsers() {
     return (
         <main className="container">
             <section className="banner-section">
-                <h1 className="banner-title">👤 Quản lý Tài khoản</h1>
-                <p className="banner-subtitle">
-                    quản lý hoạt tài khoản người dùng trong hệ thống.
-                </p>
+                <h1>👤 Quản lý Tài khoản</h1>
+                <p>Hệ thống quản lý người dùng tập trung.</p>
             </section>
 
             <div className="content-box">
                 <div className="action-buttons">
-                    <button onClick={() => openModal("add")} className="btn btn-blue">
-                        ➕ Thêm
-                    </button>
+                    <button onClick={() => openModal("add")} className="btn btn-blue">➕ Thêm mới</button>
                     <button
-                        onClick={() =>
-                            selectedUser
-                                ? openModal("edit", selectedUser)
-                                : alert("Chọn tài khoản để sửa")
-                        }
+                        onClick={() => selectedUser ? openModal("edit", selectedUser) : alert("Chọn 1 dòng để sửa")}
                         className="btn btn-yellow"
                     >
                         ✏️ Sửa
                     </button>
-                    <button onClick={handleDelete} className="btn btn-red">
-                        🗑️ Xóa
-                    </button>
+                    <button onClick={handleDelete} className="btn btn-red">🗑️ Xóa</button>
                 </div>
 
-                {/* 🔹 Bảng hiển thị danh sách */}
                 <table className="users-table">
                     <thead>
                         <tr>
                             <th>Tên đăng nhập</th>
-                            {/* <th>Họ</th>
-                            <th>Tên</th> */}
                             <th>Email</th>
                             <th>Ngày tạo</th>
-                            <th>Chi tiết</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -149,11 +149,13 @@ export default function ManageUsers() {
                                 <td>{u.email}</td>
                                 <td>{u.createDate}</td>
                                 <td>
+                                    <span className={`status-badge ${u.status ? "active" : "locked"}`}>
+                                        {u.status ? "Hoạt động" : "Khoá"}
+                                    </span>
+                                </td>
+                                <td>
                                     <button
-                                        onClick={(ev) => {
-                                            ev.stopPropagation();
-                                            openModal("view", u);
-                                        }}
+                                        onClick={(e) => { e.stopPropagation(); openModal("view", u); }}
                                         className="btn btn-gray"
                                     >
                                         👁️ Xem
@@ -165,83 +167,98 @@ export default function ManageUsers() {
                 </table>
             </div>
 
-            {/* 🔹 Modal Form */}
+            {/* MODAL FORM */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-box">
                         <h2>
-                            {modalMode === "add"
-                                ? "➕ Thêm tài khoản"
-                                : modalMode === "edit"
-                                    ? "✏️ Sửa tài khoản"
-                                    : "👁️ Chi tiết tài khoản"}
+                            {modalMode === "add" ? "➕ Thêm mới" : modalMode === "edit" ? "✏️ Chỉnh sửa" : "👁️ Chi tiết"}
                         </h2>
 
-                        <form onSubmit={handleSave}>
-                            <input
-                                type="text"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                placeholder="Tên đăng nhập"
-                                readOnly={modalMode === "view"}
-                            />
+                        <form onSubmit={handleSave} className="user-form">
+                            <div className="form-group">
+                                <label>Tên đăng nhập</label>
+                                <input
+                                    type="text"
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    readOnly={modalMode === "view"}
+                                    className={modalMode === "view" ? "readonly-input" : ""}
+                                    required
+                                />
+                            </div>
 
                             {modalMode !== "view" && (
-                                <input
-                                    type="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    placeholder="Mật khẩu"
-                                />
+                                <div className="form-group">
+                                    <label>
+                                        Mật khẩu {modalMode === "edit" && "(Bỏ trống nếu không đổi)"}
+                                    </label>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        value={formData.password || ""}
+                                        onChange={handleChange}
+                                        // Chỉ bắt buộc nhập khi ở chế độ "add"
+                                        required={modalMode === "add"}
+                                        placeholder={modalMode === "add" ? "Nhập mật khẩu" : "Nhập mật khẩu mới (nếu muốn đổi)"}
+                                    />
+                                </div>
                             )}
 
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="abc@gmail.com"
-                                readOnly={modalMode === "view"}
-                            />
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    readOnly={modalMode === "view"}
+                                    className={modalMode === "view" ? "readonly-input" : ""}
+                                    required
+                                />
+                            </div>
 
-                            <select
-                                name="status"
-                                value={formData.status === true ? "true" : "false"}
-                                onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
-                                        status: e.target.value === "true",  // ép kiểu
-                                    })
-                                }
-                                disabled={modalMode === "view"}
-                            >
-                                <option value="true">Kích hoạt</option>
-                                <option value="false">Khoá</option>
-                            </select>
+                            <div className="form-group">
+                                <label>Trạng thái</label>
+                                <select
+                                    name="status"
+                                    value={formData.status.toString()}
+                                    onChange={(e) => setFormData({ ...formData, status: e.target.value === "true" })}
+                                    disabled={modalMode === "view"}
+                                >
+                                    <option value="true">Kích hoạt</option>
+                                    <option value="false">Khoá</option>
+                                </select>
+                            </div>
 
-                            <input
-                                type="date"
-                                name="create_date"
-                                value={formData.createDate || ""}
-                                onChange={handleChange}
-                                readOnly={modalMode === "view"}
-                            />
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Ngày tạo</label>
+                                    <input type="date" name="createDate" value={formData.createDate} readOnly className="readonly-input" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Ngày cập nhật</label>
+                                    <input type="date" name="updateDate" value={formData.updateDate} readOnly className="readonly-input" />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Ghi chú</label>
+                                <textarea
+                                    name="note"
+                                    value={formData.note}
+                                    onChange={handleChange}
+                                    readOnly={modalMode === "view"}
+                                    className={modalMode === "view" ? "readonly-input" : ""}
+                                ></textarea>
+                            </div>
 
                             <div className="modal-actions">
                                 {modalMode !== "view" && (
-                                    <button type="submit" className="btn btn-green">
-                                        💾 Lưu
-                                    </button>
+                                    <button type="submit" className="btn btn-green">💾 Lưu thay đổi</button>
                                 )}
-                                <button
-                                    type="button"
-                                    onClick={closeModal}
-                                    className="btn btn-gray"
-                                >
-                                    Đóng
-                                </button>
+                                <button type="button" onClick={closeModal} className="btn btn-gray">Đóng</button>
                             </div>
                         </form>
                     </div>

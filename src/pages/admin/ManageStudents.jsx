@@ -15,12 +15,11 @@ export default function ManageStudents() {
     const [svData, setSvData] = useState({
         maSinhVien: "",
         hoTen: "",
-        email: "",
         soDienThoai: "",
         ngayNhapHoc: "",
         ngayTotNghiep: "",
         nganhId: "",
-        userId: "", // có thể tự động tạo từ backend
+        userId: "",
     });
 
     const [ctsvData, setCtsvData] = useState({
@@ -32,20 +31,28 @@ export default function ManageStudents() {
         sdtNguoiThan: "",
     });
 
-    // --- FETCH dữ liệu ---
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await apiClient.get("/students");
-                setStudents(res.data);
+    const fetchSihvien = async () => {
+        try {
+            const res = await apiClient.get("/students");
+            setStudents(res.data);
+        } catch (err) {
+            console.error("Lỗi khi fetch dữ liệu sinh viên:", err.response?.data || err);
+            alert("Lỗi khi tải danh sách sinh viên!");
+        }
+    };
 
-                const resMajors = await apiClient.get("/majors");
-                setNganhs(resMajors.data);
-            } catch (err) {
-                console.error("Lỗi khi fetch dữ liệu:", err.response?.data || err);
-            }
-        };
-        fetchData();
+    const fetchNganh = async () => {
+        try {
+            const resMajors = await apiClient.get("/majors");
+            setNganhs(resMajors.data);
+        } catch (err) {
+            console.error("Lỗi khi fetch dữ liệu ngành:", err.response?.data || err);
+            alert("Lỗi khi tải danh sách ngành!");
+        }
+    };
+
+    useEffect(() => {
+        Promise.all([fetchSihvien(), fetchNganh()]);
     }, []);
 
 
@@ -62,7 +69,6 @@ export default function ManageStudents() {
         setSvData({
             maSinhVien: "SV" + (students.length + 1).toString().padStart(3, "0"),
             hoTen: "",
-            email: "",
             soDienThoai: "",
             ngayNhapHoc: "",
             ngayTotNghiep: "",
@@ -171,7 +177,6 @@ export default function ManageStudents() {
                         <tr>
                             <th>Mã SV</th>
                             <th>Họ tên</th>
-                            <th>Email</th>
                             <th>Ngành</th>
                         </tr>
                     </thead>
@@ -184,7 +189,6 @@ export default function ManageStudents() {
                             >
                                 <td>{sv.maSinhVien}</td>
                                 <td>{sv.hoTen}</td>
-                                <td>{sv.email}</td>
                                 <td>{sv.tenNganh}</td>
                             </tr>
                         ))}
@@ -215,13 +219,6 @@ export default function ManageStudents() {
                                         onChange={handleChangeSv}
                                         placeholder="Họ tên"
                                         required
-                                    />
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={svData.email}
-                                        onChange={handleChangeSv}
-                                        placeholder="Email"
                                     />
                                     <input
                                         name="soDienThoai"

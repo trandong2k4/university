@@ -55,7 +55,7 @@ export default function PublicDashboard() {
                 <div className="card intro">
                     <h2>Giới thiệu</h2>
                     <p>
-                        Learning Hub là hệ thống học tập trực tuyến toàn diện, cung cấp một
+                        <span style={{ textTransform: "inherit", color: "orangered" }}>Learning Hub</span> là hệ thống học tập trực tuyến toàn diện, cung cấp một
                         loạt các khóa học đa dạng từ nhiều lĩnh vực. Chúng tôi cam kết mang
                         đến trải nghiệm học tập tốt nhất, với tài liệu chất lượng cao và đội
                         ngũ giảng viên chuyên nghiệp, giúp bạn đạt được mục tiêu học vấn và
@@ -64,7 +64,7 @@ export default function PublicDashboard() {
                 </div>
 
                 <div className="card featured-courses">
-                    <h2>Khóa học nổi bật</h2>
+                    <h2>Ngành học nổi bật</h2>
                     <ul>
                         {nganhs.map((nganh, index) => (
                             <li key={index}>

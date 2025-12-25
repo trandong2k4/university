@@ -40,15 +40,21 @@ export default function Login() {
                 STUDENT: "/student/dashboard",
                 TEACHER: "/teacher/dashboard",
                 ACCOUNTANT: "/accountant/tuition",
+                // ADMIN: "/auth/admin/login",
             };
 
             const roleKey = data.mrole?.toUpperCase();
-            navigate(routes[roleKey] || "/dashboard", { replace: true });
+            if (roleKey == "ADMIN") {
+                alert("Chuyển đến luồng đăng nhập quản trị viên!");
+                navigate("/auth/admin/login", { replace: true });
+                return;
+            }
+            navigate(routes[roleKey] || "/", { replace: true });
         } catch (err) {
             console.error("Login error:", err);
             alert(
                 err.response?.data?.message ||
-                "Sai tài khoản hoặc mật khẩu. Vui lòng thử lại!"
+                "Thông tin không hợp lệ. Vui lòng thử lại!"
             );
         } finally {
             setLoading(false);
@@ -101,7 +107,7 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <div className="user-note">
+                    {/* <div className="user-note">
                         <input
                             type="checkbox"
                             className="user-checkbox"
@@ -109,7 +115,7 @@ export default function Login() {
                             onChange={(e) => setRememberMe(e.target.checked)}
                         />
                         <p className="user-node-text">Ghi nhớ tài khoản</p>
-                    </div>
+                    </div> */}
 
                     <button type="submit" className="login-btn" disabled={loading}>
                         {loading ? "Đang đăng nhập..." : "Đăng nhập"}

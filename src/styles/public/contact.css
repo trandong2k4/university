@@ -12,10 +12,41 @@
     margin-bottom: 40px;
 }
 
+.map-container {
+    top: 20px;
+}
+
+.map-container iframe {
+    max-width: 350px;
+    height: 200px;
+}
+
 .contact-header h1 {
+    /* Tạo một gradient dài gấp đôi chiều cao phần tử */
+    background: linear-gradient(to bottom, rgb(0, 110, 255) 50%, rgba(0, 255, 42, 0.911) 50%);
+    background-size: 100% 200%;
+    background-position: top;
+    /* Bắt đầu ở màu xanh lá */
+
+    border-radius: 10px;
+    padding: 10px;
     font-size: 2rem;
     font-weight: bold;
-    color: #00ff37;
+    color: #ffffff;
+
+    /* Chuyển động mượt mà cho background-position */
+    transition: background-position 0.5s ease;
+}
+
+.contact-header h1:hover {
+    /* Khi di chuột vào, đẩy vị trí background lên để lộ phần màu xanh dương bên dưới */
+    background-position: bottom;
+}
+
+@media screen and (max-width: 600px) {
+    .contact-header h1 {
+        font-size: 1.5rem;
+    }
 }
 
 /* Section layout */
@@ -24,13 +55,6 @@
     grid-template-columns: 1fr 1.5fr;
     /* info 1 phần, form 1.5 phần */
     gap: 40px;
-}
-
-@media (max-width: 768px) {
-    .contact-section {
-        grid-template-columns: 1fr;
-        /* mobile: dọc */
-    }
 }
 
 /* Info */
@@ -103,5 +127,6 @@
 }
 
 .contact-form button:hover {
-    background: #1d4ed8;
+    pointer-events: visibleFill;
+    background: #00f535;
 }

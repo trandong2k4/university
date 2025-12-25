@@ -56,11 +56,11 @@ export default function AdminLogin() {
 
     return (
         <div className="login-container"> {/* Có thể thay bằng class riêng như admin-login-container */}
-            <div className="comeback-links">
+            {/* <div className="comeback-links">
                 <Link className="comeback" to="/">
                     <p className="text-comeback">Trang Chủ</p>
                 </Link>
-            </div>
+            </div> */}
 
             <div className="login-card">
                 <Link to="/">
@@ -69,7 +69,7 @@ export default function AdminLogin() {
                     </div>
                 </Link>
 
-                <h2 className="login-title">Đăng nhập Quản trị viên</h2>
+                <h2 className="login-title">Quản trị viên</h2>
 
                 <form onSubmit={onSubmit} className="login-form">
                     <div className="login-field">
@@ -100,7 +100,7 @@ export default function AdminLogin() {
                         </div>
                     </div>
 
-                    <div className="user-note">
+                    {/* <div className="user-note">
                         <input
                             type="checkbox"
                             className="user-checkbox"
@@ -108,7 +108,7 @@ export default function AdminLogin() {
                             onChange={(e) => setRememberMe(e.target.checked)}
                         />
                         <p className="user-node-text">Ghi nhớ tài khoản</p>
-                    </div>
+                    </div> */}
 
                     <button type="submit" className="login-btn" disabled={loading}>
                         {loading ? "Đang đăng nhập..." : "Đăng nhập"}

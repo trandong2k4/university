@@ -145,7 +145,7 @@ export default function ManageDepartments() {
                                             onClick={(ev) => { ev.stopPropagation(); openModal("view", d); }}
                                             className="btn btn-gray"
                                         >
-                                            Xem
+                                            Xem chi tiết
                                         </button>
                                     </td>
                                 </tr>
