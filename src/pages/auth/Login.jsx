@@ -31,7 +31,7 @@ export default function Login() {
             });
 
             const data = response.data;
-
+            setRememberMe(params.get("remember") === "true");
             // Lưu thông tin vào context + storage
             login(data, rememberMe);
 

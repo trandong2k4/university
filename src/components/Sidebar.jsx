@@ -76,11 +76,11 @@ const MENU = {
         { to: "/admin/manage_partial_class", label: "Quản lý lớp học phần", icon: <FaCalendarAlt /> },
         { to: "/admin/manage_user", label: "Quản lý tài khoản", icon: <FaClipboardList /> },
         { to: "/admin/manage_students", label: "Quản lý sinh viên", icon: <FaUsers /> },
-        { to: "/admin/manage_employees", label: "Quản lý nhân viên", icon: <FaChalkboardTeacher /> },
-        { to: "/admin/manage_credits", label: "Quản lý tín chỉ", icon: <FaClipboardList /> },
+        { to: "/admin/design", label: "Quản lý nhân viên", icon: <FaChalkboardTeacher /> }, // /admin/manage_employees"
+        { to: "/admin/design", label: "Quản lý tín chỉ", icon: <FaClipboardList /> }, // /admin/manage_credits
         { to: "/admin/manage_grades", label: "Quản lý điểm", icon: <FaRegChartBar /> },
-        { to: "/admin/manage_tuition", label: "Quản lý học phí", icon: <FaMoneyBill /> },
-        { to: "/admin/manage_role", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
+        { to: "/admin/design", label: "Quản lý học phí", icon: <FaMoneyBill /> }, //  /admin/manage_tuition
+        { to: "/admin/design", label: "Quản lý phân quyền", icon: <FaClipboardList /> }, // /admin/manage_role
         // { to: "/admin/manage_permission", label: "Quản lý phân quyền", icon: <FaClipboardList /> },
     ],
 };

@@ -20,7 +20,6 @@ export default function NotificationFloating({ userRole }) {
                 .filter(p => p.loaiBaiViet === "THONG_BAO" && p.trangThai === "CONG_KHAI")
                 .sort((a, b) => new Date(b.ngayDang) - new Date(a.ngayDang))
                 .slice(0, 10);
-
             setNotifications(filtered);
         } catch (err) {
             console.error("Lỗi tải thông báo:", err);

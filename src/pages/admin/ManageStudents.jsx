@@ -1,315 +1,267 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/admin/manageStudents.css";
+import apiClient from "/src/api/apiClient";
 
 export default function ManageStudents() {
     const navigate = useNavigate();
     const [students, setStudents] = useState([]);
+    const [nganhs, setNganhs] = useState([]);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [nganhs, setNganhs] = useState([]);
+    const [modalMode, setModalMode] = useState("add"); // add | edit | view
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
+    const [loadingsum, setLoadingsum] = useState(false);
 
-    // Dữ liệu form gồm 2 phần
+    // Form data states
     const [svData, setSvData] = useState({
-        maSinhVien: "",
-        hoTen: "",
-        soDienThoai: "",
-        ngayNhapHoc: "",
-        ngayTotNghiep: "",
-        nganhId: "",
-        userId: "",
+        id: "", maSinhVien: "", hoTen: "", ngayNhapHoc: "", ngayTotNghiep: "", soDienThoai: "", nganhId: ""
     });
-
     const [ctsvData, setCtsvData] = useState({
-        diaChi: "",
-        ngaySinh: "",
-        gioiTinh: "NAM",
-        quocTich: "Việt Nam",
-        cccd: "",
-        sdtNguoiThan: "",
+        id: "", diaChi: "", ngaySinh: "", gioiTinh: "NAM", quocTich: "Việt Nam", cccd: "", sdtNguoiThan: ""
     });
 
-    const fetchSihvien = async () => {
+    const fetchData = async () => {
+        setLoadingsum(true);
         try {
-            const res = await apiClient.get("/students");
-            setStudents(res.data);
-        } catch (err) {
-            console.error("Lỗi khi fetch dữ liệu sinh viên:", err.response?.data || err);
-            alert("Lỗi khi tải danh sách sinh viên!");
-        }
+            const [resSv, resNganh] = await Promise.all([
+                apiClient.get("/students/admin"),
+                apiClient.get("/majors")
+            ]);
+            setStudents(resSv.data);
+            setNganhs(resNganh.data);
+        } catch (err) { console.error(err); }
+        finally { setLoadingsum(false); }
     };
 
-    const fetchNganh = async () => {
-        try {
-            const resMajors = await apiClient.get("/majors");
-            setNganhs(resMajors.data);
-        } catch (err) {
-            console.error("Lỗi khi fetch dữ liệu ngành:", err.response?.data || err);
-            alert("Lỗi khi tải danh sách ngành!");
+    useEffect(() => { fetchData(); }, []);
+
+    const handleOpenModal = async (mode, student = null) => {
+        setModalMode(mode);
+        if (student) {
+            setSelectedStudent(student);
+            setLoading(true);
+            try {
+                const resDetail = await apiClient.get(`/student_details/by-sv/${student.id}`);
+                setSvData({ ...student });
+                setCtsvData(resDetail.data || {});
+            } catch (err) {
+                setSvData({ ...student });
+                setCtsvData({ diaChi: "", ngaySinh: "", gioiTinh: "NAM", quocTich: "Việt Nam", cccd: "", sdtNguoiThan: "" });
+            } finally { setLoading(false); }
+        } else {
+            setSvData({ maSinhVien: "", hoTen: "", soDienThoai: "", ngayNhapHoc: "", ngayTotNghiep: "", nganhId: "" });
+            setCtsvData({ diaChi: "", ngaySinh: "", gioiTinh: "NAM", quocTich: "Việt Nam", cccd: "", sdtNguoiThan: "" });
         }
-    };
-
-    useEffect(() => {
-        Promise.all([fetchSihvien(), fetchNganh()]);
-    }, []);
-
-
-    // --- Lọc tìm kiếm ---
-    const filteredStudents = students.filter(
-        (s) =>
-            s.hoTen?.toLowerCase().includes(search.toLowerCase()) ||
-            s.maSinhVien?.toLowerCase().includes(search.toLowerCase()) ||
-            s.email?.toLowerCase().includes(search.toLowerCase())
-    );
-
-    // --- Mở modal ---
-    const handleOpenModal = () => {
-        setSvData({
-            maSinhVien: "SV" + (students.length + 1).toString().padStart(3, "0"),
-            hoTen: "",
-            soDienThoai: "",
-            ngayNhapHoc: "",
-            ngayTotNghiep: "",
-            nganhId: "",
-            userId: "",
-        });
-        setCtsvData({
-            diaChi: "",
-            ngaySinh: "",
-            gioiTinh: "NAM",
-            quocTich: "Việt Nam",
-            cccd: "",
-            sdtNguoiThan: "",
-        });
         setIsModalOpen(true);
     };
 
-    const handleCloseModal = () => setIsModalOpen(false);
-
-    // --- Xử lý thay đổi input ---
-    const handleChangeSv = (e) => {
-        const { name, value } = e.target;
-        console.log("📩 Thay đổi field:", name, "→", value);  // ✅ Log giá trị khi chọn
-        setSvData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleChangeCtsv = (e) => {
-        const { name, value } = e.target;
-        console.log("📩 Thay đổi:", name, "=", value);
-        setCtsvData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    // --- Lưu sinh viên + chi tiết ---
-    const handleSave = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        try {
-            // Thêm sinh viên
-            const resSv = await apiClient.post("/students", svData);
-            const svResult = resSv.data;
-            if (!svResult.id) throw new Error("Không tạo được sinh viên");
-
-            // Thêm chi tiết sinh viên
-            await apiClient.post("/student_details", { ...ctsvData, sinhVienId: svResult.id });
-
-            // Cập nhật danh sách
-            setStudents([...students, svResult]);
-            alert("Thêm sinh viên thành công!");
-            setIsModalOpen(false);
-        } catch (err) {
-            console.error("Lỗi thêm sinh viên:", err.response?.data || err);
-            alert("Lỗi khi thêm sinh viên hoặc chi tiết sinh viên!");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-    // --- Xóa sinh viên ---
     const handleDelete = async () => {
-        if (!selectedStudent) return alert("Chọn sinh viên cần xóa!");
-        if (!window.confirm("Bạn có chắc muốn xóa sinh viên này?")) return;
-
+        if (!selectedStudent) return alert("Vui lòng click chọn một dòng để xóa!");
+        if (!window.confirm(`Bạn có chắc muốn xóa sinh viên ${selectedStudent.hoTen}?`)) return;
         try {
             await apiClient.delete(`/students/${selectedStudent.id}`);
-            setStudents(students.filter((s) => s.id !== selectedStudent.id));
+            setStudents(students.filter(s => s.id !== selectedStudent.id));
             setSelectedStudent(null);
-            alert("🗑️ Xóa thành công!");
-        } catch (err) {
-            console.error("❌ Lỗi xóa:", err.response?.data || err);
-            alert("❌ Xóa thất bại!");
-        }
+            alert("Xóa thành công!");
+        } catch (err) { alert("Xóa thất bại!"); }
+    };
+
+    const handleSave = async (e) => {
+        e.preventDefault();
+        try {
+            if (modalMode === "add") {
+                const resSv = await apiClient.post("/students", svData);
+                await apiClient.post("/student_details", { ...ctsvData, sinhVienId: resSv.data.id });
+                alert("Thêm thành công!");
+            } else {
+                await apiClient.put(`/students/${svData.id}`, svData);
+                await apiClient.put(`/student_details/student/${svData.id}`, ctsvData);
+                alert("Cập nhật thành công!");
+            }
+            fetchData();
+            setIsModalOpen(false);
+        } catch (err) { alert("Thao tác thất bại!"); }
     };
 
     return (
         <main className="container">
             <section className="banner-section">
                 <h1 className="banner-title">🎓 Quản lý Sinh viên</h1>
-                <p className="banner-subtitle">Thêm, sửa, xóa hoặc xem chi tiết sinh viên.</p>
+                <p className="banner-subtitle">Hệ thống quản lý dữ liệu tập trung ngang hàng.</p>
             </section>
 
             <div className="action-bar">
-                <input
-                    type="text"
-                    placeholder="🔍 Tìm kiếm sinh viên..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+                <input type="text" placeholder="🔍 Tìm mã SV, tên hoặc ngành..." value={search} onChange={(e) => setSearch(e.target.value)} />
                 <div className="actions">
-                    <button onClick={handleOpenModal} className="btn btn-blue">
-                        ➕ Thêm
-                    </button>
-                    <button onClick={handleDelete} className="btn btn-red">
-                        🗑️ Xóa
-                    </button>
-                    <button onClick={() => navigate("/admin/dashboard")} className="btn btn-gray">
-                        ⬅️ Quay lại
-                    </button>
+                    <button onClick={() => handleOpenModal("add")} className="btn btn-blue">➕ Thêm mới</button>
+                    <button onClick={() => selectedStudent ? handleOpenModal("edit", selectedStudent) : alert("Chọn SV để sửa")} className="btn btn-yellow">✏️ Sửa</button>
+                    <button onClick={handleDelete} className="btn btn-red">🗑️ Xóa</button>
+                    <button onClick={() => navigate("/admin/dashboard")} className="btn btn-gray">Quay lại</button>
                 </div>
             </div>
 
             <section className="table-section">
-                <table className="students-table">
-                    <thead>
-                        <tr>
-                            <th>Mã SV</th>
-                            <th>Họ tên</th>
-                            <th>Ngành</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredStudents.map((sv) => (
-                            <tr
-                                key={sv.id}
-                                onClick={() => setSelectedStudent(sv)}
-                                className={selectedStudent?.id === sv.id ? "selected" : ""}
-                            >
-                                <td>{sv.maSinhVien}</td>
-                                <td>{sv.hoTen}</td>
-                                <td>{sv.tenNganh}</td>
+                <h3 className="loading-sum">{loadingsum ? "Đang tải dữ liệu..." : `Tổng cộng: ${students.length} sinh viên`}</h3>
+                <div className="table-wrapper">
+                    <table className="students-table">
+                        <thead>
+                            <tr>
+                                <th>Mã SV</th>
+                                <th>Họ tên</th>
+                                <th>Ngành</th>
+                                <th style={{ textAlign: "center" }}>Hành động</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {students.filter(s => s.hoTen.toLowerCase().includes(search.toLowerCase()) || s.maSinhVien.includes(search)).map((sv) => (
+                                <tr
+                                    key={sv.id}
+                                    onClick={() => setSelectedStudent(sv)}
+                                    className={selectedStudent?.id === sv.id ? "selected" : ""}
+                                >
+                                    <td><strong>{sv.maSinhVien}</strong></td>
+                                    <td>{sv.hoTen}</td>
+                                    <td>{sv.tenNganh}</td>
+                                    <td style={{ textAlign: "center" }}>
+                                        <button
+                                            className="btn-view-small"
+                                            onClick={(e) => { e.stopPropagation(); handleOpenModal("view", sv); }}
+                                        >
+                                            Xem chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
-            {/* ---------- MODAL ---------- */}
+            {/* Modal Form giữ nguyên cấu trúc side-by-side của bạn */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal large">
-                        <h2>➕ Thêm sinh viên mới</h2>
+                        <h2>{modalMode === "view" ? "👁️ Chi tiết sinh viên" : modalMode === "edit" ? "✏️ Chỉnh sửa" : "➕ Thêm mới"}</h2>
                         <form onSubmit={handleSave}>
-                            <h3>📘 Thông tin sinh viên</h3>
-
                             <div className="form-center">
-                                <div className="form-grid">
-                                    <input
-                                        name="maSinhVien"
-                                        value={svData.maSinhVien}
-                                        onChange={handleChangeSv}
-                                        placeholder="Mã sinh viên"
-                                        required
-                                    />
-                                    <input
-                                        name="hoTen"
-                                        value={svData.hoTen}
-                                        onChange={handleChangeSv}
-                                        placeholder="Họ tên"
-                                        required
-                                    />
-                                    <input
-                                        name="soDienThoai"
-                                        value={svData.soDienThoai}
-                                        onChange={handleChangeSv}
-                                        placeholder="Số điện thoại"
-                                    />
-                                    <span>Ngày nhập học</span>
-                                    <input
-                                        type="date"
-                                        name="ngayNhapHoc"
-                                        value={svData.ngayNhapHoc}
-                                        onChange={handleChangeSv}
-                                    />
-                                    <span>Ngày tốt nghiệp</span>
-                                    <input
-                                        type="date"
-                                        name="ngayTotNghiep"
-                                        value={svData.ngayTotNghiep}
-                                        onChange={handleChangeSv}
-                                    />
-                                    {/* {console.log("📚 Danh sách ngành:", nganhs)} */}
-                                    <select
-                                        name="nganhId"   // ✅ phải trùng với key trong state svData
-                                        value={svData.nganhId}
-                                        onChange={handleChangeSv}
-                                        required
-                                    >
-                                        <option value="">-- Chọn ngành --</option>
-                                        {nganhs.map((nganh) => (
-                                            <option key={nganh.id} value={nganh.id}>
-                                                {nganh.tenNganh}
-                                            </option>
-                                        ))}
-                                    </select>
+                                {/* CỘT TRÁI */}
+                                <div className="form-section-column">
+                                    <h3>📘 Thông tin sinh viên</h3>
+                                    <div className="form-grid">
+                                        <span>Mã sinh viên</span>
+                                        <input
+                                            value={svData.maSinhVien}
+                                            onChange={(e) => setSvData({ ...svData, maSinhVien: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                            required
+                                        />
 
+                                        <span>Họ tên</span>
+                                        <input
+                                            value={svData.hoTen}
+                                            onChange={(e) => setSvData({ ...svData, hoTen: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                            required
+                                        />
+
+                                        <span>Số điện thoại</span>
+                                        <input
+                                            value={svData.soDienThoai}
+                                            onChange={(e) => setSvData({ ...svData, soDienThoai: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+
+                                        <span>Ngày nhập học</span>
+                                        <input
+                                            type="date"
+                                            value={svData.ngayNhapHoc || ""}
+                                            onChange={(e) => setSvData({ ...svData, ngayNhapHoc: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+
+                                        <span>Ngày tốt nghiệp</span>
+                                        <input
+                                            type="date"
+                                            value={svData.ngayTotNghiep || ""}
+                                            onChange={(e) => setSvData({ ...svData, ngayTotNghiep: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+
+                                        <span>Ngành học</span>
+                                        <select
+                                            value={svData.nganhId}
+                                            onChange={(e) => setSvData({ ...svData, nganhId: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                            required
+                                        >
+                                            <option value="">-- Chọn ngành --</option>
+                                            {nganhs.map(n => (
+                                                <option key={n.id} value={n.id}>{n.tenNganh}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <h3>🏠 Thông tin chi tiết</h3>
-                                <div className="form-grid">
-                                    <input
-                                        name="diaChi"
-                                        value={ctsvData.diaChi}
-                                        onChange={handleChangeCtsv}
-                                        placeholder="Địa chỉ"
-                                    />
-                                    <span>Ngày sinh</span>
-                                    <input
-                                        type="date"
-                                        name="ngaySinh"
-                                        value={ctsvData.ngaySinh}
-                                        onChange={handleChangeCtsv}
-                                    />
-                                    <select
-                                        name="gioiTinh"
-                                        value={ctsvData.gioiTinh}
-                                        onChange={handleChangeCtsv}
-                                    >
-                                        <option value="NAM">Nam</option>
-                                        <option value="NU">Nữ</option>
-                                    </select>
-                                    <input
-                                        name="quocTich"
-                                        value={ctsvData.quocTich}
-                                        onChange={handleChangeCtsv}
-                                        placeholder="Quốc tịch"
-                                    />
-                                    <input
-                                        name="cccd"
-                                        value={ctsvData.cccd}
-                                        onChange={handleChangeCtsv}
-                                        placeholder="CCCD"
-                                    />
-                                    <input
-                                        name="sdtNguoiThan"
-                                        value={ctsvData.sdtNguoiThan}
-                                        onChange={handleChangeCtsv}
-                                        placeholder="SĐT người thân"
-                                    />
+                                {/* CỘT PHẢI */}
+                                <div className="form-section-column">
+                                    <h3>🏠 Thông tin chi tiết</h3>
+                                    <div className="form-grid">
+                                        <span>Ngày sinh</span>
+                                        <input
+                                            type="date"
+                                            value={ctsvData.ngaySinh || ""}
+                                            onChange={(e) => setCtsvData({ ...ctsvData, ngaySinh: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+
+                                        <span>Giới tính</span>
+                                        <select
+                                            value={ctsvData.gioiTinh}
+                                            onChange={(e) => setCtsvData({ ...ctsvData, gioiTinh: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        >
+                                            <option value="NAM">Nam</option>
+                                            <option value="NU">Nữ</option>
+                                        </select>
+
+                                        <span>Quốc tịch</span>
+                                        <input
+                                            value={ctsvData.quocTich}
+                                            onChange={(e) => setCtsvData({ ...ctsvData, quocTich: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+
+                                        <span>CCCD</span>
+                                        <input
+                                            value={ctsvData.cccd}
+                                            onChange={(e) => setCtsvData({ ...ctsvData, cccd: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+
+                                        <span>Địa chỉ</span>
+                                        <input
+                                            value={ctsvData.diaChi}
+                                            onChange={(e) => setCtsvData({ ...ctsvData, diaChi: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+
+                                        <span>SĐT người thân</span>
+                                        <input
+                                            value={ctsvData.sdtNguoiThan}
+                                            onChange={(e) => setCtsvData({ ...ctsvData, sdtNguoiThan: e.target.value })}
+                                            disabled={modalMode === "view"}
+                                        />
+                                    </div>
                                 </div>
                             </div>
+
                             <div className="modal-actions">
-                                <button type="submit" className="btn btn-green" disabled={loading}>
-                                    {loading ? "Đang lưu..." : "💾 Lưu"}
-                                </button>
-                                <button type="button" onClick={handleCloseModal} className="btn btn-gray">
-                                    Đóng
-                                </button>
+                                {modalMode !== "view" && <button type="submit" className="btn btn-green">💾 Lưu dữ liệu</button>}
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="btn btn-gray">Đóng</button>
                             </div>
                         </form>
-
                     </div>
                 </div>
             )}

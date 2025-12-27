@@ -44,7 +44,7 @@ export default function StudentProfile() {
             const basicData = basicRes.data;
 
             // Lấy thông tin chi tiết
-            const detailRes = await apiClient.get(`/student_details/by-user/${basicData.id}`);
+            const detailRes = await apiClient.get(`/student_details/by-sv/${basicData.id}`);
             const detailData = detailRes.data;
 
             setBasicInfo(basicData);

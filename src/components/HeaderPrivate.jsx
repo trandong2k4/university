@@ -39,8 +39,8 @@ export default function HeaderPrivate({ userRole }) {
 
                 {/* Admin */}
                 {userRole === "ADMIN" && <Link to="/admin/dashboard">Trang chủ</Link>}
-                {userRole === "ADMIN" && <Link to="/admin/manage">Quản trị</Link>}
-                {userRole === "ADMIN" && <Link to="/admin/reports">Báo cáo</Link>}
+                {userRole === "ADMIN" && <Link to="/admin/manage_user">Quản trị</Link>}
+                {userRole === "ADMIN" && <Link to="/admin/design">Báo cáo</Link>}
                 {/* {userRole === "ADMIN" && <Link to="/admin/setting">Cài đặt</Link>} */}
             </nav>
             <div className="logo-icon">

@@ -101,7 +101,6 @@ export default function ManageCourses() {
     };
 
     const handleBack = () => navigate("/admin/dashboard");
-
     return (
         <main className="container">
             {/* Banner */}
@@ -133,7 +132,7 @@ export default function ManageCourses() {
                         </button>
                         <div className="flex-grow"></div>
                         <button onClick={handleBack} className="btn btn-gray">
-                            <i className="fas fa-arrow-left mr-2"></i> Quay lại
+                            <i className="fas fa-arrow-left mr-2"></i>⬅️ Quay lại
                         </button>
                     </div>
 

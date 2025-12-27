@@ -20,10 +20,7 @@ export default function ManageDepartments() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [departmentsRes, schoolsRes] = await Promise.all([
-                    apiClient.get("/departments"),
-                    apiClient.get("/schools"),
-                ]);
+                const [departmentsRes, schoolsRes] = await Promise.all([apiClient.get("/departments"), apiClient.get("/schools")]);
                 setDepartments(departmentsRes.data);
                 setSchools(schoolsRes.data);
             } catch (err) {

@@ -7,14 +7,16 @@ import { set } from "date-fns";
 
 export default function Footer() {
 
-    const [lienhes, setLienHes] = useState([]);
+    const [lienhes, setLienHes] = useState();
+    const [loading, setLoading] = useState(true);
 
     const fetchNotifications = async () => {
         try {
+            setLoading(true);
             const res = await apiClient.get("/posts");
-            setLienHes(filtered);
+            setLienHes(res.data);
         } catch (err) {
-            console.error("Lỗi tải thông báo:", err);
+            console.log("Lỗi tải thông báo:", err);
         } finally {
             setLoading(false);
         }

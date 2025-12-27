@@ -30,6 +30,7 @@ import Login from "../pages/auth/Login";
 import AdminLogin from "../pages/auth/AdminLogin";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import Design from "../pages/public/DesignPage";
 
 // Student pages
 import Profile from "../pages/student/Profile";
@@ -94,6 +95,7 @@ export default function AppRouter(id) {
                 <Route path="contact" element={<Contact />} />
                 <Route path="nganh" element={<Nganh />} />
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
+                <Route path="/design" element={<Design />} />
                 {/* … public routes … */}
             </Route>
 
@@ -115,6 +117,7 @@ export default function AppRouter(id) {
                     <Route path="/student/training-program" element={<Chuongtrinhdaotao />} />
                     <Route path="/student/notifications" element={<Notification />} />
                     <Route path={`/student/notifications/${id}`} element={<Notification />} />
+                    <Route path="/student/design" element={<Design />} />
                     {/* …other student pages… */}
                 </Route>
             </Route>
@@ -129,6 +132,7 @@ export default function AppRouter(id) {
                     <Route path="/teacher/grades" element={<StudentGrades />} />
                     <Route path="/teacher/update-grades" element={<UpdateGrades />} />
                     <Route path="/teacher/notifications" element={<Notification />} />
+                    <Route path="/teacher/design" element={<Design />} />
                     {/* …other teacher pages… */}
                 </Route>
             </Route>
@@ -140,6 +144,7 @@ export default function AppRouter(id) {
                     <Route path="/accountant/create" element={<CreateTuition />} />
                     <Route path="/accountant/update" element={<UpdateTuition />} />
                     <Route path="/accountant/notifications" element={<Notification />} />
+                    <Route path="/accountant/design" element={<Design />} />
                     {/* … */}
                 </Route>
             </Route>
@@ -166,6 +171,7 @@ export default function AppRouter(id) {
                     <Route path="/admin/manage_role" element={<ManageRoles />} />
                     <Route path="/admin/manage_permission" element={<ManagePermission />} />
                     <Route path="/admin/notifications" element={<Notification />} />
+                    <Route path="/admin/design" element={<Design />} />
                     {/* … */}
                 </Route>
             </Route>
