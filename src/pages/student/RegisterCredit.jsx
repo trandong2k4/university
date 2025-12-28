@@ -1,4 +1,3 @@
-// src/pages/student/RegisterCredit.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import apiClient from "/src/api/apiClient";
@@ -11,209 +10,162 @@ export default function RegisterCredit() {
     const [studentId, setStudentId] = useState(null);
     const [lopHocPhans, setLopHocPhans] = useState([]);
     const [dangKyList, setDangKyList] = useState([]);
+    const [semesters, setSemesters] = useState([]);
+    const [currentSemester, setCurrentSemester] = useState(null);
+
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [message, setMessage] = useState({ text: "", type: "" });
 
-    useEffect(() => {
+    const fetchData = async () => {
         if (!userId) return;
+        try {
+            setLoading(true);
+            // 1. Lấy thông tin sinh viên
+            const studentRes = await apiClient.get(`/students/by-user/${userId}`);
+            const studentData = studentRes.data;
+            setStudentId(studentData.id);
 
-        const fetchData = async () => {
-            try {
-                setLoading(true);
+            // 2. Lấy dữ liệu hệ thống (Lớp, Kì học, Đã đăng ký)
+            const [lhpRes, semRes, dkRes] = await Promise.all([
+                apiClient.get("/class"),
+                apiClient.get("/semesters"),
+                apiClient.get(`/schedule_registrations/by-sinhvien/${studentData.id}`)
+            ]);
 
-                // 1. Lấy thông tin sinh viên từ userId
-                const studentRes = await apiClient.get(`/students/by-user/${userId}`);
-                const studentData = studentRes.data;
-                setStudentId(studentData.id);
+            // Xác định kì học mới nhất (dựa trên ngày bắt đầu hoặc phần tử cuối cùng)
+            const sortedSemesters = semRes.data.sort((a, b) => new Date(b.ngayBatDau) - new Date(a.ngayBatDau));
+            const latestSem = sortedSemesters[0];
 
-                // 2. Lấy danh sách lớp học phần đang mở đăng ký
-                const lhpRes = await apiClient.get("/class");
-                const classes = lhpRes.data || [];
+            setCurrentSemester(latestSem);
+            setSemesters(semRes.data);
+            setLopHocPhans(lhpRes.data || []);
+            setDangKyList(dkRes.data.map(item => item.lopHocPhan.id));
+        } catch (err) {
+            console.error("Lỗi tải dữ liệu:", err);
+            setMessage({ text: "Lỗi kết nối hệ thống!", type: "error" });
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                // 3. Lấy danh sách lớp đã đăng ký
-                const dkRes = await apiClient.get(`/schedule_registrations/by-sinhvien/${studentData.id}`);
-                const registeredIds = dkRes.data.map(item => item.lopHocPhan.id);
-
-                setLopHocPhans(classes);
-                setDangKyList(registeredIds);
-            } catch (err) {
-                console.error("Lỗi tải dữ liệu:", err);
-                setMessage({ text: "Không thể tải dữ liệu. Vui lòng thử lại!", type: "error" });
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [userId]);
+    useEffect(() => { fetchData(); }, [userId]);
 
     const handleToggle = async (lopId, isRegistered) => {
         if (actionLoading || !studentId) return;
-
         setActionLoading(true);
-        setMessage({ text: "", type: "" });
-
         try {
             const url = `/schedule_registrations/${studentId}/${lopId}`;
-
             if (isRegistered) {
                 await apiClient.delete(url);
                 setMessage({ text: "Hủy đăng ký thành công!", type: "success" });
             } else {
                 await apiClient.post(url);
-                setMessage({ text: "Đăng ký thành công!", type: "success" });
+                setMessage({ text: "Đăng ký môn học thành công!", type: "success" });
             }
-
-            setDangKyList(prev =>
-                isRegistered ? prev.filter(id => id !== lopId) : [...prev, lopId]
-            );
-
-            setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+            fetchData(); // Reload để cập nhật sĩ số thời gian thực
         } catch (err) {
-            const msg = err.response?.data?.message || "Thao tác thất bại!";
-            setMessage({ text: msg, type: "error" });
+            setMessage({ text: err.response?.data?.message || "Thao tác thất bại!", type: "error" });
         } finally {
             setActionLoading(false);
+            setTimeout(() => setMessage({ text: "", type: "" }), 3000);
         }
     };
 
-    if (loading) {
-        return (
-            <div className="container py-12 text-center">
-                <div className="spinner"></div>
-                <p className="mt-4 text-gray-600">Đang tải danh sách lớp học phần...</p>
-            </div>
-        );
-    }
+    if (loading) return <div className="loading-screen"><div className="spinner"></div></div>;
 
     return (
-        <div className="register-credit-container container mx-auto px-4 py-8 max-w-7xl">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                    Đăng ký tín chỉ học kỳ
-                </h1>
-                <p className="text-gray-600">
-                    Chọn các lớp học phần phù hợp với lịch học và kế hoạch của bạn
+        <main className="register-credit-container">
+            {/* Banner Section - Giống ManageClass */}
+            <section className="banner-section">
+                <h1 className="banner-title">📝 Đăng ký tín chỉ trực tuyến</h1>
+                <p className="banner-subtitle">
+                    Kì học hiện tại: <strong>{currentSemester?.tenKiHoc || "Đang cập nhật"}</strong>
+                    ({currentSemester?.maKiHoc})
                 </p>
-            </div>
+            </section>
 
-            {/* Thông báo
-      {message.text && (
-        <div className={`alert alert-${message.type} mb-6 p-4 rounded-lg`}>
-          {message.text}
-        </div>
-      )}
+            {/* Thông báo Toast */}
+            {message.text && (
+                <div className={`toast-msg ${message.type}`}>
+                    {message.type === "success" ? "✅" : "⚠️"} {message.text}
+                </div>
+            )}
 
-      {/* Tổng quan */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="stat-card bg-blue-50 p-6 rounded-xl">
-                    <h3 className="text-lg font-semibold text-blue-900">Đã đăng ký</h3>
-                    <p className="text-3xl font-bold text-blue-700 mt-2">{dangKyList.length}</p>
+            {/* Stats Overview - Giống ManageClass Dashboard */}
+            <div className="stats-row">
+                <div className="stat-box blue">
+                    <h3>Môn đã chọn</h3>
+                    <p>{dangKyList.length} <span>Lớp</span></p>
                 </div>
-                <div className="stat-card bg-green-50 p-6 rounded-xl">
-                    <h3 className="text-lg font-semibold text-green-900">Lớp đang mở</h3>
-                    <p className="text-3xl font-bold text-green-700 mt-2">
-                        {lopHocPhans.filter(l => l.trangThai === "MO_DANG_KY").length}
-                    </p>
+                <div className="stat-box green">
+                    <h3>Trạng thái hệ thống</h3>
+                    <p>Đang mở</p>
                 </div>
-                <div className="stat-card bg-purple-50 p-6 rounded-xl">
-                    <h3 className="text-lg font-semibold text-purple-900">Tổng lớp</h3>
-                    <p className="text-3xl font-bold text-purple-700 mt-2">{lopHocPhans.length}</p>
+                <div className="stat-box purple">
+                    <h3>Hạn đăng ký</h3>
+                    <p>{currentSemester ? new Date(currentSemester.ngayKetThuc).toLocaleDateString("vi-VN") : "--"}</p>
                 </div>
             </div>
 
-            {/* Bảng lớp học phần */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
+            {/* Table Section */}
+            <section className="data-table-card">
+                <div className="table-header">
+                    <h3>Danh sách lớp học phần khả dụng</h3>
+                </div>
+                <div className="table-wrapper">
+                    <table className="register-table">
                         <thead>
                             <tr>
-                                <th>Mã lớp</th>
-                                <th>Môn học</th>
+                                <th>Mã LHP</th>
+                                <th>Môn học & Tín chỉ</th>
                                 <th>Giảng viên</th>
                                 <th>Sĩ số</th>
                                 <th>Kỳ học</th>
-                                <th>Trạng thái</th>
-                                <th>Hành động</th>
+                                <th style={{ textAlign: "center" }}>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {lopHocPhans.length === 0 ? (
-                                <tr>
-                                    <td colSpan="7" className="text-center py-12 text-gray-500">
-                                        Hiện chưa có lớp học phần nào được mở đăng ký.
-                                    </td>
-                                </tr>
-                            ) : (
-                                lopHocPhans.map((lhp) => {
-                                    const isRegistered = dangKyList.includes(lhp.id);
-                                    const conCho = lhp.soLuongToiDa - lhp.soLuongHienTai;
-                                    const isFull = conCho <= 0;
-                                    const isOpen = lhp.trangThai === "MO_DANG_KY";
+                            {lopHocPhans.filter(l => l.kiHocId === currentSemester?.id).map((lhp) => {
+                                const isRegistered = dangKyList.includes(lhp.id);
+                                const isFull = lhp.soLuongHienTai >= lhp.soLuongToiDa;
+                                const isOpen = lhp.trangThai === "MO_DANG_KY";
 
-                                    return (
-                                        <tr
-                                            key={lhp.id}
-                                            className={isRegistered ? "bg-green-50" : ""}
-                                        >
-                                            <td className="font-medium text-blue-700">
-                                                {lhp.maLopHocPhan}
-                                            </td>
-                                            <td>
-                                                <div className="font-semibold">{lhp.tenMonHoc}</div>
-                                                <div className="text-sm text-gray-500">
-                                                    {lhp.soTinChi} tín chỉ
-                                                </div>
-                                            </td>
-                                            <td>
-                                                {lhp.tenGiangVien || (
-                                                    <span className="text-gray-400 italic">Chưa xếp GV</span>
-                                                )}
-                                            </td>
-                                            <td className="text-center">
-                                                <span className={`font-bold ${isFull ? "text-red-600" : "text-green-600"}`}>
+                                return (
+                                    <tr key={lhp.id} className={isRegistered ? "selected-row" : ""}>
+                                        <td><strong>{lhp.maLopHocPhan}</strong></td>
+                                        <td>
+                                            <div className="subject-main">{lhp.tenMonHoc}</div>
+                                            <div className="subject-sub">{lhp.tongSoTinChi} Tín chỉ</div>
+                                        </td>
+                                        <td>{lhp.hoTen}</td>
+                                        <td>
+                                            <div className="capacity-info">
+                                                <span className={isFull ? "text-red" : "text-green"}>
                                                     {lhp.soLuongHienTai}/{lhp.soLuongToiDa}
                                                 </span>
-                                                {!isFull && (
-                                                    <div className="text-xs text-gray-500 mt-1">
-                                                        Còn {conCho} chỗ
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td className="text-center">
-                                                <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
-                                                    {lhp.tenKiHoc}
-                                                </span>
-                                            </td>
-                                            <td className="text-center">
-                                                {isRegistered ? (
-                                                    <span className="status status-registered">Đã đăng ký</span>
-                                                ) : isFull ? (
-                                                    <span className="status status-full">Hết chỗ</span>
-                                                ) : !isOpen ? (
-                                                    <span className="status status-closed">Đã đóng</span>
-                                                ) : (
-                                                    <span className="status status-open">Còn chỗ</span>
-                                                )}
-                                            </td>
-                                            <td className="text-center">
-                                                <button
-                                                    onClick={() => handleToggle(lhp.id, isRegistered)}
-                                                    disabled={actionLoading || !isOpen || isFull}
-                                                    className={`btn ${isRegistered ? "btn-cancel" : "btn-register"}`}
-                                                >
-                                                    {actionLoading ? "Đang xử lý..." : isRegistered ? "Hủy đăng ký" : "Đăng ký"}
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            )}
+                                                <div className="progress-bar">
+                                                    <div className="progress-fill" style={{ width: `${(lhp.soLuongHienTai / lhp.soLuongToiDa) * 100}%` }}></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span className="badge-sem">{lhp.tenKiHoc}</span></td>
+                                        <td style={{ textAlign: "center" }}>
+                                            <button
+                                                className={`btn-reg ${isRegistered ? "btn-del" : "btn-add"}`}
+                                                disabled={actionLoading || (!isRegistered && (isFull || !isOpen))}
+                                                onClick={() => handleToggle(lhp.id, isRegistered)}
+                                            >
+                                                {actionLoading ? "..." : isRegistered ? "Hủy đăng ký" : isFull ? "Hết chỗ" : "Đăng ký"}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
     );
 }

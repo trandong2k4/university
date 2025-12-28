@@ -1,189 +1,166 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import "../../styles/admin/manageDepartments.css";
 import "../../styles/admin/manageEmployees.css";
+import apiClient from "../../api/apiClient";
 
 export default function ManageEmployees() {
     const [employees, setEmployees] = useState([]);
-    const [positions, setPositions] = useState([]);
     const [users, setUsers] = useState([]);
-    const [selectedEmployee, setSelectedEmployee] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalMode, setModalMode] = useState("add");
+    const [selected, setSelected] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [mode, setMode] = useState("add"); // add | edit | view
 
-    const [formData, setFormData] = useState({
+    const [form, setForm] = useState({
+        maNhanVien: "",
         hoTen: "",
-        email: "",
         soDienThoai: "",
+        viTri: "GIANG_VIEN",
+        userId: "",
         ngayVaoLam: "",
         ngayNghiViec: "",
-        viTriId: "",
-        userId: "",
+        tenNguoiDung: "",
     });
 
-    // Fetch dữ liệu khi component mount
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [staffsRes, positionsRes, usersRes] = await Promise.all([
-                    apiClient.get("/staffs"),
-                    apiClient.get("/locations"),
-                    apiClient.get("/users"),
-                ]);
-
-                setEmployees(staffsRes.data);
-                setPositions(positionsRes.data);
-                setUsers(usersRes.data);
-            } catch (err) {
-                console.error("Lỗi fetch dữ liệu:", err.response?.data || err);
-            }
-        };
-        fetchData();
+        loadData();
     }, []);
 
-    const openModal = (mode, emp = null) => {
-        setModalMode(mode);
+    const loadData = async () => {
+        const [eRes, uRes] = await Promise.all([
+            apiClient.get("/staffs"),
+            apiClient.get("/users"),
+        ]);
+        setEmployees(eRes.data || []);
+        setUsers(uRes.data || []);
+    };
+
+    const openModal = (m, emp) => {
+        setMode(m);
         if (emp) {
-            setFormData(emp);
+            setForm({ ...emp });
+            setSelected(emp);
         } else {
-            setFormData({
+            setForm({
+                maNhanVien: "",
                 hoTen: "",
-                email: "",
                 soDienThoai: "",
-                ngayVaoLam: "",
-                ngayNghiViec: "",
-                viTriId: "",
+                viTri: "GIANG_VIEN",
                 userId: "",
+                ngayVaoLam: new Date().toISOString().split("T")[0],
+                ngayNghiViec: "",
+                tenNguoiDung: "",
             });
+            setSelected(null);
         }
-        setIsModalOpen(true);
+        setOpen(true);
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedEmployee(null);
-    };
-
-    const handleChange = (e) => {
-        if (modalMode === "view") return;
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    // Lưu nhân viên (thêm hoặc sửa)
-    const handleSave = async (e) => {
-        e.preventDefault();
-
-        try {
-            let res;
-            if (modalMode === "add") {
-                res = await apiClient.post("/staffs", formData);
-                setEmployees([...employees, res.data]);
-                alert("Thêm nhân viên thành công!");
-            } else {
-                res = await apiClient.put(`/staffs/${formData.id}`, formData);
-                setEmployees(employees.map((e) => (e.id === res.data.id ? res.data : e)));
-                alert("Cập nhật nhân viên thành công!");
-            }
-            closeModal();
-        } catch (err) {
-            console.error("Lỗi lưu nhân viên:", err.response?.data || err);
-            alert("Thao tác thất bại!");
+    const save = async () => {
+        const payload = { ...form };
+        if (mode === "add") {
+            const res = await apiClient.post("/staffs", payload);
+            setEmployees([...employees, res.data]);
         }
+        if (mode === "edit") {
+            const res = await apiClient.put(`/staffs/${form.id}`, payload);
+            setEmployees(employees.map(e => e.id === res.data.id ? res.data : e));
+        }
+        setOpen(false);
     };
 
-    // Xóa nhân viên
-    const handleDelete = async () => {
-        if (!selectedEmployee) return alert("Chọn nhân viên để xóa!");
-        if (!window.confirm("Bạn có chắc muốn xóa nhân viên này?")) return;
-
-        try {
-            await apiClient.delete(`/staffs/${selectedEmployee.id}`);
-            setEmployees(employees.filter((e) => e.id !== selectedEmployee.id));
-            setSelectedEmployee(null);
-            alert("Xóa nhân viên thành công!");
-        } catch (err) {
-            console.error("Lỗi xóa nhân viên:", err.response?.data || err);
-            alert("Xóa thất bại!");
-        }
+    const remove = async () => {
+        if (!selected) return;
+        await apiClient.delete(`/staffs/${selected.id}`);
+        setEmployees(employees.filter(e => e.id !== selected.id));
+        setSelected(null);
     };
 
     return (
-        <main className="container">
+        <div className="crud-page">
             <section className="banner-section">
-                <h1 className="banner-title">Quản lý Nhân viên</h1>
-                <p className="banner-subtitle">Quản lý thông tin nhân sự trong hệ thống.</p>
-            </section>
-
-            <section className="mt-8">
-                <div className="content-box">
-                    <div className="action-buttons">
-                        <button onClick={() => openModal("add")} className="btn btn-blue">Thêm</button>
-                        <button onClick={() => selectedEmployee ? openModal("edit", selectedEmployee) : alert("Chọn nhân viên để sửa")} className="btn btn-yellow">Sửa</button>
-                        <button onClick={handleDelete} className="btn btn-red">Xóa</button>
-                    </div>
-
-                    <table className="employees-table">
-                        <thead>
-                            <tr>
-                                <th>Họ tên</th>
-                                <th>Email</th>
-                                <th>SĐT</th>
-                                <th>Vị trí</th>
-                                <th>Người dùng</th>
-                                <th>Chi tiết</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {employees.map((e) => (
-                                <tr key={e.id} onClick={() => setSelectedEmployee(e)} className={selectedEmployee?.id === e.id ? "selected-row" : ""}>
-                                    <td>{e.hoTen}</td>
-                                    <td>{e.email}</td>
-                                    <td>{e.soDienThoai}</td>
-                                    <td>{e.tenViTri}</td>
-                                    <td>{e.tenNguoiDung}</td>
-                                    <td>
-                                        <button onClick={(ev) => { ev.stopPropagation(); openModal("view", e); }} className="btn btn-gray">Xem</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="banner-content">
+                    <h1 className="banner-title">Quản Lý Nhân Sự</h1>
+                    <p className="banner-subtitle">Hệ thống quản lý thông tin cán bộ, giảng viên</p>
                 </div>
             </section>
+            <div className="page-header">
+                <div className="actions">
+                    <button className="btn primary" onClick={() => openModal("add")}>+ Thêm</button>
+                    <button className="btn" disabled={!selected} onClick={() => openModal("edit", selected)}>Sửa</button>
+                    <button className="btn danger" disabled={!selected} onClick={remove}>Xóa</button>
+                </div>
+            </div>
 
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-box">
-                        <h2>{modalMode === "add" ? "Thêm nhân viên" : modalMode === "edit" ? "Sửa nhân viên" : "Chi tiết nhân viên"}</h2>
-                        <form onSubmit={handleSave}>
-                            <input name="hoTen" value={formData.hoTen} onChange={handleChange} placeholder="Họ tên" readOnly={modalMode === "view"} />
-                            <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" readOnly={modalMode === "view"} />
-                            <input name="soDienThoai" value={formData.soDienThoai} onChange={handleChange} placeholder="Số điện thoại" readOnly={modalMode === "view"} />
-                            <span>Ngày vào làm</span>
-                            <input type="date" name="ngayVaoLam" value={formData.ngayVaoLam || ""} onChange={handleChange} readOnly={modalMode === "view"} />
-                            <span>Ngày nghĩ việc</span>
-                            <input type="date" name="ngayNghiViec" value={formData.ngayNghiViec || ""} onChange={handleChange} readOnly={modalMode === "view"} />
-                            <select name="viTriId" value={formData.viTriId} onChange={handleChange} disabled={modalMode === "view"}>
-                                <option value="">-- Chọn vị trí --</option>
-                                {positions.map((p) => (
-                                    <option key={p.id} value={p.id}>{p.tenViTri}</option>
-                                ))}
+            <table className="crud-table">
+                <thead>
+                    <tr>
+                        <th>Mã Nhân viên</th>
+                        <th>Họ tên</th>
+                        <th>SĐT</th>
+                        <th>Vị trí</th>
+                        <th>User</th>
+                        <th>Ngày vào</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {employees.map(e => (
+                        <tr key={e.id} onClick={() => setSelected(e)} className={selected?.id === e.id ? "active" : ""}>
+                            <td>{e.maNhanVien}</td>
+                            <td>{e.hoTen}</td>
+                            <td>{e.soDienThoai}</td>
+                            <td><span className={`tag ${e.viTri}`}>{e.viTri}</span></td>
+                            <td>{e.tenNguoiDung}</td>
+                            <td>{e.ngayVaoLam}</td>
+                            <td>
+                                <button className="icon-btn" onClick={(ev) => { ev.stopPropagation(); openModal("view", e); }}>👁</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {open && (
+                <div className="modal">
+                    <div className="modal-card">
+                        <h2>{mode === "add" ? "Thêm" : mode === "edit" ? "Cập nhật" : "Chi tiết"}</h2>
+                        <div className="form-grid">
+                            <input placeholder="Mã nhân viên" value={form.maNhanVien} disabled={mode === "view"}
+                                onChange={e => setForm({ ...form, maNhanVien: e.target.value })} />
+                            <input placeholder="Họ tên" value={form.hoTen} disabled={mode === "view"}
+                                onChange={e => setForm({ ...form, hoTen: e.target.value })} />
+                            <input placeholder="Số điện thoại" value={form.soDienThoai} disabled={mode === "view"}
+                                onChange={e => setForm({ ...form, soDienThoai: e.target.value })} />
+                            <select value={form.viTri} disabled={mode === "view"}
+                                onChange={e => setForm({ ...form, viTri: e.target.value })}>
+                                <option value="GIANG_VIEN">Giảng viên</option>
+                                <option value="QUAN_TRI">Quản trị</option>
+                                <option value="KE_TOAN">Kế toán</option>
+                                <option value="HIEU_TRUONG">Hiệu trưởng</option>
                             </select>
-
-                            <select name="userId" value={formData.userId} onChange={handleChange} disabled={modalMode === "view"}>
-                                <option value="">-- Chọn người dùng --</option>
-                                {users.map((u) => (
-                                    <option key={u.id} value={u.id}>{u.fullName}</option>
-                                ))}
+                            <select value={form.userId} disabled={mode === "view"}
+                                onChange={e => setForm({ ...form, userId: e.target.value })}>
+                                <option value="">-- User --</option>
+                                {users.map(u => <option key={u.id} value={u.id}>{u.username}</option>)}
                             </select>
-
-                            <div className="modal-actions">
-                                {modalMode !== "view" && <button type="submit" className="btn btn-green">Lưu</button>}
-                                <button type="button" onClick={closeModal} className="btn btn-gray">Đóng</button>
-                            </div>
-                        </form>
+                            <dev className="input-css">
+                                <span>Ngày vào làm</span>
+                                <input type="date" value={form.ngayVaoLam || ""} disabled={mode === "view"}
+                                    onChange={e => setForm({ ...form, ngayVaoLam: e.target.value })} />
+                            </dev>
+                            <dev className="input-css">
+                                <span>Ngày nghĩ việc</span>
+                                <input type="date" value={form.ngayNghiViec || ""} disabled={mode === "view"}
+                                    onChange={e => setForm({ ...form, ngayNghiViec: e.target.value })} />
+                            </dev>
+                        </div>
+                        <div className="modal-actions">
+                            <button className="btn" onClick={() => setOpen(false)}>Đóng</button>
+                            {mode !== "view" && <button className="btn primary" onClick={save}>Lưu</button>}
+                        </div>
                     </div>
                 </div>
             )}
-        </main>
+        </div>
     );
 }

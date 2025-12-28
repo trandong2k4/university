@@ -208,3 +208,18 @@
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+.schedule-container {
+    padding: 16px;
+}
+
+.schedule-title {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+    .rbc-calendar {
+        font-size: 12px;
+    }
+}

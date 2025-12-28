@@ -54,6 +54,7 @@ export default function ManageUsers() {
                 updateDate: user.updateDate || "",
                 note: user.note || "",
                 roleId: user.roleId || "",
+                marole: user.maRole || "",
             });
         }
         setIsModalOpen(true);
@@ -232,6 +233,19 @@ export default function ManageUsers() {
                                 </select>
                             </div>
 
+                            <div className="form-group">
+                                <label>Vai tro</label>
+                                <select
+                                    name="status"
+                                    value={formData.marole}
+                                    onChange={(e) => setFormData({ ...formData, roleId: e.target.value === formData.marole })}
+                                    disabled={modalMode === "view"}
+                                >
+                                    <option value="true">Kích hoạt</option>
+                                    <option value="false">Khoá</option>
+                                </select>
+                            </div>
+
                             <div className="form-row">
                                 <div className="form-group">
                                     <label>Ngày tạo</label>
@@ -256,9 +270,9 @@ export default function ManageUsers() {
 
                             <div className="modal-actions">
                                 {modalMode !== "view" && (
-                                    <button type="submit" className="btn btn-green">💾 Lưu thay đổi</button>
+                                    <button type="submit" className="btn_save">💾 Lưu thay đổi</button>
                                 )}
-                                <button type="button" onClick={closeModal} className="btn btn-gray">Đóng</button>
+                                <button type="button" onClick={closeModal} className="btn btn-blue">Đóng</button>
                             </div>
                         </form>
                     </div>

@@ -3,181 +3,206 @@ import apiClient from "/src/api/apiClient";
 import "../../styles/admin/manageSchedule.css";
 
 export default function ManageSchedule() {
-    const [gioHocs, setGioHocs] = useState([]);
+    // Dữ liệu danh sách chính
     const [lichHocs, setLichHocs] = useState([]);
-    const [selected, setSelected] = useState(null);
 
-    // Modal control
+    // Dữ liệu danh mục để đổ vào SelectBox
+    const [gioHocs, setGioHocs] = useState([]);
+    const [phongHocs, setPhongHocs] = useState([]);
+    const [lopHocPhans, setLopHocPhans] = useState([]);
+
+    // Trạng thái UI
+    const [selected, setSelected] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState("add"); // add | edit | view
-    const [modalType, setModalType] = useState(""); // "giohoc" | "lichhoc"
 
-    const [formData, setFormData] = useState({});
+    // Form data khớp với LichHocRequestDTO (Sử dụng ID để gửi lên server)
+    const [formData, setFormData] = useState({
+        ngayHoc: "",
+        gioHocId: "",
+        phongHocId: "",
+        lopHocPhanId: "",
+        ghiChu: ""
+    });
 
-    // Fetch dữ liệu
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [timesRes, schedulesRes] = await Promise.all([
-                    apiClient.get("/class_times"),
-                    apiClient.get("/schedules"),
-                ]);
-                setGioHocs(timesRes.data);        // GioHocResponseDTO[]
-                setLichHocs(schedulesRes.data);   // LichHocResponseDTO[]
-            } catch (err) {
-                console.error("Lỗi fetch schedule data:", err.response?.data || err);
-            }
-        };
-        fetchData();
+        fetchInitialData();
     }, []);
 
-    // Modal logic
-    const openModal = (type, mode, item = null) => {
-        setModalType(type);
-        setModalMode(mode);
-        setFormData(item ? item : {});
-        setIsModalOpen(true);
+    const fetchInitialData = async () => {
+        try {
+            const [times, rooms, classes, schedules] = await Promise.all([
+                apiClient.get("/class_times"),
+                apiClient.get("/rooms"),
+                apiClient.get("/class"),
+                apiClient.get("/schedules")
+            ]);
+            setLichHocs(schedules.data || []);
+            setGioHocs(times.data || []);
+            setPhongHocs(rooms.data || []);
+            setLopHocPhans(classes.data || []);
+        } catch (err) {
+            console.error("Lỗi fetch dữ liệu:", err);
+        }
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelected(null);
+    const openModal = (mode, item = null) => {
+        setModalMode(mode);
+        if (item) {
+            // Khi sửa, cần truyền ID của các thực thể liên quan vào form
+            // Lưu ý: Đảm bảo item nhận được từ getAll có chứa các ID gốc hoặc map lại từ list danh mục
+            setFormData({
+                id: item.id,
+                ngayHoc: item.ngayHoc,
+                gioHocId: gioHocs.find(g => g.tenGioHoc === item.tengioHoc)?.id || "",
+                phongHocId: phongHocs.find(p => p.tenPhong === item.tenPhong)?.id || "",
+                lopHocPhanId: lopHocPhans.find(l => l.maLopHocPhan === item.tenLop)?.id || "",
+                ghiChu: item.ghiChu || ""
+            });
+        } else {
+            setFormData({
+                ngayHoc: new Date().toISOString().split("T")[0],
+                gioHocId: "",
+                phongHocId: "",
+                lopHocPhanId: "",
+                ghiChu: ""
+            });
+        }
+        setIsModalOpen(true);
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Lưu (thêm/sửa)
     const handleSave = async (e) => {
         e.preventDefault();
-        let url = "";
-        let list = [];
-        let setList;
-
-        if (modalType === "giohoc") {
-            url = modalMode === "add" ? "/class_times" : `/class_times/${formData.id}`;
-            list = gioHocs; setList = setGioHocs;
-        } else if (modalType === "lichhoc") {
-            url = modalMode === "add" ? "/schedules" : `/schedules/${formData.id}`;
-            list = lichHocs; setList = setLichHocs;
-        }
-
         try {
             let res;
             if (modalMode === "add") {
-                res = await apiClient.post(url, formData);
-                setList([...list, res.data]);
+                res = await apiClient.post("/schedules", formData);
+                setLichHocs([...lichHocs, res.data]);
+                alert("Thêm lịch học thành công!");
             } else {
-                res = await apiClient.put(url, formData);
-                setList(list.map((i) => (i.id === res.data.id ? res.data : i)));
+                res = await apiClient.put(`/schedules/${formData.id}`, formData);
+                setLichHocs(lichHocs.map(l => l.id === res.data.id ? res.data : l));
+                alert("Cập nhật thành công!");
             }
-            closeModal();
+            setIsModalOpen(false);
         } catch (err) {
-            console.error("Lỗi lưu dữ liệu:", err.response?.data || err);
-            alert("Thao tác thất bại!");
+            alert(err.response?.data?.message || "Lỗi khi lưu dữ liệu!");
         }
     };
 
-    // Xóa
-    const handleDelete = async (type, id) => {
-        const mapApi = { giohoc: "/class_times", lichhoc: "/schedules" };
-        if (!window.confirm("Bạn có chắc muốn xóa mục này?")) return;
-
+    const handleDelete = async (id) => {
+        if (!window.confirm("Bạn có chắc chắn muốn xóa lịch học này?")) return;
         try {
-            await apiClient.delete(`${mapApi[type]}/${id}`);
-            if (type === "giohoc") setGioHocs(gioHocs.filter((g) => g.id !== id));
-            if (type === "lichhoc") setLichHocs(lichHocs.filter((l) => l.id !== id));
+            await apiClient.delete(`/schedules/${id}`);
+            setLichHocs(lichHocs.filter(l => l.id !== id));
+            alert("Đã xóa lịch học!");
         } catch (err) {
-            console.error("Lỗi xóa dữ liệu:", err.response?.data || err);
             alert("Xóa thất bại!");
         }
     };
 
     return (
-        <main className="schedule-container">
-            <h1 className="title">📚 Quản lý Lịch học & Giờ học</h1>
+        <main className="crud-page">
+            <div className="header-actions">
+                <h1>📅 Quản lý Lịch học Chi tiết</h1>
+                <button className="btn btn-primary" onClick={() => openModal("add")}>+ Thêm lịch mới</button>
+            </div>
+            <div className="page-header">
+                <p>Tổng số lịch học: <strong>{lichHocs.length}</strong></p>
+                <div className="actions">
+                    <button className="btn primary" onClick={() => openModal("add")}>+ Thêm lịch mới</button>
+                </div>
+            </div>
 
-            {/* Giờ học */}
-            <section className="section">
-                <h2>🕒 Giờ học</h2>
-                <button className="btn btn-blue" onClick={() => openModal("giohoc", "add")}>Thêm</button>
-                <table>
-                    <thead>
-                        <tr><th>Mã</th><th>Tên giờ</th><th>Bắt đầu</th><th>Kết thúc</th><th>Hành động</th></tr>
-                    </thead>
-                    <tbody>
-                        {gioHocs.map(g => (
-                            <tr key={g.id}>
-                                <td>{g.maGioHoc}</td>
-                                <td>{g.tenGioHoc}</td>
-                                <td>{g.thoiGianBatDau}</td>
-                                <td>{g.thoiGianKetThuc}</td>
-                                <td>
-                                    <button className="btn btn-yellow" onClick={() => openModal("giohoc", "edit", g)}>Sửa</button>
-                                    <button className="btn btn-red" onClick={() => handleDelete("giohoc", g.id)}>Xóa</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
+            <table className="crud-table">
+                <thead>
+                    <tr>
+                        <th>Ngày học</th>
+                        <th>Lớp / Môn học</th>
+                        <th>Giờ học</th>
+                        <th>Phòng học</th>
+                        <th>Giảng viên</th>
+                        <th>Ghi chú</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {lichHocs.map((l) => (
+                        <tr key={l.id} onClick={() => setSelected(l)} className={selected?.id === l.id ? "active" : ""}>
+                            <td>{l.ngayHoc}</td>
+                            <td>
+                                <div><strong>{l.tenLop}</strong></div>
+                                <small style={{ color: '#667' }}>{l.tenMonHoc}</small>
+                            </td>
+                            <td>{l.tengioHoc}</td>
+                            <td>
+                                <div>{l.tenPhong}</div>
+                                <small className="tag-location">{l.toaNha} - Tầng {l.tang}</small>
+                            </td>
+                            <td>{l.tenGiangVien}</td>
+                            <td><span className="note-text">{l.ghiChu || "-"}</span></td>
+                            <td>
+                                <div className="cell-actions">
+                                    <button className="icon-btn" onClick={(ev) => { ev.stopPropagation(); openModal("view", l); }}>👁</button>
+                                    <button className="icon-btn edit" onClick={(ev) => { ev.stopPropagation(); openModal("edit", l); }}>✏️</button>
+                                    <button className="icon-btn delete" onClick={(ev) => { ev.stopPropagation(); handleDelete(l.id); }}>🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
 
-            {/* Lịch học */}
-            <section className="section">
-                <h2>📘 Lịch học</h2>
-                <button className="btn btn-blue" onClick={() => openModal("lichhoc", "add")}>Thêm</button>
-                <table>
-                    <thead>
-                        <tr><th>Ngày</th><th>Thứ</th><th>Giờ học</th><th>Môn học</th><th>Ghi chú</th><th>Hành động</th></tr>
-                    </thead>
-                    <tbody>
-                        {lichHocs.map(l => (
-                            <tr key={l.id}>
-                                <td>{l.ngayHoc}</td>
-                                <td>{l.thuTrongTuan}</td>
-                                <td>{l.tenGioHoc}</td>
-                                <td>{l.tenMonHoc}</td>
-                                <td>{l.ghiChu}</td>
-                                <td>
-                                    <button className="btn btn-yellow" onClick={() => openModal("lichhoc", "edit", l)}>Sửa</button>
-                                    <button className="btn btn-red" onClick={() => handleDelete("lichhoc", l.id)}>Xóa</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
-
-            {/* Modal */}
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-box">
-                        <h2>{modalMode === "add" ? "➕ Thêm" : "✏️ Sửa"} {modalType.toUpperCase()}</h2>
+                <div className="modal">
+                    <div className="modal-card">
+                        <div className="modal-header">
+                            <h2>{modalMode === "add" ? "Thêm lịch học" : modalMode === "edit" ? "Sửa lịch học" : "Chi tiết lịch học"}</h2>
+                        </div>
                         <form onSubmit={handleSave}>
-                            {modalType === "giohoc" && (
-                                <>
-                                    <input name="maGioHoc" placeholder="Mã giờ học" value={formData.maGioHoc || ""} onChange={handleChange} />
-                                    <input name="tenGioHoc" placeholder="Tên giờ học" value={formData.tenGioHoc || ""} onChange={handleChange} />
-                                    <input type="time" name="thoiGianBatDau" value={formData.thoiGianBatDau || ""} onChange={handleChange} />
-                                    <input type="time" name="thoiGianKetThuc" value={formData.thoiGianKetThuc || ""} onChange={handleChange} />
-                                </>
-                            )}
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Ngày học</label>
+                                    <input type="date" name="ngayHoc" value={formData.ngayHoc} onChange={handleChange} required disabled={modalMode === "view"} />
+                                </div>
 
-                            {modalType === "lichhoc" && (
-                                <>
-                                    <input type="date" name="ngayHoc" value={formData.ngayHoc || ""} onChange={handleChange} />
-                                    <input name="thuTrongTuan" placeholder="Thứ trong tuần" value={formData.thuTrongTuan || ""} onChange={handleChange} />
-                                    <input name="tenGioHoc" placeholder="Tên giờ học" value={formData.tenGioHoc || ""} onChange={handleChange} />
-                                    <input name="tenMonHoc" placeholder="Tên môn học" value={formData.tenMonHoc || ""} onChange={handleChange} />
-                                    <input name="ghiChu" placeholder="Ghi chú" value={formData.ghiChu || ""} onChange={handleChange} />
-                                </>
-                            )}
+                                <div className="form-group">
+                                    <label>Giờ học</label>
+                                    <select name="gioHocId" value={formData.gioHocId} onChange={handleChange} required disabled={modalMode === "view"}>
+                                        <option value="">-- Chọn giờ --</option>
+                                        {gioHocs.map(g => <option key={g.id} value={g.id}>{g.tenGioHoc} ({g.thoiGianBatDau})</option>)}
+                                    </select>
+                                </div>
 
+                                <div className="form-group">
+                                    <label>Lớp học phần</label>
+                                    <select name="lopHocPhanId" value={formData.lopHocPhanId} onChange={handleChange} required disabled={modalMode === "view"}>
+                                        <option value="">-- Chọn lớp --</option>
+                                        {lopHocPhans.map(l => <option key={l.id} value={l.id}>{l.maLopHocPhan}</option>)}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Phòng học</label>
+                                    <select name="phongHocId" value={formData.phongHocId} onChange={handleChange} required disabled={modalMode === "view"}>
+                                        <option value="">-- Chọn phòng --</option>
+                                        {phongHocs.map(p => <option key={p.id} value={p.id}>{p.tenPhong} ({p.toaNha})</option>)}
+                                    </select>
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Ghi chú</label>
+                                    <textarea name="ghiChu" value={formData.ghiChu} onChange={handleChange} disabled={modalMode === "view"} placeholder="Nhập ghi chú buổi học..."></textarea>
+                                </div>
+                            </div>
                             <div className="modal-actions">
-                                <button type="submit" className="btn btn-green">💾 Lưu</button>
-                                <button type="button" className="btn btn-gray" onClick={closeModal}>Đóng</button>
+                                <button type="button" className="btn" onClick={() => setIsModalOpen(false)}>Đóng</button>
+                                {modalMode !== "view" && <button type="submit" className="btn primary">Lưu dữ liệu</button>}
                             </div>
                         </form>
                     </div>

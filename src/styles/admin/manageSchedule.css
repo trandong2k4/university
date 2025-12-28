@@ -1,101 +1,67 @@
-.schedule-container {
-    padding: 20px;
-    background: #f9fafb;
-    font-family: "Segoe UI", sans-serif;
+/* Tận dụng lại các biến từ manageEmployees nếu có, hoặc định nghĩa mới */
+.crud-page {
+    padding: 24px;
+    background: #f8fafc;
 }
 
-.title {
-    text-align: center;
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
+.tag-location {
+    display: inline-block;
+    background: #e2e8f0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #475569;
 }
 
-.section {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 30px;
+.note-text {
+    font-size: 13px;
+    color: #64748b;
+    font-style: italic;
 }
 
-.section h2 {
-    margin-bottom: 10px;
-}
-
-.actions {
-    margin-bottom: 10px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-}
-
-th,
-td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-th {
-    background: #f0f4f8;
-}
-
-.btn {
-    padding: 6px 12px;
-    margin: 2px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.btn-blue {
-    background: #3b82f6;
-    color: #fff;
-}
-
-.btn-yellow {
-    background: #fbbf24;
-    color: #fff;
-}
-
-.btn-red {
-    background: #ef4444;
-    color: #fff;
-}
-
-.btn-green {
-    background: #22c55e;
-    color: #fff;
-}
-
-.btn-gray {
-    background: #9ca3af;
-    color: #fff;
-}
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+.cell-actions {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    gap: 8px;
 }
 
-.modal-box {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    width: 400px;
+.icon-btn.edit:hover {
+    color: #f59e0b;
 }
 
-.modal-box input {
-    width: 100%;
-    margin-bottom: 8px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+.icon-btn.delete:hover {
+    color: #ef4444;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #334155;
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.header-info h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header-info p {
+    margin: 4px 0 0;
+    color: #64748b;
+}
+
+/* Modal header tách biệt */
+.modal-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
 }

@@ -1,3 +1,13 @@
+:root {
+    --sidebar-w: 0px;
+    --primary-color: #000000;
+    --bg-color: #f8f9fa;
+    --text-main: #2b2d42;
+    --text-muted: #000000;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    /* --sidebar-width: 100px; */
+}
+
 .manage-majors-container {
     margin-left: var(--sidebar-w);
     background-color: #f3f4f6;
@@ -7,8 +17,11 @@
 
 /* Banner */
 .banner-header {
+    background-color: #0077ff;
+    padding: 30px;
     color: white;
     text-align: center;
+    border-radius: 10px;
 }
 
 .banner-title {
