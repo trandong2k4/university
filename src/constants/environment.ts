@@ -17,8 +17,8 @@ export interface EnvironmentConfig {
 
 export const envConfig: EnvironmentConfig = {
     // Get from .env variables, with defaults
-    apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
-    apiTimeout: import.meta.env.VITE_API_TIMEOUT ? parseInt(import.meta.env.VITE_API_TIMEOUT) : 10000,
+    apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'https://learning-hub-2ofu.onrender.com/api',
+    apiTimeout: import.meta.env.VITE_API_TIMEOUT ? parseInt(import.meta.env.VITE_API_TIMEOUT) : 30000,
 
     // Use mock data flag - can be overridden per environment
     useMockData: import.meta.env.VITE_USE_MOCK_DATA === 'true',
