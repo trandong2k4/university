@@ -3,7 +3,7 @@ export * from './auth';
 export * from './chatbot';
 export * from './common';
 export * from './admin';
-export * from './lecturer';
+// export * from './lecturer';
 export * from './accounting';
 
 // student re-exports from common

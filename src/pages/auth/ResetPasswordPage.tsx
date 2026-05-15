@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { ResetPasswordForm } from '@/components/forms/ResetPasswordForm';
 import { PasswordResetSuccess } from '@/components/forms/PasswordResetSuccess';
-import { GraduationCap, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
+import { LearningHubMark } from '@/components/common/LearningHubMark';
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -19,9 +20,9 @@ export default function ResetPasswordPage() {
         <div className="text-center text-white">
           <div className="inline-flex items-center gap-4 mb-8">
             <div className="bg-white/20 backdrop-blur p-4 rounded-2xl">
-              <GraduationCap className="w-12 h-12 text-white" />
+              <LearningHubMark className="w-12 h-12 text-white" />
             </div>
-            <h1 className="text-4xl font-bold">Learning Hub</h1>
+            <h1 className="text-4xl font-bold">LearningHub</h1>
           </div>
           <p className="text-xl text-blue-100 max-w-md leading-relaxed">
             Đặt lại mật khẩu để tiếp tục truy cập hệ thống của bạn
@@ -36,10 +37,10 @@ export default function ResetPasswordPage() {
           <div className="lg:hidden mb-8 text-center">
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-3 rounded-2xl shadow-lg">
-                <GraduationCap className="w-8 h-8 text-white" />
+                <LearningHubMark className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                Learning Hub
+                LearningHub
               </h1>
             </div>
           </div>
@@ -72,7 +73,7 @@ export default function ResetPasswordPage() {
           )}
 
           <div className="mt-6 text-center text-sm text-gray-500">
-            <p>© 2026 Learning Hub. All rights reserved.</p>
+            <p>© 2026 LearningHub. All rights reserved.</p>
           </div>
         </div>
       </div>

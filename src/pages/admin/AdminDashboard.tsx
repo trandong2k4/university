@@ -161,7 +161,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between relative z-10">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Chào mừng trở lại, Admin! 👋</h2>
-                  <p className="text-blue-100">Tổng quan hệ thống Learning Hub</p>
+                  <p className="text-blue-100">Tổng quan hệ thống LearningHub</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-blue-100">Hôm nay</p>

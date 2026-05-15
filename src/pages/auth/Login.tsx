@@ -7,10 +7,10 @@ import { EmailSentNotification } from '@/components/notification/EmailSentNotifi
 import { ResetPasswordForm } from '@/components/forms/ResetPasswordForm';
 import { PasswordResetSuccess } from '@/components/forms/PasswordResetSuccess';
 import {
-  GraduationCap,
   Zap,
   UserCheck,
 } from 'lucide-react';
+import { LearningHubMark } from '@/components/common/LearningHubMark';
 import { useAuth } from '@/hooks';
 import authApi from '@/api/auth';
 
@@ -215,12 +215,12 @@ export default function Login() {
           <div className="lg:hidden mb-8 text-center">
             <div className="inline-flex items-center gap-3">
               <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-3 rounded-2xl shadow-lg shadow-blue-500/25">
-                <GraduationCap className="w-8 h-8 text-white" />
+                <LearningHubMark className="w-8 h-8 text-white" />
               </div>
 
               <div className="text-left">
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                  Learning Hub
+                  LearningHub
                 </h1>
                 <p className="text-xs text-gray-500">Hệ thống Quản lý Đào tạo</p>
               </div>
@@ -263,7 +263,7 @@ export default function Login() {
                   <p className="text-gray-500 text-sm">
                     {showRoleSelect
                       ? 'Tài khoản của bạn có nhiều vai trò. Vui lòng chọn vai trò muốn sử dụng.'
-                      : 'Đăng nhập để tiếp tục với Learning Hub'}
+                      : 'Đăng nhập để tiếp tục với LearningHub'}
                   </p>
                 </div>
 
@@ -297,7 +297,7 @@ export default function Login() {
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1.5 text-sm text-gray-400">
                   <Zap className="w-3.5 h-3.5" />
-                  <span>2026 Learning Hub. Mọi quyền được bảo lưu.</span>
+                  <span>2026 LearningHub. Mọi quyền được bảo lưu.</span>
                 </div>
               </div>
             </>

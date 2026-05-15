@@ -62,7 +62,7 @@ export function EmailSentNotification({ email, onBackToLogin, onResend }: EmailS
         <div className="bg-gray-50 rounded-xl p-6 mb-8 max-w-lg mx-auto">
           <div className="space-y-3 text-left">
             {[
-              <>Mở email và tìm thư từ <span className="font-semibold">Learning Hub</span></>,
+              <>Mở email và tìm thư từ <span className="font-semibold">LearningHub</span></>,
               <>Nhấn vào liên kết <span className="font-semibold">"Đặt lại mật khẩu"</span></>,
               <>Tạo mật khẩu mới cho tài khoản của bạn</>,
             ].map((text, i) => (

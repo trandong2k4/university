@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ChevronDown, GraduationCap, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut } from 'lucide-react';
 import { NavLink, useLocation, useNavigate } from 'react-router';
+import { LearningHubMark } from '@/components/common/LearningHubMark';
 import { LogoutConfirmDialog } from '@/components/common/LogoutConfirmDialog';
 import { useAuth } from '@/hooks';
 
@@ -92,7 +93,7 @@ export function RoleSidebar({ roleLabel, menuGroups }: RoleSidebarProps) {
         <div className="border-b border-slate-800 p-5">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-emerald-600 p-2 shadow-lg shadow-emerald-900/20">
-              <GraduationCap className="h-6 w-6 text-white" />
+              <LearningHubMark className="h-6 w-6 text-white" />
             </div>
             <div className="min-w-0">
               <h1 className="truncate text-lg font-bold text-white" style={{ fontFamily: "'Sora', sans-serif" }}>

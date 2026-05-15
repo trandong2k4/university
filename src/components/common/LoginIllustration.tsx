@@ -1,5 +1,6 @@
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
-import { GraduationCap, BookOpen, Brain, Users } from 'lucide-react';
+import { BookOpen, Brain, Users } from 'lucide-react';
+import { LearningHubMark } from '@/components/common/LearningHubMark';
 
 // Decorative elements inspired by Figma design
 function Km1Component() {
@@ -27,9 +28,9 @@ export function LoginIllustration() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl">
-              <GraduationCap className="w-10 h-10 text-white" />
+              <LearningHubMark className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-3xl 2xl:text-4xl font-bold text-white">Learning Hub</h1>
+            <h1 className="text-3xl 2xl:text-4xl font-bold text-white">LearningHub</h1>
           </div>
 
           <h2 className="text-2xl 2xl:text-3xl font-bold text-white leading-tight max-w-lg">

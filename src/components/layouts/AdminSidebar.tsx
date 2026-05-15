@@ -89,7 +89,7 @@ const ADMIN_MENU_GROUPS: RoleSidebarGroup[] = [
         label: 'Đăng ký tín chỉ',
         path: '/admin/credit-registrations',
       },
-      { id: 'submissions', icon: <FileText className="h-4 w-4" />, label: 'Bài làm học viên', path: '/admin/submissions' },
+      // { id: 'submissions', icon: <FileText className="h-4 w-4" />, label: 'Bài làm học viên', path: '/admin/submissions' },
       {
         id: 'chuong-trinh-dao-tao',
         icon: <BookMarked className="h-4 w-4" />,
