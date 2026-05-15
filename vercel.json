@@ -1,6 +1,4 @@
 {
-  "buildCommand": "cd ums_frontend && npm run build",
-  "outputDirectory": "ums_frontend/dist",
   "rewrites": [
     {
       "source": "/(.*)",
