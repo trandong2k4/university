@@ -1,4 +1,4 @@
-import { BarChart3, Bell, DollarSign, LayoutDashboard, User } from 'lucide-react';
+import { BarChart3, Bell, DollarSign, LayoutDashboard, MessageCircle, User } from 'lucide-react';
 import { RoleSidebar, type RoleSidebarGroup } from './RoleSidebar';
 
 const ACCOUNTANT_MENU_GROUPS: RoleSidebarGroup[] = [
@@ -14,6 +14,7 @@ const ACCOUNTANT_MENU_GROUPS: RoleSidebarGroup[] = [
       },
       { id: 'reports', icon: <BarChart3 className="h-4 w-4" />, label: 'Báo cáo thống kê', path: '/accountant/reports' },
       { id: 'tuition', icon: <DollarSign className="h-4 w-4" />, label: 'Quản lý học phí', path: '/accountant/tuition' },
+      { id: 'chatbot', icon: <MessageCircle className="h-4 w-4" />, label: 'Trợ lý AI', path: '/accountant/chatbot' },
       { id: 'notifications', icon: <Bell className="h-4 w-4" />, label: 'Thông báo học phí', path: '/accountant/notifications' },
       { id: 'profile', icon: <User className="h-4 w-4" />, label: 'Hồ sơ cá nhân', path: '/accountant/profile' },
     ],

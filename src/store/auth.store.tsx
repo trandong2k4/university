@@ -7,14 +7,12 @@ import usersApi from '@/api/admin/users.api';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Backend trả về role dạng "ADMIN", "STUDENT", "LECTURER", "ACCOUNTING"
+// Backend trả về role dạng "ADMIN", "STUDENT", "LECTURER", "ACCOUNTANT"
 const mapBackendRole = (backendRole: string): UserRole => {
   switch (backendRole.toUpperCase()) {
     case 'ADMIN': return 'admin';
     case 'STUDENT': return 'student';
     case 'LECTURER': return 'lecturer';
-    case 'LECTURE': return 'lecturer';
-    case 'ACCOUNTING': return 'accountant';
     case 'ACCOUNTANT': return 'accountant';
     default: return 'student';
   }
@@ -31,7 +29,7 @@ const getLoginErrorMessage = (error: any): string => {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Khôi phục session từ localStorage khi app mount
@@ -59,28 +57,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Map LoginResponseDTO → frontend User
       const backendRoles: string[] = res.drole ?? [];
       const mappedRoles = Array.from(new Set(backendRoles.map(r => mapBackendRole(r || ''))));
-
-      // Fetch user roles & permissions (backend returns pairings)
       let permissions: string[] = [];
-      try {
-        const authPairs = await usersApi.getUserRolesAndPermissions(res.id);
-        const permSet = new Set<string>();
-        const roleSet = new Set<string>();
-        authPairs.forEach((p) => {
-          if (p.maPermissions) permSet.add(p.maPermissions);
-          if (p.maRole) roleSet.add(p.maRole);
-        });
-        permissions = Array.from(permSet);
-        // Merge roles từ authPairs vào mappedRoles nếu chưa có
-        roleSet.forEach(r => {
-          if (!backendRoles.includes(r)) {
-            backendRoles.push(r);
-            const mapped = mapBackendRole(r);
-            if (!mappedRoles.includes(mapped)) mappedRoles.push(mapped);
-          }
-        });
-      } catch (e) {
-        // ignore — permissions may be empty if endpoint not accessible
+
+      storageUtils.setAccessToken(res.accessToken);
+      storageUtils.setRefreshToken(res.refreshToken);
+
+      // Fetch extra roles/permissions via admin endpoint — only if the user is admin
+      const isAdmin = backendRoles.some(r => r.toUpperCase() === 'ADMIN');
+      if (isAdmin) {
+        try {
+          const authPairs = await usersApi.getUserRolesAndPermissions(res.id);
+          const permSet = new Set<string>();
+          const roleSet = new Set<string>();
+          authPairs.forEach((p) => {
+            if (p.maPermissions) permSet.add(p.maPermissions);
+            if (p.maRole) roleSet.add(p.maRole);
+          });
+          permissions = Array.from(permSet);
+          roleSet.forEach(r => {
+            if (!backendRoles.includes(r)) {
+              backendRoles.push(r);
+              const mapped = mapBackendRole(r);
+              if (!mappedRoles.includes(mapped)) mappedRoles.push(mapped);
+            }
+          });
+        } catch {
+          // ignore
+        }
       }
 
       const userData: User = {
@@ -93,8 +96,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
 
       storageUtils.setUser(userData);
-      storageUtils.setAccessToken(res.accessToken);
-      storageUtils.setRefreshToken(res.refreshToken);
 
       setUser(userData);
       setAccessToken(res.accessToken);

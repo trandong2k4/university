@@ -1,8 +1,8 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AdminSidebar } from '@/components/layouts/AdminSidebar';
 import { AdminHeader } from '@/components/layouts/AdminHeader';
 import { FileCheck2, FileWarning, BookOpenText, Search } from 'lucide-react';
-import AiAssistantButton from '@/imports/AiAssistantButton-4-13343';
+import { AdminAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
 import { useAsync } from '@/hooks';
 import { adminRepository, workflowRepository } from '@/api';
 import type { AdminContentItem } from '@/types';
@@ -85,8 +85,9 @@ export default function AdminContentPage() {
           </div>
         </div>
       </div>
-      <button className="fixed bottom-8 right-8 w-16 h-16 z-50 hover:scale-110 transition-transform cursor-pointer" aria-label="AI Assistant"><AiAssistantButton /></button>
+      <AdminAIAssistantButton />
     </div>
   );
 }
+
 

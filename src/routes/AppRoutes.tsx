@@ -4,7 +4,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import Login from '@/pages/auth/Login';
 import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
 
-import StudentDashboard from '@/pages//student/StudentDashboard';
+import StudentDashboard from '@/pages/student/StudentDashboard';
 import ProfilePage from '@/pages/student/ProfilePage';
 import SchedulePage from '@/pages/student/SchedulePage';
 import DocumentsPage from '@/pages/student/DocumentsPage';
@@ -63,6 +63,9 @@ import NotificationsPage from '@/pages/accounting/NotificationsPage';
 import AccountantProfilePage from '@/pages/accounting/AccountantProfilePage';
 import FinancialReportsPage from '@/pages/accounting/FinancialReportsPage';
 import TuitionManagementPage from '@/pages/accounting/TuitionManagementPage';
+import { AccountantChatbotPage } from '@/pages/accounting/AccountantChatbotPage';
+import { LecturerChatbotPage } from '@/pages/lecturer/LecturerChatbotPage';
+import { AdminChatbotPage } from '@/pages/admin/AdminChatbotPage';
 
 // Pre-created wrapper components to prevent re-creation on every render
 const withRole = (Component: React.ComponentType, role: string) => {
@@ -135,6 +138,9 @@ const NotificationsPageWrapper = withRole(NotificationsPage, 'accountant');
 const AccountantProfilePageWrapper = withRole(AccountantProfilePage, 'accountant');
 const FinancialReportsPageWrapper = withRole(FinancialReportsPage, 'accountant');
 const TuitionManagementPageWrapper = withRole(TuitionManagementPage, 'accountant');
+const AccountantChatbotPageWrapper = withRole(AccountantChatbotPage, 'accountant');
+const LecturerChatbotPageWrapper = withRole(LecturerChatbotPage, 'lecturer');
+const AdminChatbotPageWrapper = withRole(AdminChatbotPage, 'admin');
 
 export const router = createBrowserRouter([
     { path: '/', element: <Login /> },
@@ -168,6 +174,7 @@ export const router = createBrowserRouter([
     { path: '/lecturer/attendance', element: <AttendanceManagementWrapper /> },
     { path: '/lecturer/notifications', element: <NotificationManagementWrapper /> },
     { path: '/lecturer/profile', element: <InstructorProfileWrapper /> },
+    { path: '/lecturer/chatbot', element: <LecturerChatbotPageWrapper /> },
 
     { path: '/admin/dashboard', element: <AdminDashboardWrapper /> },
     { path: '/admin/schools', element: <AdminSchoolsPageWrapper /> },
@@ -194,10 +201,12 @@ export const router = createBrowserRouter([
     { path: '/admin/students', element: <AdminStudentsPageWrapper /> },
     { path: '/admin/chuong-trinh-dao-tao', element: <AdminChuongTrinhDaoTaoPageWrapper /> },
     { path: '/admin/submissions', element: <AdminSubmissionsPageWrapper /> },
+    { path: '/admin/chatbot', element: <AdminChatbotPageWrapper /> },
 
     { path: '/accountant/dashboard', element: <AccountantDashboardWrapper /> },
     { path: '/accountant/reports', element: <FinancialReportsPageWrapper /> },
     { path: '/accountant/tuition', element: <TuitionManagementPageWrapper /> },
     { path: '/accountant/notifications', element: <NotificationsPageWrapper /> },
     { path: '/accountant/profile', element: <AccountantProfilePageWrapper /> },
+    { path: '/accountant/chatbot', element: <AccountantChatbotPageWrapper /> },
 ]);

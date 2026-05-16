@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '@/hooks';
-import AiAssistantButton from '@/imports/AiAssistantButton';
+import { LecturerAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
 import lecturerApi, { LecturerClassSummaryResponseDTO } from '@/api/lecturer/lecturer.api';
 
 const SUBJECT_COLORS = [
@@ -205,12 +205,8 @@ export default function ClassManagement() {
         </div>
       </div>
 
-      <button
-        className="fixed bottom-8 right-8 w-16 h-16 hover:scale-110 transition-transform duration-200 z-40"
-        aria-label="AI Assistant"
-      >
-        <AiAssistantButton />
-      </button>
+      <LecturerAIAssistantButton />
     </div>
   );
 }
+

@@ -9,7 +9,7 @@ import {
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useAuth } from '@/hooks';
-import AiAssistantButton from '@/imports/AiAssistantButton';
+import { LecturerAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
 import lecturerApi, {
   LecturerClassDetailResponseDTO, LecturerScheduleDTO,
   GradeResponseDTO,
@@ -305,9 +305,7 @@ export default function ClassDetail() {
         </div>
       )}
 
-      <button className="fixed bottom-8 right-8 w-16 h-16 hover:scale-110 transition-transform duration-200 z-40" aria-label="AI Assistant">
-        <AiAssistantButton />
-      </button>
+      <LecturerAIAssistantButton />
     </div>
   );
 }
@@ -1629,3 +1627,4 @@ function AttendanceTab({
     </div>
   );
 }
+

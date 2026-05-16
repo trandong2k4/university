@@ -1,8 +1,8 @@
-﻿import { AdminSidebar } from '@/components/layouts/AdminSidebar';
+import { AdminSidebar } from '@/components/layouts/AdminSidebar';
 import { AdminHeader } from '@/components/layouts/AdminHeader';
 import { useMemo } from 'react';
 import { BarChart3, Users, GraduationCap, CircleDollarSign, Loader2 } from 'lucide-react';
-import AiAssistantButton from '@/imports/AiAssistantButton-4-13343';
+import { AdminAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
 import * as hocVienApi from '@/api/admin/hoc-vien.api';
 import { useAsync } from '@/hooks';
 
@@ -97,7 +97,8 @@ export default function AdminReportsPage() {
           </div>
         </div>
       </div>
-      <button className="fixed bottom-8 right-8 w-16 h-16 z-50 hover:scale-110 transition-transform cursor-pointer" aria-label="AI Assistant"><AiAssistantButton /></button>
+      <AdminAIAssistantButton />
     </div>
   );
 }
+

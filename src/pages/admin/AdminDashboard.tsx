@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useMemo } from 'react';
-import AiAssistantButton from '@/imports/AiAssistantButton-4-13343';
+import { AdminAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
 import { adminRepository } from '@/api';
 import { useAsync } from '@/hooks';
 
@@ -361,13 +361,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* AI Assistant Button */}
-      <button 
-        className="fixed bottom-8 right-8 w-16 h-16 z-50 hover:scale-110 transition-transform cursor-pointer"
-        aria-label="AI Assistant"
-      >
-        <AiAssistantButton />
-      </button>
+      <AdminAIAssistantButton />
     </div>
   );
 }
+

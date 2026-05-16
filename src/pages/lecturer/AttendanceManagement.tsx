@@ -25,11 +25,11 @@ const STATUS_OPTIONS: Array<{
   shortLabel: string;
   className: string;
 }> = [
-  { value: 'PRESENT', label: 'Có mặt', shortLabel: 'Có mặt', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' },
-  { value: 'LATE', label: 'Đi muộn', shortLabel: 'Muộn', className: 'border-amber-200 bg-amber-50 text-amber-700' },
-  { value: 'EXCUSED', label: 'Vắng có phép', shortLabel: 'Có phép', className: 'border-blue-200 bg-blue-50 text-blue-700' },
-  { value: 'ABSENT', label: 'Vắng không phép', shortLabel: 'Vắng', className: 'border-red-200 bg-red-50 text-red-700' },
-];
+    { value: 'PRESENT', label: 'Có mặt', shortLabel: 'Có mặt', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' },
+    { value: 'LATE', label: 'Đi muộn', shortLabel: 'Muộn', className: 'border-amber-200 bg-amber-50 text-amber-700' },
+    { value: 'EXCUSED', label: 'Vắng có phép', shortLabel: 'Có phép', className: 'border-blue-200 bg-blue-50 text-blue-700' },
+    { value: 'ABSENT', label: 'Vắng không phép', shortLabel: 'Vắng', className: 'border-red-200 bg-red-50 text-red-700' },
+  ];
 
 function formatDate(value?: string) {
   if (!value) return 'Chưa có ngày';
@@ -264,11 +264,10 @@ export default function AttendanceManagement() {
         <div className="flex-1 overflow-auto p-6 lg:p-8">
           <div className="max-w-7xl mx-auto space-y-5">
             {toast && (
-              <div className={`flex items-center gap-3 px-5 py-3 rounded-xl border shadow-sm ${
-                toast.type === 'success'
+              <div className={`flex items-center gap-3 px-5 py-3 rounded-xl border shadow-sm ${toast.type === 'success'
                   ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                   : 'bg-red-50 text-red-800 border-red-200'
-              }`}>
+                }`}>
                 {toast.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
                 <span className="font-semibold text-sm">{toast.msg}</span>
               </div>
@@ -288,11 +287,10 @@ export default function AttendanceManagement() {
                 <button
                   onClick={handleSave}
                   disabled={!hasUnsavedChanges || saving || !canTakeAttendance}
-                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
-                    hasUnsavedChanges && !saving && canTakeAttendance
+                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-colors ${hasUnsavedChanges && !saving && canTakeAttendance
                       ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                       : 'bg-slate-200 text-slate-500 cursor-not-allowed'
-                  }`}
+                    }`}
                 >
                   <Save className="w-4 h-4" />
                   {saving ? 'Đang lưu...' : 'Lưu điểm danh'}
@@ -372,11 +370,10 @@ export default function AttendanceManagement() {
                 </div>
               </div>
 
-              <div className={`mt-4 flex items-start gap-3 p-4 rounded-xl border ${
-                canTakeAttendance
+              <div className={`mt-4 flex items-start gap-3 p-4 rounded-xl border ${canTakeAttendance
                   ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
                   : 'bg-slate-50 border-slate-200 text-slate-700'
-              }`}>
+                }`}>
                 <Calendar className={`w-5 h-5 mt-0.5 ${canTakeAttendance ? 'text-emerald-600' : 'text-slate-500'}`} />
                 <div>
                   <p className="text-sm font-bold">
@@ -470,11 +467,10 @@ export default function AttendanceManagement() {
                                   key={option.value}
                                   onClick={() => updateStudentStatus(student.hocVienId, option.value)}
                                   disabled={!canTakeAttendance}
-                                  className={`px-3 py-2 rounded-lg border text-sm font-semibold transition-colors ${
-                                    selected
+                                  className={`px-3 py-2 rounded-lg border text-sm font-semibold transition-colors ${selected
                                       ? option.className
                                       : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
-                                  } disabled:cursor-not-allowed disabled:opacity-70`}
+                                    } disabled:cursor-not-allowed disabled:opacity-70`}
                                 >
                                   {option.shortLabel}
                                 </button>

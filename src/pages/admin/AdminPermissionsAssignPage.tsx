@@ -1,12 +1,18 @@
 import { AdminSidebar } from '@/components/layouts/AdminSidebar';
 import { AdminHeader } from '@/components/layouts/AdminHeader';
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { Plus, Trash2, X, Search, Users, AlertCircle, CheckCircle, RefreshCw, Shield } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Plus, Trash2, X, Search, Users, AlertCircle, CheckCircle } from 'lucide-react';
 import AiAssistantButton from '@/imports/AiAssistantButton-4-13343';
-import type { UserRoleItem, RoleItem, UsersItem } from '@/api/common/types';
+import type { UserRoleItem } from '@/api/admin/user-role.api';
+import type { RolePermissionsItem } from '@/api/admin/role-permissions.api';
+import type { RoleItem } from '@/api/admin/role.api';
+import type { PermissionsItem } from '@/api/admin/permissions.api';
+import type { UsersItem } from '@/common/types';
 import * as userRoleApi from '@/api/admin/user-role.api';
+import * as rolePermissionsApi from '@/api/admin/role-permissions.api';
 import * as usersApi from '@/api/admin/users.api';
 import * as roleApi from '@/api/admin/role.api';
+import * as permissionsApi from '@/api/admin/permissions.api';
 
 interface Toast {
     id: string;
@@ -15,12 +21,12 @@ interface Toast {
 }
 
 export default function AdminPermissionsAssignPage() {
+    const [activeTab, setActiveTab] = useState<'user-roles' | 'role-permissions'>('user-roles');
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [toasts, setToasts] = useState<Toast[]>([]);
-    const [confirmModal, setConfirmModal] = useState<{ open: boolean; message: string; onConfirm: (() => void) | null }>({ open: false, message: '', onConfirm: null });
 
+    // User Roles State
     const [userRoles, setUserRoles] = useState<UserRoleItem[]>([]);
     const [users, setUsers] = useState<UsersItem[]>([]);
     const [roles, setRoles] = useState<RoleItem[]>([]);
@@ -29,65 +35,105 @@ export default function AdminPermissionsAssignPage() {
     const [selectedRole, setSelectedRole] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
+    // Role Permissions State
+    const [rolePermissions, setRolePermissions] = useState<RolePermissionsItem[]>([]);
+    const [permissions, setPermissions] = useState<PermissionsItem[]>([]);
+    const [selectedRoleForPerm, setSelectedRoleForPerm] = useState<string>('');
+    const [isAssignPermOpen, setIsAssignPermOpen] = useState(false);
+    const [selectedPermission, setSelectedPermission] = useState<string>('');
 
-    const addToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const addToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
         const id = Date.now().toString();
         setToasts(prev => [...prev, { id, message, type }]);
         setTimeout(() => {
             setToasts(prev => prev.filter(t => t.id !== id));
-        }, 4000);
-    }, []);
+        }, 3000);
+    };
 
-    const fetchData = useCallback(async () => {
+    const fetchUserRoles = async () => {
         try {
-            setLoading(true);
-            const [urData, usersData, rolesData] = await Promise.all([
-                userRoleApi.getUserRoles(),
-                usersApi.getUsers(),
-                roleApi.getRoles(),
-            ]);
-            setUserRoles(urData || []);
-            setUsers(usersData || []);
-            setRoles(rolesData || []);
+            const data = await userRoleApi.getUserRoles();
+            setUserRoles(data || []);
         } catch (err) {
             console.error(err);
-            addToast('Lỗi khi tải dữ liệu', 'error');
-        } finally {
-            setLoading(false);
+            addToast('Lỗi khi tải dữ liệu người dùng - vai trò', 'error');
         }
-    }, [addToast]);
+    };
 
-    useEffect(() => { fetchData(); }, [fetchData]);
+    const fetchUsers = async () => {
+        try {
+            const data = await usersApi.getUsers();
+            setUsers(data || []);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-    const filteredUserRoles = useMemo(() =>
-        userRoles.filter(ur =>
-            users.find(u => u.id === ur.usersId)?.hoTen?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-            roles.find(r => r.id === ur.roleId)?.maRole?.toLowerCase().includes(debouncedSearch.toLowerCase())
-        ),
-        [userRoles, users, roles, debouncedSearch]
+    const fetchRoles = async () => {
+        try {
+            const data = await roleApi.getRoles();
+            setRoles(data || []);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const fetchRolePermissions = async () => {
+        try {
+            const data = await rolePermissionsApi.getRolePermissions();
+            setRolePermissions(data || []);
+        } catch (err) {
+            console.error(err);
+            addToast('Lỗi khi tải dữ liệu vai trò - quyền hạn', 'error');
+        }
+    };
+
+    const fetchPermissions = async () => {
+        try {
+            const data = await permissionsApi.getPermissions();
+            setPermissions(data || []);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            if (activeTab === 'user-roles') {
+                await Promise.all([fetchUserRoles(), fetchUsers(), fetchRoles()]);
+            } else {
+                await Promise.all([fetchRolePermissions(), fetchRoles(), fetchPermissions()]);
+            }
+            setLoading(false);
+        };
+        loadData();
+    }, [activeTab]);
+
+    // User Roles Handlers
+    const filteredUserRoles = userRoles.filter(ur =>
+        users.find(u => u.id === ur.usersId)?.hoTen?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        roles.find(r => r.id === ur.roleId)?.maRole?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const uniqueUsersCount = useMemo(() => new Set(userRoles.map(ur => ur.usersId)).size, [userRoles]);
-    const uniqueRolesCount = useMemo(() => new Set(userRoles.map(ur => ur.roleId)).size, [userRoles]);
-
-    const handleAssignRole = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAssignRole = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedUser || !selectedRole) {
             addToast('Vui lòng chọn người dùng và vai trò', 'error');
             return;
         }
+
         try {
             setIsSubmitting(true);
-            await userRoleApi.assignUserRole({ usersId: selectedUser, roleId: selectedRole });
+            await userRoleApi.assignUserRole({
+                usersId: selectedUser,
+                roleId: selectedRole
+            });
             addToast('Phân quyền thành công!', 'success');
             setIsAssignRoleOpen(false);
             setSelectedUser('');
             setSelectedRole('');
-            await fetchData();
+            await fetchUserRoles();
         } catch (err) {
             console.error(err);
             addToast('Lỗi khi phân quyền', 'error');
@@ -96,198 +142,310 @@ export default function AdminPermissionsAssignPage() {
         }
     };
 
-    const handleRemoveUserRole = (id: string) => {
-        setConfirmModal({
-            open: true,
-            message: 'Bạn có chắc chắn muốn xóa phân quyền này? Hành động này không thể hoàn tác.',
-            onConfirm: async () => {
-                try {
-                    await userRoleApi.removeUserRole(id);
-                    addToast('Xóa quyền thành công!', 'success');
-                    await fetchData();
-                } catch (err) {
-                    console.error(err);
-                    addToast('Lỗi khi xóa quyền', 'error');
-                }
-            }
-        });
+    const handleRemoveUserRole = async (id: string) => {
+        if (!confirm('Bạn có chắc chắn muốn xóa quyền này?')) return;
+        try {
+            await userRoleApi.removeUserRole(id);
+            addToast('Xóa quyền thành công!', 'success');
+            await fetchUserRoles();
+        } catch (err) {
+            console.error(err);
+            addToast('Lỗi khi xóa quyền', 'error');
+        }
+    };
+
+    // Role Permissions Handlers
+    const filteredRolePermissions = rolePermissions.filter(rp =>
+        selectedRoleForPerm === '' || rp.roleId === selectedRoleForPerm
+    );
+
+    const handleAssignPermission = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedRoleForPerm || !selectedPermission) {
+            addToast('Vui lòng chọn vai trò và quyền hạn', 'error');
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            await rolePermissionsApi.assignRolePermission({
+                roleId: selectedRoleForPerm,
+                permissionsId: selectedPermission
+            });
+            addToast('Gán quyền hạn thành công!', 'success');
+            setIsAssignPermOpen(false);
+            setSelectedPermission('');
+            await fetchRolePermissions();
+        } catch (err) {
+            console.error(err);
+            addToast('Lỗi khi gán quyền hạn', 'error');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleRemoveRolePermission = async (id: string) => {
+        if (!confirm('Bạn có chắc chắn muốn xóa quyền hạn này?')) return;
+        try {
+            await rolePermissionsApi.removeRolePermission(id);
+            addToast('Xóa quyền hạn thành công!', 'success');
+            await fetchRolePermissions();
+        } catch (err) {
+            console.error(err);
+            addToast('Lỗi khi xóa quyền hạn', 'error');
+        }
     };
 
     return (
         <div className="flex h-screen bg-slate-50">
-            <AdminSidebar activeMenu="permissions-assign" />
+            <AdminSidebar activeMenu="permissions" />
             <div className="flex-1 ml-64 flex flex-col overflow-hidden">
-                <AdminHeader title="Phân Quyền Người Dùng" />
+                <AdminHeader title="Phân Quyền" />
                 <div className="flex-1 overflow-auto">
-                    <div className="p-6 max-w-7xl mx-auto space-y-4">
-
-                        {/* Stats Bar */}
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="bg-white border border-slate-200 rounded-xl px-5 py-3 flex items-center gap-3 shadow-sm">
-                                <div className="rounded-lg bg-blue-100 p-2">
-                                    <Shield className="w-5 h-5 text-blue-600" />
-                                </div>
-                                <div>
-                                    <p className="text-xl font-bold text-slate-900">{userRoles.length}</p>
-                                    <p className="text-xs text-slate-500">Tổng phân quyền</p>
-                                </div>
-                            </div>
-                            <div className="bg-white border border-slate-200 rounded-xl px-5 py-3 flex items-center gap-3 shadow-sm">
-                                <div className="rounded-lg bg-green-100 p-2">
-                                    <Users className="w-5 h-5 text-green-600" />
-                                </div>
-                                <div>
-                                    <p className="text-xl font-bold text-green-700">{uniqueUsersCount}</p>
-                                    <p className="text-xs text-slate-500">Người dùng có quyền</p>
-                                </div>
-                            </div>
-                            <div className="bg-white border border-slate-200 rounded-xl px-5 py-3 flex items-center gap-3 shadow-sm">
-                                <div className="rounded-lg bg-purple-100 p-2">
-                                    <Search className="w-5 h-5 text-purple-600" />
-                                </div>
-                                <div>
-                                    <p className="text-xl font-bold text-purple-700">{uniqueRolesCount}</p>
-                                    <p className="text-xs text-slate-500">Vai trò được dùng</p>
-                                </div>
-                            </div>
+                    <div className="p-6 max-w-7xl mx-auto space-y-6">
+                        {/* Tab Navigation */}
+                        <div className="flex gap-2 bg-white rounded-xl shadow-sm border border-slate-200 p-2">
+                            <button
+                                onClick={() => setActiveTab('user-roles')}
+                                className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'user-roles'
+                                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
+                                    : 'text-slate-700 hover:bg-slate-100'
+                                    }`}
+                            >
+                                Người Dùng - Vai Trò
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('role-permissions')}
+                                className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${activeTab === 'role-permissions'
+                                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
+                                    : 'text-slate-700 hover:bg-slate-100'
+                                    }`}
+                            >
+                                Vai Trò - Quyền Hạn
+                            </button>
                         </div>
 
-                        {/* Toolbar */}
-                        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between sticky top-0 z-20">
-                            <div className="flex flex-wrap items-center gap-2 flex-1">
-                                <div className="relative min-w-[200px] max-w-sm">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="Tìm người dùng hoặc vai trò..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
+                        {/* User Roles Tab */}
+                        {activeTab === 'user-roles' && (
+                            <>
+                                {/* Search and Add Section */}
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div className="relative flex-1 max-w-md w-full">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                        <input
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder="Tìm kiếm người dùng hoặc vai trò..."
+                                            className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => setIsAssignRoleOpen(true)}
+                                        className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium whitespace-nowrap"
+                                    >
+                                        <Plus className="w-5 h-5" /> Phân Quyền
+                                    </button>
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={fetchData}
-                                    title="Làm mới"
-                                    className="p-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors"
-                                >
-                                    <RefreshCw className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={() => { setSelectedUser(''); setSelectedRole(''); setIsAssignRoleOpen(true); }}
-                                    className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm"
-                                >
-                                    <Plus className="w-4 h-4" /> Phân quyền
-                                </button>
-                            </div>
-                        </div>
 
-                        {/* Table */}
-                        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                            {loading ? (
-                                <div className="flex flex-col items-center justify-center h-72 gap-3">
-                                    <div className="w-9 h-9 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-                                    <p className="text-sm text-slate-500">Đang tải...</p>
-                                </div>
-                            ) : (
-                                <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 380px)' }}>
-                                    <table className="w-full text-sm">
-                                        <thead className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-                                            <tr>
-                                                <th className="px-4 py-3 text-left font-semibold">Tên Người Dùng</th>
-                                                <th className="px-4 py-3 text-left font-semibold">Email</th>
-                                                <th className="px-4 py-3 text-left font-semibold">Vai Trò</th>
-                                                <th className="px-4 py-3 text-left font-semibold">Ngày Gán</th>
-                                                <th className="px-4 py-3 text-center font-semibold">Thao Tác</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-100">
-                                            {filteredUserRoles.map((ur) => {
-                                                const user = users.find(u => u.id === ur.usersId);
-                                                const role = roles.find(r => r.id === ur.roleId);
-                                                return (
-                                                    <tr key={ur.id} className="transition-colors hover:bg-blue-50/60">
-                                                        <td className="px-4 py-3 font-semibold text-slate-900">{user?.hoTen || '-'}</td>
-                                                        <td className="px-4 py-3 text-slate-600">{user?.email || '-'}</td>
-                                                        <td className="px-4 py-3">
-                                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                                                                <Shield className="w-3 h-3" />
-                                                                {role?.maRole || '-'}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-4 py-3 text-slate-500">
-                                                            {ur.createdAt ? new Date(ur.createdAt).toLocaleDateString('vi-VN') : '-'}
-                                                        </td>
-                                                        <td className="px-4 py-3">
-                                                            <div className="flex items-center justify-center">
-                                                                <button
-                                                                    onClick={() => handleRemoveUserRole(ur.id)}
-                                                                    className="p-1.5 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
-                                                                    title="Xóa"
-                                                                >
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
-                                                            </div>
-                                                        </td>
+                                {/* Table Section */}
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                                    {loading ? (
+                                        <div className="flex items-center justify-center h-96">
+                                            <div className="text-center">
+                                                <div className="inline-block mb-4">
+                                                    <div className="w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+                                                </div>
+                                                <p className="text-slate-600 font-medium">Đang tải dữ liệu...</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full">
+                                                <thead className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                                                    <tr>
+                                                        <th className="px-6 py-4 text-left text-sm font-semibold">Tên Người Dùng</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-semibold">Vai Trò</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-semibold">Ngày Gán</th>
+                                                        <th className="px-6 py-4 text-center text-sm font-semibold">Thao Tác</th>
                                                     </tr>
-                                                );
-                                            })}
-                                            {filteredUserRoles.length === 0 && (
-                                                <tr>
-                                                    <td colSpan={5} className="py-16 text-center">
-                                                        <div className="flex flex-col items-center gap-2">
-                                                            <div className="rounded-full bg-slate-100 p-4">
-                                                                <Users className="w-8 h-8 text-slate-400" />
-                                                            </div>
-                                                            <p className="font-medium text-slate-600">
-                                                                {debouncedSearch ? 'Không tìm thấy kết quả' : 'Chưa có phân quyền nào'}
-                                                            </p>
-                                                            <p className="text-sm text-slate-400">
-                                                                {debouncedSearch ? 'Thử từ khóa khác' : 'Nhấn "Phân quyền" để bắt đầu'}
-                                                            </p>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-200">
+                                                    {filteredUserRoles.map((ur) => {
+                                                        const user = users.find(u => u.id === ur.usersId);
+                                                        const role = roles.find(r => r.id === ur.roleId);
+                                                        return (
+                                                            <tr key={ur.id} className="hover:bg-blue-50 transition-colors">
+                                                                <td className="px-6 py-4 text-sm font-semibold text-slate-900">{user?.hoTen}</td>
+                                                                <td className="px-6 py-4 text-sm text-slate-600">{user?.email}</td>
+                                                                <td className="px-6 py-4 text-sm">
+                                                                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                                                                        {role?.maRole}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-slate-600">
+                                                                    {new Date(ur.createdAt).toLocaleDateString('vi-VN')}
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <div className="flex items-center justify-center">
+                                                                        <button
+                                                                            onClick={() => handleRemoveUserRole(ur.id)}
+                                                                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                                                            title="Xóa"
+                                                                        >
+                                                                            <Trash2 className="w-4 h-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                    {!loading && filteredUserRoles.length === 0 && (
+                                                        <tr>
+                                                            <td colSpan={5} className="px-6 py-16">
+                                                                <div className="flex flex-col items-center gap-3">
+                                                                    <div className="rounded-full bg-slate-100 p-4">
+                                                                        <Users className="w-8 h-8 text-slate-400" />
+                                                                    </div>
+                                                                    <p className="text-lg font-semibold text-slate-900">
+                                                                        {searchQuery ? 'Không tìm thấy phân quyền' : 'Chưa có phân quyền nào'}
+                                                                    </p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
+                            </>
+                        )}
 
-                        {/* Footer */}
-                        {!loading && userRoles.length > 0 && (
-                            <div className="flex items-center justify-between text-xs text-slate-500 px-1">
-                                <span>
-                                    Hiển thị <b className="text-slate-700">{filteredUserRoles.length}</b> / <b className="text-slate-700">{userRoles.length}</b> phân quyền
-                                </span>
-                            </div>
+                        {/* Role Permissions Tab */}
+                        {activeTab === 'role-permissions' && (
+                            <>
+                                {/* Filter and Add Section */}
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <select
+                                        value={selectedRoleForPerm}
+                                        onChange={(e) => setSelectedRoleForPerm(e.target.value)}
+                                        className="flex-1 max-w-sm px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    >
+                                        <option value="">-- Tất cả vai trò --</option>
+                                        {roles.map(r => (
+                                            <option key={r.id} value={r.id}>{r.maRole}</option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        onClick={() => setIsAssignPermOpen(true)}
+                                        className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium whitespace-nowrap"
+                                    >
+                                        <Plus className="w-5 h-5" /> Gán Quyền
+                                    </button>
+                                </div>
+
+                                {/* Table Section */}
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                                    {loading ? (
+                                        <div className="flex items-center justify-center h-96">
+                                            <div className="text-center">
+                                                <div className="inline-block mb-4">
+                                                    <div className="w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+                                                </div>
+                                                <p className="text-slate-600 font-medium">Đang tải dữ liệu...</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full">
+                                                <thead className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                                                    <tr>
+                                                        <th className="px-6 py-4 text-left text-sm font-semibold">Vai Trò</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-semibold">Quyền Hạn</th>
+                                                        <th className="px-6 py-4 text-left text-sm font-semibold">Mô Tả</th>
+                                                        <th className="px-6 py-4 text-center text-sm font-semibold">Thao Tác</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-200">
+                                                    {filteredRolePermissions.map((rp) => {
+                                                        const role = roles.find(r => r.id === rp.roleId);
+                                                        const permission = permissions.find(p => p.id === rp.permissionsId);
+                                                        return (
+                                                            <tr key={rp.id} className="hover:bg-blue-50 transition-colors">
+                                                                <td className="px-6 py-4 text-sm font-semibold text-slate-900">
+                                                                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
+                                                                        {role?.maRole}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm font-semibold text-slate-900">
+                                                                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                                        {permission?.maPermissions}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-slate-600">{permission?.moTa || '-'}</td>
+                                                                <td className="px-6 py-4">
+                                                                    <div className="flex items-center justify-center">
+                                                                        <button
+                                                                            onClick={() => handleRemoveRolePermission(rp.id)}
+                                                                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                                                            title="Xóa"
+                                                                        >
+                                                                            <Trash2 className="w-4 h-4" />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                    {!loading && filteredRolePermissions.length === 0 && (
+                                                        <tr>
+                                                            <td colSpan={4} className="px-6 py-16">
+                                                                <div className="flex flex-col items-center gap-3">
+                                                                    <div className="rounded-full bg-slate-100 p-4">
+                                                                        <Users className="w-8 h-8 text-slate-400" />
+                                                                    </div>
+                                                                    <p className="text-lg font-semibold text-slate-900">
+                                                                        Chưa có gán quyền hạn
+                                                                    </p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>
             </div>
 
             {/* Assign Role Modal */}
-            {isAssignRoleOpen && (
-                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => setIsAssignRoleOpen(false)}>
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-                        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
-                            <h2 className="text-base font-bold flex items-center gap-2"><Plus className="w-5 h-5" /> Phân Quyền Cho Người Dùng</h2>
-                            <button onClick={() => setIsAssignRoleOpen(false)} className="p-1 hover:bg-white/20 rounded-lg">
-                                <X className="w-5 h-5" />
+            {isAssignRoleOpen && activeTab === 'user-roles' && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full">
+                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 flex items-center justify-between">
+                            <h2 className="text-xl font-bold flex items-center gap-2"><Plus className="w-6 h-6" /> Phân Quyền Cho Người Dùng</h2>
+                            <button
+                                onClick={() => setIsAssignRoleOpen(false)}
+                                className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+                            >
+                                <X className="w-6 h-6" />
                             </button>
                         </div>
-                        <form className="p-6 space-y-5" onSubmit={handleAssignRole}>
+                        <form className="p-6 space-y-4" onSubmit={handleAssignRole}>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label className="block text-sm font-semibold text-slate-900 mb-2">
                                     Người dùng <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     required
                                     value={selectedUser}
                                     onChange={(e) => setSelectedUser(e.target.value)}
-                                    className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                 >
                                     <option value="">-- Chọn người dùng --</option>
                                     {users.map(u => (
@@ -296,14 +454,14 @@ export default function AdminPermissionsAssignPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label className="block text-sm font-semibold text-slate-900 mb-2">
                                     Vai trò <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     required
                                     value={selectedRole}
                                     onChange={(e) => setSelectedRole(e.target.value)}
-                                    className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                 >
                                     <option value="">-- Chọn vai trò --</option>
                                     {roles.map(r => (
@@ -311,11 +469,20 @@ export default function AdminPermissionsAssignPage() {
                                     ))}
                                 </select>
                             </div>
-                            <div className="flex gap-3 pt-4 border-t border-slate-100">
-                                <button type="button" onClick={() => setIsAssignRoleOpen(false)} className="flex-1 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50">
+
+                            <div className="flex gap-3 pt-4 border-t border-slate-200">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAssignRoleOpen(false)}
+                                    className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium text-slate-700"
+                                >
                                     Hủy
                                 </button>
-                                <button type="submit" disabled={isSubmitting} className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
                                     {isSubmitting ? 'Đang phân quyền...' : 'Phân Quyền'}
                                 </button>
                             </div>
@@ -324,47 +491,98 @@ export default function AdminPermissionsAssignPage() {
                 </div>
             )}
 
-            {/* Toasts */}
-            <div className="fixed bottom-24 right-6 space-y-2 z-[70] pointer-events-none">
-                {toasts.map(t => (
-                    <div key={t.id} className={`flex items-start gap-2.5 px-4 py-3 rounded-xl shadow-xl text-white text-sm font-medium max-w-xs pointer-events-auto ${t.type === 'success' ? 'bg-green-600' : t.type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`}>
-                        {t.type === 'success' && <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />}
-                        {t.type === 'error' && <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />}
-                        <span>{t.message}</span>
+            {/* Assign Permission Modal */}
+            {isAssignPermOpen && activeTab === 'role-permissions' && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full">
+                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 flex items-center justify-between">
+                            <h2 className="text-xl font-bold flex items-center gap-2"><Plus className="w-6 h-6" /> Gán Quyền Cho Vai Trò</h2>
+                            <button
+                                onClick={() => setIsAssignPermOpen(false)}
+                                className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <form className="p-6 space-y-4" onSubmit={handleAssignPermission}>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                                    Vai trò <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    required
+                                    value={selectedRoleForPerm}
+                                    onChange={(e) => setSelectedRoleForPerm(e.target.value)}
+                                    className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                >
+                                    <option value="">-- Chọn vai trò --</option>
+                                    {roles.map(r => (
+                                        <option key={r.id} value={r.id}>{r.maRole}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                                    Quyền hạn <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    required
+                                    value={selectedPermission}
+                                    onChange={(e) => setSelectedPermission(e.target.value)}
+                                    className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                >
+                                    <option value="">-- Chọn quyền hạn --</option>
+                                    {permissions.map(p => (
+                                        <option key={p.id} value={p.id}>{p.maPermissions}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex gap-3 pt-4 border-t border-slate-200">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAssignPermOpen(false)}
+                                    className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium text-slate-700"
+                                >
+                                    Hủy
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {isSubmitting ? 'Đang gán...' : 'Gán Quyền'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Toast Notifications */}
+            <div className="fixed bottom-24 right-8 space-y-3 z-40">
+                {toasts.map(toast => (
+                    <div
+                        key={toast.id}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white font-medium ${toast.type === 'success' ? 'bg-green-500' :
+                            toast.type === 'error' ? 'bg-red-500' :
+                                'bg-blue-500'
+                            }`}
+                    >
+                        {toast.type === 'success' && <CheckCircle className="w-5 h-5" />}
+                        {toast.type === 'error' && <AlertCircle className="w-5 h-5" />}
+                        {toast.message}
                     </div>
                 ))}
             </div>
 
-            {/* AI Assistant */}
-            <button className="fixed bottom-8 right-8 w-14 h-14 z-50 hover:scale-110 transition-transform" aria-label="AI">
+            {/* AI Assistant Button */}
+            <button
+                className="fixed bottom-8 right-8 w-16 h-16 z-50 hover:scale-110 transition-transform"
+                aria-label="AI Assistant"
+            >
                 <AiAssistantButton />
             </button>
-
-            {/* Confirm Delete Modal */}
-            {confirmModal.open && (
-                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => setConfirmModal(m => ({ ...m, open: false }))}>
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="rounded-full bg-red-100 p-3 flex-shrink-0">
-                                <AlertCircle className="w-6 h-6 text-red-600" />
-                            </div>
-                            <h3 className="font-bold text-slate-900">Xác nhận xóa</h3>
-                        </div>
-                        <p className="text-sm text-slate-600 mb-6">{confirmModal.message}</p>
-                        <div className="flex gap-3">
-                            <button onClick={() => setConfirmModal(m => ({ ...m, open: false }))} className="flex-1 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50">
-                                Hủy
-                            </button>
-                            <button
-                                onClick={() => { confirmModal.onConfirm?.(); setConfirmModal(m => ({ ...m, open: false })); }}
-                                className="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700"
-                            >
-                                Xóa
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

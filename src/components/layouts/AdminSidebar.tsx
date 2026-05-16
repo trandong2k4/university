@@ -3,6 +3,7 @@ import {
   Bell,
   BookMarked,
   BookOpen,
+  Bot,
   Calendar,
   CalendarDays,
   Clock,
@@ -110,9 +111,10 @@ const ADMIN_MENU_GROUPS: RoleSidebarGroup[] = [
     title: 'HỆ THỐNG',
     defaultOpen: true,
     items: [
+      { id: 'chatbot', icon: <Bot className="h-4 w-4" />, label: 'Trợ lý AI', path: '/admin/chatbot' },
       { id: 'contacts', icon: <MessageCircle className="h-4 w-4" />, label: 'Liên hệ', path: '/admin/contacts' },
       { id: 'notifications', icon: <Bell className="h-4 w-4" />, label: 'Thông báo hệ thống', path: '/admin/notifications' },
-      { id: 'content', icon: <FileText className="h-4 w-4" />, label: 'Nội dung', path: '/admin/content' },
+      // { id: 'content', icon: <FileText className="h-4 w-4" />, label: 'Nội dung', path: '/admin/content' },
     ],
   },
 ];

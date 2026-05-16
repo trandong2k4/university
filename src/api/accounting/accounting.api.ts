@@ -10,6 +10,7 @@ export interface AccountingHocPhiResponse {
   createdAt: string;
   updatedAt: string;
   hocVienId: string;
+  maHocVien: string;
   hocVienName: string;
   hocVienEmail: string;
   hocKiId: string;
@@ -19,6 +20,51 @@ export interface AccountingHocPhiResponse {
   phuongThucThanhToan: string | null;
   fileChungTu: string | null;
   maGiaoDich: string | null;
+}
+
+export interface AccountingStudentLedgerResponse {
+  hocVienId: string;
+  maHocVien: string;
+  hocVienName: string;
+  hocVienEmail: string;
+  tongCongNo: number;
+  tongDaThanhToan: number;
+  tongQuaHan: number;
+  soKhoanCongNo: number;
+  congNoItems: AccountingHocPhiResponse[];
+  lichSuThanhToan: AccountingHocPhiResponse[];
+}
+
+export interface AccountingInvoiceSemesterResponse {
+  hocKiId: string;
+  hocKiMa: string;
+  hocKiName: string;
+  soHocVienDangKy: number;
+  tongTinChi: number;
+  tongTienDuKien: number;
+}
+
+export interface AccountingInvoiceCandidateResponse {
+  hocVienId: string;
+  maHocVien: string;
+  hocVienName: string;
+  hocVienEmail: string;
+  tongSoTinChi: number;
+  soTien: number;
+  daCoHoaDon: boolean;
+  hocPhiId: string | null;
+  trangThaiHocPhi: TrangThaiHocPhi | null;
+}
+
+export interface AccountingInvoiceGenerationResponse {
+  hocKiId: string;
+  hocKiMa: string;
+  hocKiName: string;
+  tongHocVien: number;
+  soHoaDonDaTao: number;
+  soHoaDonBoQua: number;
+  tongTienDaTao: number;
+  items: AccountingInvoiceCandidateResponse[];
 }
 
 export interface PaymentInfoResponse {
@@ -52,7 +98,7 @@ export interface CreatePaymentRequest {
   hocPhiId: string;
   ngayThanhToan?: string;
   fileChungTu: string;
-  phuongThucThanhToan?: string;
+  phuongThucThanhToan: string;
 }
 
 export interface AccountingProfileResponse {
@@ -66,14 +112,18 @@ export interface AccountingProfileResponse {
   ngaySinh: string | null;
   maNhanVien: string | null;
   ngayNhanViec: string | null;
+  cccd: string | null;
+  avatarUrl: string | null;
 }
 
 export interface AccountingProfileRequest {
   hoTen: string;
+  email: string;
   diaChi?: string;
-  soDienThoai?: string;
-  gioiTinh?: 'NAM' | 'NU';
+  soDienThoai: string;
+  gioiTinh?: 'NAM' | 'NU' | null;
   ngaySinh?: string;
+  avatarUrl?: string;
 }
 
 export interface AccountingChangePasswordRequest {
@@ -83,51 +133,63 @@ export interface AccountingChangePasswordRequest {
 
 export const accountingApi = {
   getDueHocPhi: (): Promise<AccountingHocPhiResponse[]> =>
-    apiClient.get('/accounting/hoc-phi/due').then(r => r.data),
+    apiClient.get('/accountant/hoc-phi/due').then(r => r.data),
 
   getAllHocPhi: (): Promise<AccountingHocPhiResponse[]> =>
-    apiClient.get('/accounting/hoc-phi').then(r => r.data),
+    apiClient.get('/accountant/hoc-phi').then(r => r.data),
+
+  getStudentLedger: (hocVienId: string): Promise<AccountingStudentLedgerResponse> =>
+    apiClient.get(`/accountant/hoc-phi/students/${hocVienId}/ledger`).then(r => r.data),
+
+  getInvoiceSemesters: (): Promise<AccountingInvoiceSemesterResponse[]> =>
+    apiClient.get('/accountant/hoc-phi/invoices/semesters').then(r => r.data),
+
+  previewInvoices: (hocKiId: string): Promise<AccountingInvoiceGenerationResponse> =>
+    apiClient.get('/accountant/hoc-phi/invoices/preview', { params: { hocKiId } }).then(r => r.data),
+
+  generateInvoices: (hocKiId: string): Promise<AccountingInvoiceGenerationResponse> =>
+    apiClient.post('/accountant/hoc-phi/invoices/generate', undefined, { params: { hocKiId } }).then(r => r.data),
 
   getOverview: (start?: string, end?: string): Promise<BaoCaoThongKeOverviewResponse> => {
     const params: Record<string, string> = {};
     if (start) params.start = start;
     if (end) params.end = end;
-    return apiClient.get('/accounting/report/overview', { params }).then(r => r.data);
+    return apiClient.get('/accountant/report/overview', { params }).then(r => r.data);
   },
 
   getPayments: (start?: string, end?: string): Promise<PaymentInfoResponse[]> => {
     const params: Record<string, string> = {};
     if (start) params.start = start;
     if (end) params.end = end;
-    return apiClient.get('/accounting/report/payments', { params }).then(r => r.data);
+    return apiClient.get('/accountant/report/payments', { params }).then(r => r.data);
   },
 
   createPayment: (hocPhiId: string, data: CreatePaymentRequest): Promise<unknown> =>
-    apiClient.post(`/accounting/hoc-phi/${hocPhiId}/payment`, data).then(r => r.data),
+    apiClient.post(`/accountant/hoc-phi/${hocPhiId}/payment`, data).then(r => r.data),
 
   sendNotification: (hocPhiId: string): Promise<void> =>
-    apiClient.post(`/accounting/hoc-phi/${hocPhiId}/notify`).then(() => undefined),
+    apiClient.post(`/accountant/hoc-phi/${hocPhiId}/notify`).then(() => undefined),
 
   sendNotificationBulk: (ids: string[]): Promise<{ requested: number; sent: number }> =>
-    apiClient.post('/accounting/hoc-phi/notify/bulk', ids).then(r => r.data),
+    apiClient.post('/accountant/hoc-phi/notify/bulk', ids).then(r => r.data),
 
   sendNotificationToUser: (usersId: string): Promise<void> =>
-    apiClient.post(`/accounting/hoc-phi/notify/user/${usersId}`).then(() => undefined),
+    apiClient.post(`/accountant/hoc-phi/notify/user/${usersId}`).then(() => undefined),
 
   confirmPayment: (id: string): Promise<void> =>
-    apiClient.post(`/accounting/hoc-phi/${id}/confirm`).then(() => undefined),
+    apiClient.post(`/accountant/hoc-phi/${id}/confirm`).then(() => undefined),
 
   rejectPayment: (id: string): Promise<void> =>
-    apiClient.post(`/accounting/hoc-phi/${id}/reject`).then(() => undefined),
+    apiClient.post(`/accountant/hoc-phi/${id}/reject`).then(() => undefined),
 
   getProfile: (): Promise<AccountingProfileResponse> =>
-    apiClient.get('/accounting/profile').then(r => r.data),
+    apiClient.get('/accountant/profile').then(r => r.data),
 
   updateProfile: (data: AccountingProfileRequest): Promise<AccountingProfileResponse> =>
-    apiClient.put('/accounting/profile', data).then(r => r.data),
+    apiClient.put('/accountant/profile', data).then(r => r.data),
 
   changePassword: (data: AccountingChangePasswordRequest): Promise<void> =>
-    apiClient.put('/accounting/profile/change-password', data).then(() => undefined),
+    apiClient.put('/accountant/profile/change-password', data).then(() => undefined),
 };
 
 export default accountingApi;

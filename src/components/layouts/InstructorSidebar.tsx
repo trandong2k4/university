@@ -6,6 +6,7 @@ import {
   ClipboardList,
   FileText,
   LayoutDashboard,
+  MessageCircle,
   User,
   UserCheck,
 } from 'lucide-react';
@@ -29,6 +30,7 @@ const INSTRUCTOR_MENU_GROUPS: RoleSidebarGroup[] = [
       { id: 'quiz', path: '/lecturer/quiz', icon: <Award className="h-4 w-4" />, label: 'Bài kiểm tra' },
       { id: 'grades', path: '/lecturer/grades', icon: <BarChart3 className="h-4 w-4" />, label: 'Quản lý điểm' },
       { id: 'attendance', path: '/lecturer/attendance', icon: <UserCheck className="h-4 w-4" />, label: 'Điểm danh' },
+      { id: 'chatbot', path: '/lecturer/chatbot', icon: <MessageCircle className="h-4 w-4" />, label: 'Trợ lý AI' },
       { id: 'notifications', path: '/lecturer/notifications', icon: <Bell className="h-4 w-4" />, label: 'Thông báo' },
     ],
   },

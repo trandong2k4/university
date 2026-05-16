@@ -18,6 +18,10 @@ const chatbotApi = {
     const response = await apiClient.get<ChatMessage[]>(API_ENDPOINTS.CHATBOT_HISTORY);
     return response.data;
   },
+
+  clearHistory: async (): Promise<void> => {
+    await apiClient.delete(API_ENDPOINTS.CHATBOT_HISTORY);
+  },
 };
 
 export default chatbotApi;

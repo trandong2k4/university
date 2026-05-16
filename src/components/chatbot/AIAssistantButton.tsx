@@ -10,37 +10,98 @@ interface Message {
   timestamp: Date;
 }
 
-const SUGGESTIONS = [
-  'Lịch học của tôi hôm nay?',
-  'Tiến độ học tập hiện tại?',
-  'Kiểm tra học phí',
-  'Hướng dẫn đăng ký tín chỉ',
-];
+// ── Role configuration ────────────────────────────────────────────────────────
 
-const WELCOME_MESSAGE: Message = {
-  id: 'welcome',
-  text: 'Xin chào! Tôi là trợ lý học tập của LearningHub. Tôi có thể giúp bạn tra cứu lịch học, tiến độ học tập, học phí và nhiều hơn nữa.',
-  sender: 'bot',
-  timestamp: new Date(),
+export type ChatbotRole = 'student' | 'lecturer' | 'admin' | 'accountant';
+
+interface RoleConfig {
+  title: string;
+  userInitials: string;
+  welcomeMessage: string;
+  suggestions: string[];
+}
+
+const ROLE_CONFIGS: Record<ChatbotRole, RoleConfig> = {
+  student: {
+    title: 'Trợ lý học viên',
+    userInitials: 'HV',
+    welcomeMessage:
+      'Xin chào! Tôi là trợ lý học viên của LearningHub. Tôi có thể giúp bạn tra cứu lịch học, tiến độ học tập, học phí và nhiều hơn nữa.',
+    suggestions: [
+      'Lịch học của tôi hôm nay?',
+      'Tiến độ học tập hiện tại?',
+      'Kiểm tra học phí',
+      'Hướng dẫn đăng ký tín chỉ',
+    ],
+  },
+  lecturer: {
+    title: 'Trợ lý giảng viên',
+    userInitials: 'GV',
+    welcomeMessage:
+      'Xin chào! Tôi là trợ lý giảng viên của LearningHub. Tôi có thể giúp bạn tra cứu lịch dạy, lớp phụ trách, bài cần chấm và thông báo.',
+    suggestions: [
+      'Lịch dạy của tôi tuần này?',
+      'Bài tập nào cần chấm?',
+      'Danh sách lớp phụ trách',
+      'Thông báo mới nhất',
+    ],
+  },
+  admin: {
+    title: 'Trợ lý quản trị',
+    userInitials: 'AD',
+    welcomeMessage:
+      'Xin chào! Tôi là trợ lý quản trị của LearningHub. Tôi có thể hỗ trợ tra cứu thống kê người dùng, lớp học phần, học kỳ và tình hình tài chính tổng quan.',
+    suggestions: [
+      'Thống kê người dùng hệ thống',
+      'Tổng số lớp học phần',
+      'Tình hình học phí tổng quan',
+      'Thông báo hệ thống mới nhất',
+    ],
+  },
+  accountant: {
+    title: 'Trợ lý kế toán',
+    userInitials: 'KT',
+    welcomeMessage:
+      'Xin chào! Tôi là trợ lý kế toán của LearningHub. Tôi có thể hỗ trợ tra cứu công nợ học phí, hóa đơn, thanh toán và báo cáo tài chính.',
+    suggestions: [
+      'Tổng quan công nợ học phí',
+      'Sinh viên nợ nhiều nhất',
+      'Thanh toán gần đây',
+      'Báo cáo thu chi',
+    ],
+  },
 };
 
-export function LearningSupportButton() {
+// ── Component ─────────────────────────────────────────────────────────────────
+
+interface Props {
+  /** Determines title, suggestions, and welcome message. Defaults to 'student'. */
+  role?: ChatbotRole;
+}
+
+function LearningSupportButton({ role = 'student' }: Props) {
+  const config = ROLE_CONFIGS[role];
+
+  const buildWelcome = (): Message => ({
+    id: 'welcome',
+    text: config.welcomeMessage,
+    sender: 'bot',
+    timestamp: new Date(),
+  });
+
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
+  const [messages, setMessages] = useState<Message[]>([buildWelcome()]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const parseBotResponse = (raw: string): string => {
     try {
       const parsed = JSON.parse(raw);
-      if (parsed.choices && parsed.choices[0]?.message?.content) {
-        return parsed.choices[0].message.content.trim();
-      }
+      if (parsed.choices?.[0]?.message?.content) return parsed.choices[0].message.content.trim();
       if (parsed.content) return parsed.content;
       if (typeof parsed === 'string') return parsed;
     } catch {
@@ -53,27 +114,26 @@ export function LearningSupportButton() {
     try {
       const history = await chatbotApi.getHistory();
       if (history.length === 0) {
-        setMessages([WELCOME_MESSAGE]);
+        setMessages([buildWelcome()]);
       } else {
-        const loadedMessages: Message[] = history.map((msg, index) => ({
-          id: msg.id ? String(msg.id) : `history-${index}`,
-          text: msg.role === 'bot' ? parseBotResponse(msg.content) : msg.content,
-          sender: msg.role as 'user' | 'bot',
-          timestamp: msg.createdAt ? new Date(msg.createdAt) : new Date(),
-        }));
-        setMessages(loadedMessages);
+        setMessages(
+          history.map((msg, index) => ({
+            id: msg.id ? String(msg.id) : `history-${index}`,
+            text: msg.role === 'bot' ? parseBotResponse(msg.content) : msg.content,
+            sender: msg.role as 'user' | 'bot',
+            timestamp: msg.createdAt ? new Date(msg.createdAt) : new Date(),
+          })),
+        );
       }
     } catch {
-      setMessages([WELCOME_MESSAGE]);
+      setMessages([buildWelcome()]);
     } finally {
       setHistoryLoaded(true);
     }
   };
 
   useEffect(() => {
-    if (isOpen && !historyLoaded) {
-      loadHistory();
-    }
+    if (isOpen && !historyLoaded) loadHistory();
   }, [isOpen]);
 
   useEffect(() => {
@@ -86,7 +146,6 @@ export function LearningSupportButton() {
   const handleSendMessage = async (text?: string) => {
     const textToSend = (text ?? inputText).trim();
     if (!textToSend) return;
-
     if (!text) setInputText('');
 
     const userMessage: Message = {
@@ -95,32 +154,27 @@ export function LearningSupportButton() {
       sender: 'user',
       timestamp: new Date(),
     };
-
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
     setError(null);
 
     try {
       const rawResponse = await chatbotApi.sendMessage(textToSend);
-      const botText = parseBotResponse(rawResponse);
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: botText,
-        sender: 'bot',
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          text: parseBotResponse(rawResponse),
+          sender: 'bot',
+          timestamp: new Date(),
+        },
+      ]);
     } catch {
       const errorMsg = 'Không thể kết nối. Vui lòng thử lại.';
       setError(errorMsg);
       setMessages((prev) => [
         ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          text: errorMsg,
-          sender: 'bot',
-          timestamp: new Date(),
-        },
+        { id: (Date.now() + 1).toString(), text: errorMsg, sender: 'bot', timestamp: new Date() },
       ]);
     } finally {
       setIsTyping(false);
@@ -139,7 +193,7 @@ export function LearningSupportButton() {
 
   return (
     <>
-      {/* Floating support button */}
+      {/* Floating button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full shadow-[0px_25px_50px_0px_rgba(0,0,0,0.25)] hover:scale-110 transition-all duration-300 border-2 border-white opacity-[0.83]"
@@ -147,7 +201,7 @@ export function LearningSupportButton() {
           backgroundImage:
             'linear-gradient(135deg, rgb(43, 127, 255) 0%, rgb(21, 93, 252) 50%, rgb(152, 16, 250) 100%)',
         }}
-        aria-label="Trợ lý học tập"
+        aria-label={config.title}
       >
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8">
           {isOpen ? (
@@ -206,15 +260,13 @@ export function LearningSupportButton() {
             </svg>
           )}
         </div>
-
         <div className="absolute -top-1 right-0 bg-[#00c950] border-2 border-white rounded-full w-4 h-4" />
-
         {!isOpen && (
           <span className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20" />
         )}
       </button>
 
-      {/* Support chat panel */}
+      {/* Chat panel */}
       {isOpen && (
         <div className="fixed bottom-24 right-8 z-50 w-[390px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden max-h-[580px]">
           {/* Header */}
@@ -225,7 +277,7 @@ export function LearningSupportButton() {
                   <Bot className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white">LearningHub AI</h3>
+                  <h3 className="font-bold text-white">{config.title}</h3>
                   <p className="text-xs text-blue-100 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
                     Đang hoạt động
@@ -241,9 +293,8 @@ export function LearningSupportButton() {
             </div>
           </div>
 
-          {/* Chat Content */}
+          {/* Messages */}
           <div
-            ref={chatContainerRef}
             className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/50"
             style={{ maxHeight: 'calc(580px - 140px)' }}
           >
@@ -264,10 +315,9 @@ export function LearningSupportButton() {
                   {message.sender === 'bot' ? (
                     <Bot className="w-4 h-4 text-white" />
                   ) : (
-                    <span className="text-white text-[10px] font-bold">HV</span>
+                    <span className="text-white text-[10px] font-bold">{config.userInitials}</span>
                   )}
                 </div>
-
                 <div
                   className={`flex flex-col ${
                     message.sender === 'user' ? 'items-end' : 'items-start'
@@ -296,18 +346,13 @@ export function LearningSupportButton() {
                 </div>
                 <div className="bg-white px-3 py-2 rounded-2xl rounded-bl-sm border border-gray-100 shadow-sm">
                   <div className="flex gap-1">
-                    <div
-                      className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '0ms' }}
-                    />
-                    <div
-                      className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '150ms' }}
-                    />
-                    <div
-                      className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '300ms' }}
-                    />
+                    {[0, 150, 300].map((delay) => (
+                      <div
+                        key={delay}
+                        className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: `${delay}ms` }}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -321,13 +366,12 @@ export function LearningSupportButton() {
               </div>
             )}
 
+            {/* Suggestions — shown only when conversation is empty */}
             {messages.length <= 1 && !isTyping && (
               <div className="space-y-2 mt-2">
-                <p className="text-[11px] font-semibold text-gray-400 px-1">
-                  Câu hỏi gợi ý:
-                </p>
+                <p className="text-[11px] font-semibold text-gray-400 px-1">Câu hỏi gợi ý:</p>
                 <div className="flex flex-col gap-1.5">
-                  {SUGGESTIONS.map((s, i) => (
+                  {config.suggestions.map((s, i) => (
                     <button
                       key={i}
                       onClick={() => handleSendMessage(s)}
@@ -343,7 +387,7 @@ export function LearningSupportButton() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
+          {/* Input */}
           <div className="p-3 bg-white border-t border-gray-100 flex-shrink-0">
             <div className="flex gap-2">
               <input
@@ -379,4 +423,9 @@ export function LearningSupportButton() {
   );
 }
 
+export { LearningSupportButton };
 export const AIAssistantButton = LearningSupportButton;
+export const StudentAIAssistantButton = () => <LearningSupportButton role="student" />;
+export const LecturerAIAssistantButton = () => <LearningSupportButton role="lecturer" />;
+export const AdminAIAssistantButton = () => <LearningSupportButton role="admin" />;
+export const AccountantAIAssistantButton = () => <LearningSupportButton role="accountant" />;

@@ -12,7 +12,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import AiAssistantButton from '@/imports/AiAssistantButton-4-13343';
+import { AccountantAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
 import { accountingApi, type BaoCaoThongKeOverviewResponse, type AccountingHocPhiResponse } from '@/api/accounting/accounting.api';
 import { useAsync } from '@/hooks';
 import { Toast } from '@/components/notification/Toast';
@@ -299,13 +299,7 @@ export default function AccountantDashboard() {
         <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />
       )}
 
-      <button
-        onClick={() => setToast({ type: 'warning', message: 'Tính năng Trợ lý AI đang được phát triển!' })}
-        className="fixed bottom-8 right-8 w-16 h-16 hover:scale-110 transition-transform duration-200 z-50"
-        aria-label="AI Assistant"
-      >
-        <AiAssistantButton />
-      </button>
+      <AccountantAIAssistantButton />
     </div>
   );
 }
