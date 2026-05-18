@@ -124,10 +124,20 @@ export default function TuitionPage() {
   const [paying,          setPaying]          = useState(false);
   const [payError,        setPayError]        = useState('');
 
+  // center-screen notification
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // pdf
   const [pdfLoading, setPdfLoading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    setNotification({ type, message });
+    notifTimerRef.current = setTimeout(() => setNotification(null), 4500);
+  };
 
   useEffect(() => {
     if (!isAuthenticated || !authUser) { navigate('/'); return; }
@@ -192,7 +202,7 @@ export default function TuitionPage() {
   // ── submit proof ───────────────────────────────────────────────────────────
 
   const handlePay = async () => {
-    if (!selectedItem || !selectedMethod) return;
+    if (!selectedItem || !selectedMethod || paying) return;
     if (proofMode === 'transaction' && !transactionCode.trim()) { setPayError('Vui lòng nhập mã giao dịch.'); return; }
     if (proofMode === 'image'       && !proofFile)              { setPayError('Vui lòng chọn ảnh chứng từ.'); return; }
     setPaying(true); setPayError('');
@@ -206,14 +216,13 @@ export default function TuitionPage() {
         fileChungTu,
       });
       closeModal();
-      // refresh data, keep current semester selected
       const saved = selectedItem.hocPhiId;
       await fetchData();
-      // re-select the same semester after refresh
       setSelectedHocPhiId(saved);
+      showNotification('success', 'Nộp chứng từ thành công! Kế toán sẽ xác nhận trong thời gian sớm nhất.');
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
-      setPayError(msg || 'Nộp chứng từ thất bại. Vui lòng thử lại.');
+      showNotification('error', msg || 'Nộp chứng từ thất bại. Vui lòng thử lại.');
     } finally {
       setPaying(false);
     }
@@ -560,6 +569,36 @@ export default function TuitionPage() {
       <AIAssistantButton />
 
       {/* ── Payment Proof Modal ── */}
+      {/* ── Center-screen Notification ── */}
+      {notification && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none">
+          <div
+            className={`pointer-events-auto flex items-start gap-4 px-6 py-5 rounded-2xl shadow-2xl max-w-sm w-full mx-4 border animate-in fade-in zoom-in-95 duration-200 ${
+              notification.type === 'success'
+                ? 'bg-green-50 border-green-200 text-green-900'
+                : 'bg-red-50 border-red-200 text-red-900'
+            }`}
+          >
+            <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+              notification.type === 'success' ? 'bg-green-100' : 'bg-red-100'
+            }`}>
+              {notification.type === 'success'
+                ? <CheckCircle className="w-6 h-6 text-green-600" />
+                : <AlertCircle className="w-6 h-6 text-red-600" />}
+            </div>
+            <div className="flex-1 pt-0.5">
+              <p className="font-semibold text-sm">
+                {notification.type === 'success' ? 'Thành công' : 'Có lỗi xảy ra'}
+              </p>
+              <p className="text-sm mt-0.5 opacity-90">{notification.message}</p>
+            </div>
+            <button onClick={() => setNotification(null)} className="flex-shrink-0 p-1 rounded-lg hover:bg-black/5 transition-colors">
+              <X className="w-4 h-4 opacity-60" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {selectedItem && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
           <div

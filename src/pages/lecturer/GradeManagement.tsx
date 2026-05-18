@@ -2,7 +2,7 @@ import { InstructorSidebar } from '@/components/layouts/InstructorSidebar';
 import { InstructorHeader } from '@/components/layouts/InstructorHeader';
 import {
   ChevronDown, Save, Search, AlertCircle, Calculator, TrendingUp,
-  Users, Award, Plus, Trash2, X, Clock, History, FileSpreadsheet,
+  Users, Award, X, Clock, History, FileSpreadsheet,
   FileText, Edit2, CheckCircle, Download, Settings2
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -14,18 +14,11 @@ import lecturerApi, {
   GradeStudentResponseDTO,
   GradeColumnDTO,
   GradeHistoryResponseDTO,
-  CreateCotDiemRequestDTO,
 } from '@/api/lecturer/lecturer.api';
 
 interface StudentGrade extends GradeStudentResponseDTO {
   editedGrades: Record<string, string>;
   originalGrades: Record<string, number | null>;
-}
-
-interface NewColumnForm {
-  tenCotDiem: string;
-  tiTrong: string;
-  loai: string;
 }
 
 function gradeColor(diem: number | null | undefined) {
@@ -62,11 +55,6 @@ export default function GradeManagement() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loadingStudents, setLoadingStudents] = useState(false);
-
-  // Column management
-  const [showColumnModal, setShowColumnModal] = useState(false);
-  const [newColumn, setNewColumn] = useState<NewColumnForm>({ tenCotDiem: '', tiTrong: '', loai: '' });
-  const [creatingColumn, setCreatingColumn] = useState(false);
 
   // History modal
   const [historyStudent, setHistoryStudent] = useState<GradeStudentResponseDTO | null>(null);
@@ -110,30 +98,30 @@ export default function GradeManagement() {
   }, [selectedClassId, user?.id]);
 
   // Load grades
-  const loadGrades = () => {
+  const loadGrades = async () => {
     if (!selectedClassId || !user?.id) return;
     setLoadingStudents(true);
-    lecturerApi.getGrades(selectedClassId, user.id)
-      .then(data => {
-        setColumns(data.columns || []);
-        setStudents(data.students.map(s => {
-          const edited: Record<string, string> = {};
-          const original: Record<string, number | null> = {};
-          if (s.diemThanhPhan) {
-            s.diemThanhPhan.forEach(cp => {
-              edited[cp.cotDiemId] = cp.diem !== null ? String(cp.diem) : '';
-              original[cp.cotDiemId] = cp.diem;
-            });
-          }
-          return { ...s, editedGrades: edited, originalGrades: original };
-        }));
-        setHasUnsavedChanges(false);
-      })
-      .catch(err => {
-        console.error(err);
-        toast.error('Không thể tải dữ liệu điểm');
-      })
-      .finally(() => setLoadingStudents(false));
+    try {
+      const data = await lecturerApi.getGrades(selectedClassId, user.id);
+      setColumns(data.columns || []);
+      setStudents(data.students.map(s => {
+        const edited: Record<string, string> = {};
+        const original: Record<string, number | null> = {};
+        if (s.diemThanhPhan) {
+          s.diemThanhPhan.forEach(cp => {
+            edited[cp.cotDiemId] = cp.diem !== null ? String(cp.diem) : '';
+            original[cp.cotDiemId] = cp.diem;
+          });
+        }
+        return { ...s, editedGrades: edited, originalGrades: original };
+      }));
+      setHasUnsavedChanges(false);
+    } catch (err) {
+      console.error(err);
+      toast.error('Không thể tải dữ liệu điểm');
+    } finally {
+      setLoadingStudents(false);
+    }
   };
 
   useEffect(() => { loadGrades(); }, [selectedClassId, user?.id]);
@@ -166,51 +154,22 @@ export default function GradeManagement() {
 
     setSaving(true);
     try {
-      const studentGrades: Record<string, number> = {};
+      const studentGrades: Record<string, number | null> = {};
       students.forEach(s => {
         Object.entries(s.editedGrades).forEach(([cotDiemId, gradeValue]) => {
-          if (gradeValue !== undefined && gradeValue !== '') {
-            studentGrades[`${s.hocVienId}|${cotDiemId}`] = Number(gradeValue);
+          if (gradeValue !== undefined) {
+            studentGrades[`${s.hocVienId}|${cotDiemId}`] = gradeValue === '' ? null : Number(gradeValue);
           }
         });
       });
       await lecturerApi.updateGrades(user.id, { lopHocPhanId: selectedClassId, studentGrades });
-      setHasUnsavedChanges(false);
-      loadGrades();
       toast.success('Lưu điểm thành công');
+      loadGrades();
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || 'Lưu điểm thất bại');
+      toast.error(err?.response?.data?.detail || err?.response?.data?.message || 'Lưu điểm thất bại');
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleCreateColumn = async () => {
-    if (!user?.id || !selectedClassId) return;
-    if (!newColumn.tenCotDiem.trim() || !newColumn.tiTrong.trim()) {
-      toast.error('Vui lòng nhập đầy đủ thông tin cột điểm');
-      return;
-    }
-    setCreatingColumn(true);
-    try {
-      const payload: CreateCotDiemRequestDTO = {
-        tenCotDiem: newColumn.tenCotDiem.trim(),
-        tiTrong: newColumn.tiTrong.trim(),
-        loai: newColumn.loai || null,
-        thuTuHienThi: (columns.length || 0) + 1,
-        lopHocPhanId: selectedClassId,
-      };
-      await lecturerApi.createCotDiem(user.id, payload);
-      setShowColumnModal(false);
-      setNewColumn({ tenCotDiem: '', tiTrong: '', loai: '' });
-      loadGrades();
-      toast.success('Thêm cột điểm thành công');
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || 'Thêm cột điểm thất bại');
-    } finally {
-      setCreatingColumn(false);
     }
   };
 
@@ -441,13 +400,6 @@ export default function GradeManagement() {
                     {filtered.length} sinh viên
                   </span>
                 </div>
-                <button
-                  onClick={() => setShowColumnModal(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 font-semibold text-sm transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Thêm cột điểm
-                </button>
               </div>
 
               <div className="overflow-x-auto">
@@ -544,70 +496,6 @@ export default function GradeManagement() {
           </div>
         </div>
       </div>
-
-      {/* Add Column Modal */}
-      {showColumnModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
-            <div className="px-6 py-5 bg-gradient-to-r from-indigo-50 to-violet-50 border-b border-gray-100 flex items-center gap-3">
-              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
-                <Plus className="w-5 h-5 text-indigo-600" />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900">Thêm cột điểm mới</h3>
-                <p className="text-sm text-gray-500">Tạo cột điểm thành phần cho lớp</p>
-              </div>
-            </div>
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Tên cột điểm <span className="text-red-500">*</span></label>
-                <input
-                  type="text"
-                  value={newColumn.tenCotDiem}
-                  onChange={e => setNewColumn(p => ({ ...p, tenCotDiem: e.target.value }))}
-                  placeholder="VD: Giữa kỳ, Cuối kỳ, Điểm cộng..."
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Tỷ trọng (%) <span className="text-red-500">*</span></label>
-                <input
-                  type="text"
-                  value={newColumn.tiTrong}
-                  onChange={e => setNewColumn(p => ({ ...p, tiTrong: e.target.value }))}
-                  placeholder="VD: 30, 40, 50..."
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Loại</label>
-                <select
-                  value={newColumn.loai}
-                  onChange={e => setNewColumn(p => ({ ...p, loai: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium bg-white"
-                >
-                  <option value="">— Chọn loại —</option>
-                  <option value="EXAM">Thi</option>
-                  <option value="ASSIGNMENT">Bài tập</option>
-                  <option value="QUIZ">Bài kiểm tra</option>
-                  <option value="SYSTEM">Hệ thống</option>
-                </select>
-              </div>
-            </div>
-            <div className="px-6 pb-6 flex gap-3 justify-end">
-              <button onClick={() => { setShowColumnModal(false); setNewColumn({ tenCotDiem: '', tiTrong: '', loai: '' }); }}
-                className="px-5 py-2.5 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 font-semibold text-sm transition-colors flex items-center gap-2">
-                <X className="w-4 h-4" />Hủy
-              </button>
-              <button onClick={handleCreateColumn} disabled={creatingColumn}
-                className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-semibold text-sm shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                {creatingColumn ? 'Đang thêm...' : 'Thêm cột điểm'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Grade History Modal */}
       {historyStudent && (

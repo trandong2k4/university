@@ -2,7 +2,7 @@ import { AccountantSidebar } from '@/components/layouts/AccountantSidebar';
 import { AccountantHeader } from '@/components/layouts/AccountantHeader';
 import { type ChangeEvent, useState, useMemo, useCallback, useRef } from 'react';
 import {
-  Bell, CheckCircle, FilePlus2, History, ImageIcon, RefreshCw, Search, ThumbsDown, ThumbsUp, Upload, Wallet, X
+  Bell, CheckCircle, ExternalLink, FilePlus2, History, ImageIcon, RefreshCw, Search, ShieldCheck, ThumbsDown, ThumbsUp, Upload, Wallet, X
 } from 'lucide-react';
 import {
   accountingApi,
@@ -76,9 +76,11 @@ export default function TuitionManagementPage() {
   const [invoicePreview, setInvoicePreview] = useState<AccountingInvoiceGenerationResponse | null>(null);
   const [invoicePreviewLoading, setInvoicePreviewLoading] = useState(false);
   const [invoiceGenerating, setInvoiceGenerating] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<AccountingHocPhiResponse | null>(null);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const proofFileInputRef = useRef<HTMLInputElement>(null);
   const paymentSubmittingRef = useRef(false);
+  const confirmingRef = useRef(false);
 
   const todayStr = new Date().toISOString().slice(0, 10);
 
@@ -192,23 +194,27 @@ export default function TuitionManagementPage() {
     }
   }, [pendingActionIds]);
 
-  const confirmPayment = useCallback(async (id: string) => {
-    if (pendingActionIds.has(id)) return;
+  const confirmPayment = useCallback(async () => {
+    if (!confirmModal || confirmingRef.current) return;
+    confirmingRef.current = true;
+    const id = confirmModal.id;
     setPendingActionIds(prev => new Set(prev).add(id));
     try {
       await accountingApi.confirmPayment(id);
-      setToast({ type: 'success', message: 'Đã xác nhận thanh toán!' });
+      setToast({ type: 'success', message: 'Xác nhận thanh toán thành công! Đã gửi thông báo cho học viên.' });
+      setConfirmModal(null);
       reload();
     } catch (err: unknown) {
-      setToast({ type: 'error', message: getApiErrorMessage(err, 'Thanh toán không thành công') });
+      setToast({ type: 'error', message: getApiErrorMessage(err, 'Xác nhận thất bại') });
     } finally {
+      confirmingRef.current = false;
       setPendingActionIds(prev => {
         const next = new Set(prev);
         next.delete(id);
         return next;
       });
     }
-  }, [pendingActionIds, reload]);
+  }, [confirmModal, reload]);
 
   const rejectPayment = useCallback(async (id: string) => {
     if (pendingActionIds.has(id)) return;
@@ -441,7 +447,7 @@ export default function TuitionManagementPage() {
                               {r.trangThai === 'DANG_XU_LY' && (
                                 <>
                                   <button
-                                    onClick={() => confirmPayment(r.id)}
+                                    onClick={() => setConfirmModal(r)}
                                     disabled={rowPending}
                                     className="px-3 py-1.5 text-xs font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
                                   >
@@ -803,6 +809,127 @@ export default function TuitionManagementPage() {
           </div>
         </div>
       )}
+
+      {/* Confirm Payment Modal */}
+      {confirmModal && (() => {
+        const item = confirmModal;
+        const isPending = pendingActionIds.has(item.id);
+        const isImageProof = item.fileChungTu?.startsWith('/api/files/');
+        return (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+              <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                  <h3 className="text-lg font-bold text-slate-900">Xác nhận duyệt thanh toán</h3>
+                </div>
+                <button
+                  onClick={() => { if (!isPending) setConfirmModal(null); }}
+                  className="text-slate-400 hover:text-slate-600 disabled:opacity-50"
+                  disabled={isPending}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {/* Thông tin học phí */}
+                <div className="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Học viên</span>
+                    <span className="font-semibold text-slate-900">{item.hocVienName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Mã sinh viên</span>
+                    <span className="font-medium text-slate-700">{item.maHocVien}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Học kỳ</span>
+                    <span className="font-medium text-slate-700">{item.hocKiName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Phương thức</span>
+                    <span className="font-medium text-slate-700">
+                      {item.phuongThucThanhToan?.replace(/_/g, ' ') ?? '—'}
+                    </span>
+                  </div>
+                  {item.ngayThanhToan && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Ngày nộp chứng từ</span>
+                      <span className="font-medium text-slate-700">{formatDate(item.ngayThanhToan)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center pt-1 border-t border-slate-200">
+                    <span className="text-slate-500 font-medium">Số tiền</span>
+                    <span className="text-xl font-bold text-emerald-700">
+                      {item.soTien.toLocaleString('vi-VN')} VNĐ
+                    </span>
+                  </div>
+                </div>
+
+                {/* Chứng từ */}
+                {item.fileChungTu ? (
+                  <div>
+                    <p className="text-sm font-medium text-slate-700 mb-2">Chứng từ học viên nộp</p>
+                    {isImageProof ? (
+                      <div className="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                        <img
+                          src={resolveFileUrl(item.fileChungTu)}
+                          alt="Chứng từ"
+                          className="w-full max-h-64 object-contain"
+                        />
+                        <div className="px-4 py-2 border-t border-slate-200 flex justify-end">
+                          <a
+                            href={resolveFileUrl(item.fileChungTu)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-800 font-medium"
+                          >
+                            <ExternalLink className="w-3 h-3" /> Mở ảnh đầy đủ
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                        <p className="text-xs text-slate-500 mb-1">Mã giao dịch</p>
+                        <p className="font-mono text-sm text-slate-900 break-all">{item.fileChungTu}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                    Học viên chưa đính kèm chứng từ.
+                  </div>
+                )}
+
+                <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                  Sau khi xác nhận, hệ thống sẽ tự động gửi thông báo cho học viên.
+                </div>
+              </div>
+
+              <div className="flex gap-3 p-6 pt-0">
+                <button
+                  onClick={() => setConfirmModal(null)}
+                  disabled={isPending}
+                  className="flex-1 px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={confirmPayment}
+                  disabled={isPending}
+                  className="flex-1 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isPending
+                    ? <><RefreshCw className="w-4 h-4 animate-spin" /> Đang xác nhận...</>
+                    : <><CheckCircle className="w-4 h-4" /> Xác nhận thanh toán</>
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {toast && <Toast type={toast.type} message={toast.message} onClose={() => setToast(null)} />}
 

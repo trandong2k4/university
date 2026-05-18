@@ -1,6 +1,14 @@
 import apiClient from '../common/axiosClient';
 import { UsersItem, CreateUserRequest, UpdateUserRequest, AuthRolePermission, RoleItem, UserRoleAssignment, BatchDeleteResult } from '@/common/types';
 
+export type ExcelImportResult = {
+    totalRows: number;
+    successCount: number;
+    errorCount: number;
+    errors: string[];
+    message?: string;
+};
+
 export async function getUsers(): Promise<UsersItem[]> {
     return (await apiClient.get('/admin/users')).data;
 }
@@ -74,12 +82,7 @@ export async function deleteUsersBatch(ids: string[]): Promise<BatchDeleteResult
 /**
  * Import user từ file Excel
  */
-export async function importUsersFromExcel(file: File): Promise<{
-    totalRows: number;
-    successCount: number;
-    errorCount: number;
-    errors: string[];
-}> {
+export async function importUsersFromExcel(file: File): Promise<ExcelImportResult> {
     const formData = new FormData();
     formData.append('file', file);
     return (

@@ -107,8 +107,15 @@ export async function deleteHocVien(id: string): Promise<void> {
     await apiClient.delete(`/admin/hoc-vien/${id}`);
 }
 
-export async function deleteHocVienList(ids: string[]): Promise<void> {
-    await apiClient.delete('/admin/hoc-vien/delete-list', { data: ids });
+export type BatchDeleteResult = {
+    totalRequested: number;
+    deletedCount: number;
+    failedCount: number;
+    failedUsers: { id: string; hoTen: string | null; reason: string }[];
+};
+
+export async function deleteHocVienList(ids: string[]): Promise<BatchDeleteResult> {
+    return (await apiClient.delete('/admin/hoc-vien/delete-list', { data: ids })).data;
 }
 
 export async function getAvailableUsers(): Promise<AvailableUser[]> {

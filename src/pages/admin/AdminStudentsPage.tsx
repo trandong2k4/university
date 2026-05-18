@@ -1,11 +1,11 @@
 import { AdminSidebar } from '@/components/layouts/AdminSidebar';
 import { AdminHeader } from '@/components/layouts/AdminHeader';
 import { useEffect, useState, useRef, FormEvent, useMemo, useCallback } from 'react';
-import { Plus, Edit, Trash2, X, Search, RefreshCw, AlertCircle, CheckCircle, GraduationCap, FileSpreadsheet, Upload, School, UserCheck, Shield, UserCog } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Search, RefreshCw, AlertCircle, CheckCircle, GraduationCap, FileSpreadsheet, Upload, School, UserCheck, Shield, UserCog, Square, CheckSquare } from 'lucide-react';
 import AiAssistantButton from '@/imports/AiAssistantButton-4-13343';
 import * as hocVienApi from '@/api/admin/hoc-vien.api';
 import * as nganhApi from '@/api/admin/nganh.api';
-import type { AvailableUser } from '@/api/admin/hoc-vien.api';
+import type { AvailableUser, BatchDeleteResult } from '@/api/admin/hoc-vien.api';
 
 interface Toast { id: string; message: string; type: 'success' | 'error' | 'info'; }
 type AddMode = 'existing-user' | 'with-user';
@@ -77,6 +77,11 @@ export default function AdminStudentsPage() {
         totalRows: number; successCount: number; errorCount: number; errors: string[];
     } | null>(null);
     const [isImporting, setIsImporting] = useState(false);
+
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [isBatchDeleteOpen, setIsBatchDeleteOpen] = useState(false);
+    const [isBatchDeleting, setIsBatchDeleting] = useState(false);
+    const [batchDeleteResult, setBatchDeleteResult] = useState<BatchDeleteResult | null>(null);
 
     const addToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
         const id = Date.now().toString();
@@ -300,9 +305,57 @@ export default function AdminStudentsPage() {
                 addToast(`${result.errorCount} dòng lỗi`, 'error');
             }
         } catch (err) {
-            addToast(extractError(err, 'Lỗi khi import Excel'), 'error');
+            const msg = extractError(err, 'Lỗi khi import Excel');
+            setImportResult({ totalRows: 0, successCount: 0, errorCount: 1, errors: [msg] });
+            addToast(msg, 'error');
         } finally {
             setIsImporting(false);
+        }
+    };
+
+    const allFilteredSelected = filtered.length > 0 && filtered.every(i => selectedIds.has(i.id));
+    const someSelected = filtered.some(i => selectedIds.has(i.id));
+
+    const toggleSelectAll = () => {
+        if (allFilteredSelected) {
+            setSelectedIds(prev => {
+                const next = new Set(prev);
+                filtered.forEach(i => next.delete(i.id));
+                return next;
+            });
+        } else {
+            setSelectedIds(prev => {
+                const next = new Set(prev);
+                filtered.forEach(i => next.add(i.id));
+                return next;
+            });
+        }
+    };
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+        });
+    };
+
+    const handleBatchDelete = async () => {
+        if (selectedIds.size === 0) return;
+        setIsBatchDeleting(true);
+        try {
+            const result = await hocVienApi.deleteHocVienList(Array.from(selectedIds));
+            setBatchDeleteResult(result);
+            setSelectedIds(new Set());
+            await fetchAll();
+            if (result.failedCount === 0) {
+                addToast(`Đã xóa ${result.deletedCount} học viên thành công`, 'success');
+            }
+        } catch (err) {
+            addToast(extractError(err, 'Lỗi khi xóa học viên'), 'error');
+        } finally {
+            setIsBatchDeleting(false);
+            setIsBatchDeleteOpen(false);
         }
     };
 
@@ -397,6 +450,24 @@ export default function AdminStudentsPage() {
                             </div>
                         </div>
 
+                        {selectedIds.size > 0 && (
+                            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 flex items-center justify-between">
+                                <span className="text-sm font-medium text-red-700">
+                                    Đã chọn <b>{selectedIds.size}</b> học viên
+                                </span>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setSelectedIds(new Set())}
+                                        className="text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded hover:bg-white transition-colors">
+                                        Bỏ chọn
+                                    </button>
+                                    <button onClick={() => setIsBatchDeleteOpen(true)}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium transition-colors">
+                                        <Trash2 className="w-4 h-4" /> Xóa đã chọn
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                             {loading ? (
                                 <div className="flex flex-col items-center justify-center h-72 gap-3">
@@ -408,6 +479,15 @@ export default function AdminStudentsPage() {
                                     <table className="w-full text-sm">
                                         <thead className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
                                             <tr>
+                                                <th className="px-3 py-3 w-10">
+                                                    <button onClick={toggleSelectAll} className="flex items-center justify-center text-white/80 hover:text-white transition-colors">
+                                                        {allFilteredSelected
+                                                            ? <CheckSquare className="w-4 h-4" />
+                                                            : someSelected
+                                                                ? <CheckSquare className="w-4 h-4 opacity-50" />
+                                                                : <Square className="w-4 h-4" />}
+                                                    </button>
+                                                </th>
                                                 <th className="px-4 py-3 text-left font-semibold">Mã HV</th>
                                                 <th className="px-4 py-3 text-left font-semibold">Họ tên</th>
                                                 <th className="px-4 py-3 text-center font-semibold">GT</th>
@@ -421,7 +501,14 @@ export default function AdminStudentsPage() {
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
                                             {filtered.map(i => (
-                                                <tr key={i.id} className="transition-colors hover:bg-blue-50/60">
+                                                <tr key={i.id} className={`transition-colors hover:bg-blue-50/60 ${selectedIds.has(i.id) ? 'bg-blue-50' : ''}`}>
+                                                    <td className="px-3 py-3">
+                                                        <button onClick={() => toggleSelect(i.id)} className="flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors">
+                                                            {selectedIds.has(i.id)
+                                                                ? <CheckSquare className="w-4 h-4 text-blue-600" />
+                                                                : <Square className="w-4 h-4" />}
+                                                        </button>
+                                                    </td>
                                                     <td className="px-4 py-3 font-semibold text-slate-900">{i.maHocVien}</td>
                                                     <td className="px-4 py-3 text-slate-700">{i.tenNhanVien || '—'}</td>
                                                     <td className="px-4 py-3 text-center">
@@ -471,7 +558,7 @@ export default function AdminStudentsPage() {
                                             ))}
                                             {filtered.length === 0 && (
                                                 <tr>
-                                                    <td colSpan={9} className="py-16 text-center">
+                                                    <td colSpan={10} className="py-16 text-center">
                                                         <div className="flex flex-col items-center gap-2">
                                                             <div className="rounded-full bg-slate-100 p-4">
                                                                 <GraduationCap className="w-8 h-8 text-slate-400" />
@@ -859,6 +946,81 @@ export default function AdminStudentsPage() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Batch Delete Confirm Modal */}
+            {isBatchDeleteOpen && (
+                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[60] p-4" onClick={() => !isBatchDeleting && setIsBatchDeleteOpen(false)}>
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="rounded-full bg-red-100 p-3 flex-shrink-0">
+                                <Trash2 className="w-6 h-6 text-red-600" />
+                            </div>
+                            <h3 className="font-bold text-slate-900">Xóa hàng loạt</h3>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-6">
+                            Bạn có chắc muốn xóa <b>{selectedIds.size}</b> học viên đã chọn?
+                            Những học viên đang có dữ liệu liên kết sẽ được báo cáo và bỏ qua.
+                        </p>
+                        <div className="flex gap-3">
+                            <button disabled={isBatchDeleting} onClick={() => setIsBatchDeleteOpen(false)}
+                                className="flex-1 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50">Hủy</button>
+                            <button disabled={isBatchDeleting} onClick={handleBatchDelete}
+                                className="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 disabled:opacity-50">
+                                {isBatchDeleting ? 'Đang xóa...' : 'Xóa'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Batch Delete Result Modal */}
+            {batchDeleteResult && (
+                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[60] p-4" onClick={() => setBatchDeleteResult(null)}>
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full" onClick={e => e.stopPropagation()}>
+                        <div className={`px-6 py-4 rounded-t-2xl flex items-center justify-between ${batchDeleteResult.failedCount === 0 ? 'bg-gradient-to-r from-green-600 to-green-700' : 'bg-gradient-to-r from-amber-500 to-amber-600'} text-white`}>
+                            <h3 className="font-bold flex items-center gap-2">
+                                {batchDeleteResult.failedCount === 0
+                                    ? <><CheckCircle className="w-5 h-5" /> Xóa thành công</>
+                                    : <><AlertCircle className="w-5 h-5" /> Xóa một phần</>}
+                            </h3>
+                            <button onClick={() => setBatchDeleteResult(null)} className="p-1 hover:bg-white/20 rounded-lg"><X className="w-5 h-5" /></button>
+                        </div>
+                        <div className="p-5 space-y-4">
+                            <div className="grid grid-cols-3 gap-3 text-center">
+                                <div className="bg-slate-50 rounded-xl p-3">
+                                    <p className="text-xl font-bold text-slate-800">{batchDeleteResult.totalRequested}</p>
+                                    <p className="text-xs text-slate-500">Yêu cầu</p>
+                                </div>
+                                <div className="bg-green-50 rounded-xl p-3">
+                                    <p className="text-xl font-bold text-green-700">{batchDeleteResult.deletedCount}</p>
+                                    <p className="text-xs text-slate-500">Đã xóa</p>
+                                </div>
+                                <div className="bg-red-50 rounded-xl p-3">
+                                    <p className="text-xl font-bold text-red-600">{batchDeleteResult.failedCount}</p>
+                                    <p className="text-xs text-slate-500">Không xóa được</p>
+                                </div>
+                            </div>
+                            {batchDeleteResult.failedUsers.length > 0 && (
+                                <div className="rounded-xl border border-red-200 overflow-hidden max-h-52 overflow-y-auto">
+                                    <div className="bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 sticky top-0">Danh sách không xóa được</div>
+                                    <div className="divide-y divide-red-100">
+                                        {batchDeleteResult.failedUsers.map((f, idx) => (
+                                            <div key={idx} className="px-3 py-2 text-xs">
+                                                <span className="font-medium text-slate-800">{f.hoTen || '—'}</span>
+                                                <span className="text-red-600 ml-2">— {f.reason}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            <button onClick={() => setBatchDeleteResult(null)}
+                                className="w-full py-2.5 bg-slate-800 text-white rounded-xl text-sm font-medium hover:bg-slate-700">
+                                Đóng
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -10,6 +10,7 @@ interface UseAsyncState<T> {
   data: T | null;
   loading: boolean;
   error: string | null;
+  execute: () => Promise<void>;
 }
 
 interface UseAsyncOptions<T> {
@@ -74,7 +75,7 @@ export function useAsync<T>(
     execute();
   }, [execute]);
 
-  return { data, loading, error };
+  return { data, loading, error, execute };
 }
 
 export default useAsync;

@@ -84,11 +84,11 @@ function buildInvoiceHTML(data: HocPhiInvoiceData): string {
   <!-- Student info -->
   <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
     <tr>
-      <td style="padding:3px 12px 3px 0;width:38%;font-weight:bold;">Họ và tên sinh viên:</td>
+      <td style="padding:3px 12px 3px 0;width:38%;font-weight:bold;">Họ và tên học viên:</td>
       <td style="padding:3px 0;">${data.hoTen || '—'}</td>
     </tr>
     <tr>
-      <td style="padding:3px 12px 3px 0;font-weight:bold;">Mã sinh viên:</td>
+      <td style="padding:3px 12px 3px 0;font-weight:bold;">Mã học viên:</td>
       <td style="padding:3px 0;">${data.maHocVien || '—'}</td>
     </tr>
     <tr>
@@ -161,7 +161,7 @@ function buildInvoiceHTML(data: HocPhiInvoiceData): string {
     <tr>
       <td style="width:45%;text-align:center;vertical-align:top;padding:0 8px;">
         <div style="font-size:12px;font-style:italic;">Đà Nẵng, ngày ${ngayLap}</div>
-        <div style="margin-top:6px;font-weight:bold;font-size:12px;">SINH VIÊN</div>
+        <div style="margin-top:6px;font-weight:bold;font-size:12px;">HỌC VIÊN</div>
         <div style="font-style:italic;font-size:11px;color:#666;">(Ký, ghi rõ họ tên)</div>
         <div style="height:52px;"></div>
         <div style="font-size:12px;border-top:1px solid #888;display:inline-block;padding-top:4px;min-width:120px;">${data.hoTen || ''}</div>

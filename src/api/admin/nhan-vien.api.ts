@@ -115,8 +115,15 @@ export async function deleteNhanVien(id: string): Promise<void> {
     await apiClient.delete(`/admin/nhan-vien/${id}`);
 }
 
-export async function deleteNhanVienList(ids: string[]): Promise<void> {
-    await apiClient.delete('/admin/nhan-vien/delete-list', { data: ids });
+export type BatchDeleteResult = {
+    totalRequested: number;
+    deletedCount: number;
+    failedCount: number;
+    failedUsers: { id: string; hoTen: string | null; reason: string }[];
+};
+
+export async function deleteNhanVienList(ids: string[]): Promise<BatchDeleteResult> {
+    return (await apiClient.delete('/admin/nhan-vien/delete-list', { data: ids })).data;
 }
 
 export async function getAvailableUsers(): Promise<AvailableUser[]> {

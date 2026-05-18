@@ -57,6 +57,7 @@ import AdminStaffPage from '@/pages/admin/AdminStaffPage';
 import AdminStudentsPage from '@/pages/admin/AdminStudentsPage';
 import AdminChuongTrinhDaoTaoPage from '@/pages/admin/AdminChuongTrinhDaoTaoPage';
 import AdminSubmissionsPage from '@/pages/admin/AdminSubmissionsPage';
+import AdminBaiVietPage from '@/pages/admin/AdminBaiVietPage';
 
 import AccountantDashboard from '@/pages/accounting/AccountantDashboard';
 import NotificationsPage from '@/pages/accounting/NotificationsPage';
@@ -105,6 +106,7 @@ const AdminStaffPageWrapper = withRole(AdminStaffPage, 'admin');
 const AdminStudentsPageWrapper = withRole(AdminStudentsPage, 'admin');
 const AdminChuongTrinhDaoTaoPageWrapper = withRole(AdminChuongTrinhDaoTaoPage, 'admin');
 const AdminSubmissionsPageWrapper = withRole(AdminSubmissionsPage, 'admin');
+const AdminBaiVietPageWrapper = withRole(AdminBaiVietPage, 'admin');
 
 const StudentDashboardWrapper = withRole(StudentDashboard, 'student');
 const ProfilePageWrapper = withRole(ProfilePage, 'student');
@@ -202,6 +204,7 @@ export const router = createBrowserRouter([
     { path: '/admin/chuong-trinh-dao-tao', element: <AdminChuongTrinhDaoTaoPageWrapper /> },
     { path: '/admin/submissions', element: <AdminSubmissionsPageWrapper /> },
     { path: '/admin/chatbot', element: <AdminChatbotPageWrapper /> },
+    { path: '/admin/bai-viet', element: <AdminBaiVietPageWrapper /> },
 
     { path: '/accountant/dashboard', element: <AccountantDashboardWrapper /> },
     { path: '/accountant/reports', element: <FinancialReportsPageWrapper /> },

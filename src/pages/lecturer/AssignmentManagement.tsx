@@ -9,10 +9,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '@/hooks';
 import AiAssistantButton from '@/imports/AiAssistantButton';
-import { uploadFile } from '@/utils/fileUtils';
+import { uploadFile, resolveFileUrl } from '@/utils/fileUtils';
 import lecturerApi, {
   LecturerClassSummaryResponseDTO, AssignmentResponseDTO,
-  SubmissionResponseDTO
+  SubmissionResponseDTO, SubmissionDetailResponseDTO
 } from '@/api/lecturer/lecturer.api';
 
 const ACCEPTED_FILE_TYPES = ['pdf', 'docx', 'pptx', 'zip', 'doc', 'xlsx'];
@@ -403,6 +403,7 @@ export default function AssignmentManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loadingAssignments, setLoadingAssignments] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const importInputRef = useRef<HTMLInputElement | null>(null);
 
   // Create form
@@ -414,6 +415,7 @@ export default function AssignmentManagement() {
   const [attemptLimit, setAttemptLimit] = useState(1);
   const [questions, setQuestions] = useState<QuestionForm[]>([newQuestion()]);
   const [creating, setCreating] = useState(false);
+  const createAssignmentLockRef = useRef(false);
   const [fileError, setFileError] = useState('');
   const [uploadingAssignmentFile, setUploadingAssignmentFile] = useState(false);
   const [selectedAssignmentFile, setSelectedAssignmentFile] = useState<File | null>(null);
@@ -449,7 +451,8 @@ export default function AssignmentManagement() {
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
 
   // Grading
-  const [gradingSubmission, setGradingSubmission] = useState<SubmissionResponseDTO | null>(null);
+  const [gradingSubmission, setGradingSubmission] = useState<SubmissionDetailResponseDTO | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [gradeScore, setGradeScore] = useState('');
   const [gradeFeedback, setGradeFeedback] = useState('');
   const [grading, setGrading] = useState(false);
@@ -526,6 +529,7 @@ export default function AssignmentManagement() {
 
   const handleCreateAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (createAssignmentLockRef.current || creating || uploadingAssignmentFile) return;
     if (!user?.id || !selectedClassId || !title.trim()) return;
     if (fileError) return;
     const questionPayload = buildQuestionsPayload(questions);
@@ -538,6 +542,7 @@ export default function AssignmentManagement() {
       setFileError(questionError);
       return;
     }
+    createAssignmentLockRef.current = true;
     setCreating(true);
     try {
       let saved = await lecturerApi.createAssignment(user.id, {
@@ -586,6 +591,7 @@ export default function AssignmentManagement() {
     } catch (err) {
       console.error(err);
     } finally {
+      createAssignmentLockRef.current = false;
       setCreating(false);
     }
   };
@@ -706,8 +712,11 @@ export default function AssignmentManagement() {
       setAssignments(prev => prev.filter(a => a.id !== deleteId));
       setDeleteId(null);
       showSuccess('Xóa bài tập thành công');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      const msg = err?.response?.data?.detail || err?.response?.data?.message || 'Xóa bài tập thất bại';
+      setErrorMsg(msg);
+      setTimeout(() => setErrorMsg(''), 6000);
     } finally {
       setDeleting(false);
     }
@@ -726,10 +735,19 @@ export default function AssignmentManagement() {
     }
   };
 
-  const openGrading = (s: SubmissionResponseDTO) => {
-    setGradingSubmission(s);
+  const openGrading = async (s: SubmissionResponseDTO) => {
+    setGradingSubmission(null);
     setGradeScore(s.grade != null ? String(s.grade) : '');
     setGradeFeedback(s.feedback || '');
+    setDetailLoading(true);
+    try {
+      const detail = await lecturerApi.getSubmissionDetailFull(s.submissionId, user!.id);
+      setGradingSubmission(detail);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDetailLoading(false);
+    }
   };
 
   const confirmGrade = async () => {
@@ -773,6 +791,13 @@ export default function AssignmentManagement() {
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
                 <p className="text-green-700 font-medium">{successMsg}</p>
+              </div>
+            )}
+
+            {errorMsg && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+                <p className="text-red-700 font-medium">{errorMsg}</p>
               </div>
             )}
 
@@ -1410,7 +1435,7 @@ export default function AssignmentManagement() {
                         <td className="px-6 py-4 text-sm text-gray-600">{s.studentCode}</td>
                         <td className="px-6 py-4">
                           {s.fileUrl ? (
-                            <a href={s.fileUrl} target="_blank" rel="noopener noreferrer"
+                            <a href={resolveFileUrl(s.fileUrl)} target="_blank" rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium">
                               <FileText className="w-4 h-4" /> Xem file
                             </a>
@@ -1453,26 +1478,99 @@ export default function AssignmentManagement() {
 
       {/* Grading Modal */}
       {gradingSubmission && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Chấm điểm bài nộp</h3>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-auto py-6">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between shrink-0">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Chấm điểm bài nộp</h3>
+                <p className="text-sm text-gray-500">{gradingSubmission.studentName} – {gradingSubmission.studentCode}</p>
+              </div>
               <button onClick={() => setGradingSubmission(null)} className="p-1 hover:bg-gray-100 rounded-lg">
                 <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-600 mb-2">
-                  <strong>{gradingSubmission.studentName}</strong> – {gradingSubmission.studentCode}
-                </p>
-                {gradingSubmission.fileUrl && (
-                  <a href={gradingSubmission.fileUrl} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm">
-                    <FileText className="w-4 h-4" /> Xem bài nộp
-                  </a>
-                )}
-              </div>
+
+            {/* Body */}
+            <div className="overflow-auto flex-1 px-6 py-4 space-y-4">
+              {/* File link */}
+              {detailLoading ? (
+                <div className="text-center py-6">
+                  <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
+                  <p className="text-sm text-gray-500 mt-2">Đang tải chi tiết bài nộp...</p>
+                </div>
+              ) : (
+                <>
+                  {gradingSubmission.fileUrl && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-xs font-semibold text-blue-700 uppercase mb-1">File đính kèm</p>
+                      <a href={resolveFileUrl(gradingSubmission.fileUrl)} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        <FileText className="w-4 h-4" />
+                        Xem bài nộp của sinh viên
+                      </a>
+                    </div>
+                  )}
+
+                  {/* Questions & Answers */}
+                  {gradingSubmission.answers && gradingSubmission.answers.length > 0 ? (
+                    <div className="space-y-3">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Câu hỏi & Câu trả lời</p>
+                      {gradingSubmission.answers.map((q, idx) => (
+                        <div key={q.questionId} className={`border rounded-lg p-4 ${q.isCorrect ? 'border-green-200 bg-green-50/30' : 'border-orange-200 bg-orange-50/30'}`}>
+                          <div className="flex items-start gap-2 mb-2">
+                            <span className="shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold flex items-center justify-center">
+                              {idx + 1}
+                            </span>
+                            <p className="text-sm font-medium text-gray-900 flex-1">{q.questionContent}</p>
+                            <span className="shrink-0 text-xs text-gray-500">({q.maxScore} đ)</span>
+                          </div>
+
+                          {q.isMultipleChoice ? (
+                            <div className="ml-8 space-y-1.5">
+                              {q.options?.map(opt => (
+                                <div key={opt.answerId} className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg ${
+                                  opt.isSelected && opt.isCorrect ? 'bg-green-100 border border-green-300' :
+                                  opt.isSelected && !opt.isCorrect ? 'bg-red-100 border border-red-300' :
+                                  !opt.isSelected && opt.isCorrect ? 'bg-green-50 border border-green-200' :
+                                  'bg-gray-50'
+                                }`}>
+                                  {opt.isSelected && <CheckCircle className="w-3.5 h-3.5 shrink-0 text-blue-600" />}
+                                  <span className={`flex-1 ${opt.isCorrect ? 'font-semibold text-green-700' : 'text-gray-700'}`}>
+                                    {opt.content}
+                                  </span>
+                                </div>
+                              ))}
+                              {q.earnedScore != null && (
+                                <p className={`text-xs font-semibold mt-1 ${q.isCorrect ? 'text-green-700' : 'text-red-600'}`}>
+                                  Điểm: {q.earnedScore} / {q.maxScore}
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="ml-8">
+                              <p className="text-xs text-gray-500 mb-1">Câu trả lời:</p>
+                              <div className="bg-white border border-gray-200 rounded-lg p-3">
+                                <p className="text-sm text-gray-800 whitespace-pre-wrap">
+                                  {q.submittedAnswer || <span className="italic text-gray-400">Chưa trả lời</span>}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 text-sm text-gray-400 italic">
+                      Không có câu hỏi trắc nghiệm hoặc bài tự luận được nộp
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Footer - grading form */}
+            <div className="px-6 py-4 border-t border-gray-200 shrink-0 space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Điểm (0 – 10) <span className="text-red-500">*</span>
@@ -1484,32 +1582,31 @@ export default function AssignmentManagement() {
                   step="0.1"
                   value={gradeScore}
                   onChange={e => setGradeScore(e.target.value)}
-                  placeholder="VD: 8.5"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="VD: 8.5"
                 />
-                <p className="text-xs text-gray-500 mt-1">Nhập điểm từ 0 đến 10</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nhận xét</label>
                 <textarea
                   value={gradeFeedback}
                   onChange={e => setGradeFeedback(e.target.value)}
-                  placeholder="Nhập nhận xét, góp ý cho sinh viên..."
-                  rows={3}
+                  rows={2}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  placeholder="Nhập nhận xét..."
                 />
               </div>
-            </div>
-            <div className="flex gap-3 justify-end mt-4">
-              <button onClick={() => setGradingSubmission(null)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Hủy</button>
-              <button
-                onClick={confirmGrade}
-                disabled={grading || gradeScore === '' || isNaN(parseFloat(gradeScore))}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Check className="w-4 h-4" />
-                {grading ? 'Đang lưu...' : 'Lưu điểm'}
-              </button>
+              <div className="flex gap-3 justify-end">
+                <button onClick={() => setGradingSubmission(null)} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Hủy</button>
+                <button
+                  onClick={confirmGrade}
+                  disabled={grading || gradeScore === '' || isNaN(parseFloat(gradeScore))}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Check className="w-4 h-4" />
+                  {grading ? 'Đang lưu...' : 'Lưu điểm'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

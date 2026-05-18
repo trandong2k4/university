@@ -6,7 +6,7 @@ import {
   Download, Trash2, Edit2, Clock, ChevronLeft, ChevronRight,
   GraduationCap, Star, Save, TrendingUp, Award, Check
 } from 'lucide-react';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useAuth } from '@/hooks';
 import { LecturerAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
@@ -809,6 +809,7 @@ function AssignmentsTab({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ tieuDe: '', moTa: '', thoiGianBatDau: '', thoiGianKetThuc: '', fileExerciseUrl: '' });
   const [saving, setSaving] = useState(false);
+  const saveLockRef = useRef(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -825,8 +826,10 @@ function AssignmentsTab({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (saveLockRef.current || saving) return;
     if (!form.tieuDe.trim()) { showToast('Tiêu đề bài tập không được để trống', 'error'); return; }
 
+    saveLockRef.current = true;
     setSaving(true);
     try {
       const payload = {
@@ -850,6 +853,7 @@ function AssignmentsTab({
     } catch {
       showToast('Thao tác thất bại, vui lòng thử lại', 'error');
     } finally {
+      saveLockRef.current = false;
       setSaving(false);
     }
   };

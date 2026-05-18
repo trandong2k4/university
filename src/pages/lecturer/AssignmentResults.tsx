@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useAuth } from '@/hooks';
 import AiAssistantButton from '@/imports/AiAssistantButton';
+import { resolveFileUrl } from '@/utils/fileUtils';
 import lecturerApi, {
   SubmissionResponseDTO,
 } from '@/api/lecturer/lecturer.api';
@@ -285,7 +286,7 @@ export default function AssignmentResults() {
                             <td className="px-3 py-4 hidden sm:table-cell">
                               {s.fileUrl ? (
                                 <a
-                                  href={s.fileUrl}
+                                  href={resolveFileUrl(s.fileUrl)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -356,7 +357,7 @@ export default function AssignmentResults() {
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">File bài nộp</p>
                   <a
-                    href={gradingSubmission.fileUrl}
+                    href={resolveFileUrl(gradingSubmission.fileUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-700 text-sm rounded-xl hover:bg-blue-100 transition-colors font-semibold"

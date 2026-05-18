@@ -362,71 +362,69 @@ export default function AdminChuongTrinhDaoTaoPage() {
               {/* Quick add - available subjects */}
               <div>
                 <p className="text-sm font-medium text-slate-700 mb-2">Môn học có thể thêm:</p>
+                <div className="mb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input
+                        type="text"
+                        placeholder="Tìm môn học để thêm..."
+                        value={batchSearch}
+                        onChange={e => setBatchSearch(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    {availableMonHoc.length > 0 && (
+                      <div
+                        onClick={() => toggleBatchAll(!(batchMonHocIndexes.length === availableMonHoc.length && availableMonHoc.length > 0))}
+                        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer select-none ml-2"
+                      >
+                        <span className="w-4 h-4 flex items-center justify-center">
+                          <input
+                            type="checkbox"
+                            checked={batchMonHocIndexes.length === availableMonHoc.length && availableMonHoc.length > 0}
+                            readOnly
+                            ref={input => { if (input) input.indeterminate = batchMonHocIndexes.length > 0 && batchMonHocIndexes.length < availableMonHoc.length; }}
+                            className="w-4 h-4 text-blue-600 rounded accent-blue-600 pointer-events-none"
+                          />
+                        </span>
+                        Chọn tất cả
+                      </div>
+                    )}
+                  </div>
+                </div>
                 {availableMonHoc.length === 0 ? (
                   <div className="text-center py-8 text-sm text-slate-400">
                     <BookOpen className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                    <p>Tất cả môn học đã có trong CTĐT này</p>
+                    <p>{batchSearch ? 'Không tìm thấy môn học nào phù hợp' : 'Tất cả môn học đã có trong CTĐT này'}</p>
                   </div>
                 ) : (
-                  <>
-                    <div className="mb-2">
-                      <div className="flex items-center justify-between">
-                        <div className="relative flex-1">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <div className="max-h-64 overflow-y-auto space-y-1.5">
+                    {availableMonHoc.map((m, idx) => (
+                      <div
+                        key={m.id}
+                        onClick={() => toggleBatchMonHoc(idx, !batchMonHocIndexes.includes(idx))}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                          batchMonHocIndexes.includes(idx)
+                            ? 'border-blue-400 bg-blue-50'
+                            : 'border-slate-200 hover:border-blue-300 hover:bg-blue-50/50'
+                        }`}
+                      >
+                        <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center">
                           <input
-                            type="text"
-                            placeholder="Tìm môn học để thêm..."
-                            value={batchSearch}
-                            onChange={e => setBatchSearch(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            type="checkbox"
+                            checked={batchMonHocIndexes.includes(idx)}
+                            readOnly
+                            className="w-4 h-4 text-blue-600 rounded accent-blue-600 pointer-events-none"
                           />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-800">{m.tenMonHoc}</p>
+                          <p className="text-xs text-slate-500">{m.maMonHoc} &bull; {m.soTinChi} tín chỉ</p>
                         </div>
-                        {availableMonHoc.length > 0 && (
-                          <div
-                            onClick={() => toggleBatchAll(!(batchMonHocIndexes.length === availableMonHoc.length && availableMonHoc.length > 0))}
-                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 cursor-pointer select-none ml-2"
-                          >
-                            <span className="w-4 h-4 flex items-center justify-center">
-                              <input
-                                type="checkbox"
-                                checked={batchMonHocIndexes.length === availableMonHoc.length && availableMonHoc.length > 0}
-                                readOnly
-                                ref={input => { if (input) input.indeterminate = batchMonHocIndexes.length > 0 && batchMonHocIndexes.length < availableMonHoc.length; }}
-                                className="w-4 h-4 text-blue-600 rounded accent-blue-600 pointer-events-none"
-                              />
-                            </span>
-                            Chọn tất cả
-                          </div>
-                        )}
                       </div>
-                    </div>
-                    <div className="max-h-64 overflow-y-auto space-y-1.5">
-                      {availableMonHoc.map((m, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => toggleBatchMonHoc(idx, !batchMonHocIndexes.includes(idx))}
-                          className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
-                            batchMonHocIndexes.includes(idx)
-                              ? 'border-blue-400 bg-blue-50'
-                              : 'border-slate-200 hover:border-blue-300 hover:bg-blue-50/50'
-                          }`}
-                        >
-                          <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center">
-                            <input
-                              type="checkbox"
-                              checked={batchMonHocIndexes.includes(idx)}
-                              readOnly
-                              className="w-4 h-4 text-blue-600 rounded accent-blue-600 pointer-events-none"
-                            />
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-slate-800">{m.tenMonHoc}</p>
-                            <p className="text-xs text-slate-500">{m.maMonHoc} &bull; {m.soTinChi} tín chỉ</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>

@@ -66,6 +66,7 @@ export type UsersItem = {
     ghiChu?: string;
     createAt?: string;
     updateAt?: string;
+    roles?: string[];
 };
 
 export type CreateUserRequest = {

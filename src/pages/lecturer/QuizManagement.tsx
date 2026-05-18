@@ -5,12 +5,13 @@ import {
   CheckCircle2, Edit2, Eye, Clock, BookOpen, Save,
   CheckCircle
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '@/hooks';
 import AiAssistantButton from '@/imports/AiAssistantButton';
 import lecturerApi, {
   LecturerClassSummaryResponseDTO,
+  AssignmentResponseDTO,
   QuizResponseDTO,
   QuizQuestionDTO,
   QuizRequestDTO,
@@ -90,8 +91,18 @@ export default function QuizManagement() {
   const [duration, setDuration] = useState(30);
   const [attempts, setAttempts] = useState(1);
   const [isPublished, setIsPublished] = useState(false);
+  const [quizType, setQuizType] = useState<'exercise_based' | 'random_question' | 'manual_question'>('exercise_based');
+  const [assignments, setAssignments] = useState<AssignmentResponseDTO[]>([]);
+  const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
+  const [randomQuestionCount, setRandomQuestionCount] = useState(10);
+  const [randomQuestionTypes, setRandomQuestionTypes] = useState('multiple_choice,essay');
+  const [shuffleQuestions, setShuffleQuestions] = useState(true);
+  const [shuffleAnswers, setShuffleAnswers] = useState(true);
+  const [showResult, setShowResult] = useState<'immediately' | 'after_due' | 'never'>('immediately');
+  const [passScore, setPassScore] = useState(50);
   const [questions, setQuestions] = useState<QuestionForm[]>([newQuestion()]);
   const [creatingQuiz, setCreatingQuiz] = useState(false);
+  const submitLockRef = useRef(false);
 
   // Delete
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -145,6 +156,9 @@ export default function QuizManagement() {
       .then(setQuizzes)
       .catch(console.error)
       .finally(() => setLoadingQuizzes(false));
+    lecturerApi.getAssignments(selectedClassId, user.id)
+      .then(setAssignments)
+      .catch(() => setAssignments([]));
   }, [selectedClassId, user?.id]);
 
   const filteredQuizzes = quizzes.filter(q =>
@@ -161,6 +175,14 @@ export default function QuizManagement() {
     setDuration(30);
     setAttempts(1);
     setIsPublished(false);
+    setQuizType('exercise_based');
+    setSelectedExerciseIds([]);
+    setRandomQuestionCount(10);
+    setRandomQuestionTypes('multiple_choice,essay');
+    setShuffleQuestions(true);
+    setShuffleAnswers(true);
+    setShowResult('immediately');
+    setPassScore(50);
     setQuestions([newQuestion()]);
     setEditingQuiz(null);
     setActiveTab('list');
@@ -179,6 +201,13 @@ export default function QuizManagement() {
       setDuration(full.thoiGianLam || 30);
       setAttempts(full.soLanLam || 1);
       setIsPublished(full.trinhTrang ?? false);
+      setQuizType((full.quizType as any) || 'manual_question');
+      setRandomQuestionCount(full.randomQuestionCount || 10);
+      setRandomQuestionTypes(full.randomQuestionTypes || 'multiple_choice,essay');
+      setShuffleQuestions(full.shuffleQuestions ?? true);
+      setShuffleAnswers(full.shuffleAnswers ?? true);
+      setShowResult((full.showResult as any) || 'immediately');
+      setPassScore(full.passScore ?? 50);
       setQuestions(full.questions ? full.questions.map(questionFromDTO) : [newQuestion()]);
       setActiveTab('edit');
     } catch (err) {
@@ -200,6 +229,16 @@ export default function QuizManagement() {
     if (new Date(endTime) <= new Date(startTime)) { showToast('Thời gian kết thúc phải sau thời gian bắt đầu', 'error'); return false; }
     if (duration < 1) { showToast('Thời gian làm bài phải lớn hơn 0 phút', 'error'); return false; }
     if (attempts < 1) { showToast('Số lần làm bài phải lớn hơn 0', 'error'); return false; }
+    if (passScore < 0 || passScore > 100) { showToast('Điểm đạt phải nằm trong khoảng 0-100%', 'error'); return false; }
+
+    if (quizType === 'exercise_based') {
+      if (selectedExerciseIds.length === 0) { showToast('Vui lòng chọn ít nhất một bài tập', 'error'); return false; }
+      return true;
+    }
+    if (quizType === 'random_question') {
+      if (randomQuestionCount < 1) { showToast('Số câu random phải lớn hơn 0', 'error'); return false; }
+      return true;
+    }
 
     for (const q of questions) {
       if (!q.noiDung.trim()) { showToast('Vui lòng nhập nội dung cho tất cả câu hỏi', 'error'); return false; }
@@ -222,7 +261,15 @@ export default function QuizManagement() {
     thoiGianLam: duration,
     soLanLam: attempts,
     trinhTrang: isPublished,
-    questions: questions.map(q => ({
+    quizType,
+    exerciseIds: quizType === 'exercise_based' ? selectedExerciseIds : undefined,
+    randomQuestionCount: quizType === 'random_question' ? randomQuestionCount : undefined,
+    randomQuestionTypes: quizType === 'random_question' ? randomQuestionTypes : undefined,
+    shuffleQuestions,
+    shuffleAnswers,
+    showResult,
+    passScore,
+    questions: quizType === 'manual_question' ? questions.map(q => ({
       noiDung: q.noiDung.trim(),
       loaiCauHoi: q.loaiCauHoi,
       diem: q.diem,
@@ -233,12 +280,14 @@ export default function QuizManagement() {
           conText: a.conText.trim(),
           isCorrect: a.isCorrect
         }))
-    }))
+    })) : undefined
   });
 
   const handleCreateQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitLockRef.current || creatingQuiz) return;
     if (!user?.id || !validateQuiz()) return;
+    submitLockRef.current = true;
     setCreatingQuiz(true);
     try {
       await lecturerApi.createQuiz(user.id, buildPayload());
@@ -250,13 +299,16 @@ export default function QuizManagement() {
       console.error(err);
       showToast('Tạo bài kiểm tra thất bại', 'error');
     } finally {
+      submitLockRef.current = false;
       setCreatingQuiz(false);
     }
   };
 
   const handleUpdateQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitLockRef.current || creatingQuiz) return;
     if (!user?.id || !editingQuiz || !validateQuiz()) return;
+    submitLockRef.current = true;
     setCreatingQuiz(true);
     try {
       await lecturerApi.updateQuiz(editingQuiz.quizId, user.id, buildPayload());
@@ -268,6 +320,7 @@ export default function QuizManagement() {
       console.error(err);
       showToast('Cập nhật thất bại: ' + (err instanceof Error ? err.message : 'Lỗi không xác định'), 'error');
     } finally {
+      submitLockRef.current = false;
       setCreatingQuiz(false);
     }
   };
@@ -642,6 +695,111 @@ export default function QuizManagement() {
                       </div>
                     </div>
 
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Loại bài kiểm tra</label>
+                        <select
+                          value={quizType}
+                          onChange={e => setQuizType(e.target.value as any)}
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm font-medium"
+                        >
+                          <option value="exercise_based">Theo bài tập</option>
+                          <option value="random_question">Random từ ngân hàng câu hỏi</option>
+                          <option value="manual_question">Tạo câu hỏi thủ công</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Điểm đạt (%)</label>
+                        <input
+                          type="number"
+                          value={passScore}
+                          onChange={e => setPassScore(parseFloat(e.target.value) || 0)}
+                          min={0}
+                          max={100}
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Hiển thị kết quả</label>
+                        <select
+                          value={showResult}
+                          onChange={e => setShowResult(e.target.value as any)}
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm font-medium"
+                        >
+                          <option value="immediately">Ngay sau khi nộp</option>
+                          <option value="after_due">Sau hạn đóng đề</option>
+                          <option value="never">Không hiển thị</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {quizType === 'exercise_based' && (
+                      <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-sm font-bold text-gray-900">Chọn bài tập thuộc lớp học phần</h3>
+                          <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-lg">{selectedExerciseIds.length} đã chọn</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {assignments.map(exercise => (
+                            <label key={exercise.id} className="flex items-start gap-3 p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300">
+                              <input
+                                type="checkbox"
+                                checked={selectedExerciseIds.includes(exercise.id)}
+                                onChange={e => {
+                                  setSelectedExerciseIds(prev => e.target.checked
+                                    ? [...prev, exercise.id]
+                                    : prev.filter(id => id !== exercise.id));
+                                }}
+                                className="mt-1"
+                              />
+                              <span>
+                                <span className="block text-sm font-semibold text-gray-800">{exercise.tieuDe}</span>
+                                <span className="block text-xs text-gray-500">{exercise.questionCount || 0} câu hỏi</span>
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {quizType === 'random_question' && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-gray-200 rounded-xl p-4 bg-gray-50">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Số câu random</label>
+                          <input
+                            type="number"
+                            value={randomQuestionCount}
+                            onChange={e => setRandomQuestionCount(parseInt(e.target.value) || 1)}
+                            min={1}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Loại câu hỏi</label>
+                          <select
+                            value={randomQuestionTypes}
+                            onChange={e => setRandomQuestionTypes(e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm font-medium"
+                          >
+                            <option value="multiple_choice,essay">Trắc nghiệm và tự luận</option>
+                            <option value="multiple_choice">Chỉ trắc nghiệm</option>
+                            <option value="essay">Chỉ tự luận</option>
+                          </select>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl bg-white cursor-pointer">
+                        <input type="checkbox" checked={shuffleQuestions} onChange={e => setShuffleQuestions(e.target.checked)} />
+                        <span className="text-sm font-semibold text-gray-700">Trộn thứ tự câu hỏi</span>
+                      </label>
+                      <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl bg-white cursor-pointer">
+                        <input type="checkbox" checked={shuffleAnswers} onChange={e => setShuffleAnswers(e.target.checked)} />
+                        <span className="text-sm font-semibold text-gray-700">Trộn thứ tự đáp án</span>
+                      </label>
+                    </div>
+
                     {/* Publish toggle */}
                     <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-indigo-50 to-violet-50 rounded-xl border border-indigo-100">
                       <label className="flex items-center gap-3 cursor-pointer select-none group">
@@ -685,6 +843,7 @@ export default function QuizManagement() {
                     </div>
 
                     {/* Questions */}
+                    {quizType === 'manual_question' && (
                     <div className="border-t border-gray-100 pt-5">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-base font-bold text-gray-900">Câu hỏi</h3>
@@ -792,6 +951,7 @@ export default function QuizManagement() {
                         Thêm câu hỏi
                       </button>
                     </div>
+                    )}
 
                     {/* Actions */}
                     <div className="flex gap-3 pt-2">

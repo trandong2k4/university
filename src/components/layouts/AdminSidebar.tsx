@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   MapPin,
   MessageCircle,
+  Newspaper,
   School,
   UserCheck,
   UserCog,
@@ -111,6 +112,7 @@ const ADMIN_MENU_GROUPS: RoleSidebarGroup[] = [
     title: 'HỆ THỐNG',
     defaultOpen: true,
     items: [
+      { id: 'bai-viet', icon: <Newspaper className="h-4 w-4" />, label: 'Bài viết & Tin tức', path: '/admin/bai-viet' },
       { id: 'chatbot', icon: <Bot className="h-4 w-4" />, label: 'Trợ lý AI', path: '/admin/chatbot' },
       { id: 'contacts', icon: <MessageCircle className="h-4 w-4" />, label: 'Liên hệ', path: '/admin/contacts' },
       { id: 'notifications', icon: <Bell className="h-4 w-4" />, label: 'Thông báo hệ thống', path: '/admin/notifications' },

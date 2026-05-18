@@ -8,6 +8,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useAuth } from '@/hooks';
 import { LecturerAIAssistantButton } from '@/components/chatbot/AIAssistantButton';
 import lecturerApi, { SubmissionResponseDTO } from '@/api/lecturer/lecturer.api';
+import { resolveFileUrl } from '@/utils/fileUtils';
 
 export default function SubmissionsView() {
   const navigate = useNavigate();
@@ -207,7 +208,7 @@ export default function SubmissionsView() {
                         <td className="px-6 py-4">
                           {s.fileUrl && (
                             <a
-                              href={s.fileUrl}
+                              href={resolveFileUrl(s.fileUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-flex"

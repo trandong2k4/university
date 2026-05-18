@@ -1,4 +1,5 @@
 import apiClient from '@/common/axiosClient';
+import type { CotDiemLoai } from '@/api/admin/cot-diem.api';
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -180,6 +181,30 @@ export interface SubmissionResponseDTO {
   feedback: string | null;
 }
 
+export interface SubmissionDetailResponseDTO extends SubmissionResponseDTO {
+  answers: QuestionAnswerDTO[];
+}
+
+export interface QuestionAnswerDTO {
+  questionId: string;
+  questionContent: string;
+  isMultipleChoice: boolean;
+  isMultipleAnswer: boolean;
+  maxScore: number;
+  earnedScore: number;
+  submittedAnswer: string | null; // for essay
+  options: AnswerOptionDTO[] | null; // for multiple choice
+  selectedAnswerId: string | null;
+  isCorrect: boolean | null;
+}
+
+export interface AnswerOptionDTO {
+  answerId: string;
+  content: string;
+  isCorrect: boolean;
+  isSelected: boolean;
+}
+
 export interface GradeStudentResponseDTO {
   hocVienId: string;
   hoTen: string;
@@ -192,7 +217,7 @@ export interface ComponentGradeEntryDTO {
   cotDiemId: string;
   tenCotDiem: string;
   tiTrong: string;
-  loai: string | null;
+  loai: CotDiemLoai | null;
   diem: number | null;
   thuTuHienThi: number;
 }
@@ -201,7 +226,7 @@ export interface GradeColumnDTO {
   cotDiemId: string;
   tenCotDiem: string;
   tiTrong: string;
-  loai: string | null;
+  loai: CotDiemLoai | null;
   thuTuHienThi: number;
 }
 
@@ -222,13 +247,13 @@ export interface GradeHistoryResponseDTO {
 
 export interface GradeRequestDTO {
   lopHocPhanId: string;
-  studentGrades: Record<string, number>;
+  studentGrades: Record<string, number | null>;
 }
 
 export interface CreateCotDiemRequestDTO {
   tenCotDiem: string;
   tiTrong: string;
-  loai: string | null;
+  loai: CotDiemLoai | null;
   thuTuHienThi: number;
   lopHocPhanId: string;
 }
@@ -334,6 +359,13 @@ export interface QuizResponseDTO {
   createdAt: string;
   questionCount: number;
   questions?: QuizQuestionDTO[];
+  quizType?: 'manual_question' | 'exercise_based' | 'random_question' | string;
+  randomQuestionCount?: number | null;
+  randomQuestionTypes?: string | null;
+  shuffleQuestions?: boolean | null;
+  shuffleAnswers?: boolean | null;
+  showResult?: 'immediately' | 'after_due' | 'never' | string | null;
+  passScore?: number | null;
 }
 
 export interface QuizQuestionDTO {
@@ -395,8 +427,21 @@ export interface QuizAttemptAnswerDetailDTO {
   selectedAnswerId: string | null;
   selectedKeyAnswers: string | null;
   selectedAnswerText: string | null;
+  textAnswer?: string | null;
   selectedCorrect: boolean | null;
+  scoreReceived?: number | null;
   answers: QuizAttemptAnswerOptionDTO[];
+  answerLogs?: QuizAttemptAnswerLogDTO[];
+}
+
+export interface QuizAttemptAnswerLogDTO {
+  questionId: string;
+  oldAnswerId: string | null;
+  newAnswerId: string | null;
+  oldTextAnswer: string | null;
+  newTextAnswer: string | null;
+  timeOnQuestion: number | null;
+  changedAt: string;
 }
 
 export interface QuizAttemptDetailResponseDTO {
@@ -507,6 +552,11 @@ const lecturerApi = {
       params: { userId },
     }).then(r => r.data),
 
+  getSubmissionDetailFull: (submissionId: string, userId: string) =>
+    apiClient.get<SubmissionDetailResponseDTO>(`/lecturer/submissions/${submissionId}/detail-full`, {
+      params: { userId },
+    }).then(r => r.data),
+
   // Grades
   getGrades: (lopHocPhanId: string, userId: string) =>
     apiClient.get<GradeResponseDTO>(`/lecturer/grades/${lopHocPhanId}`, {
@@ -596,7 +646,15 @@ export interface QuizRequestDTO {
   thoiGianLam: number;
   soLanLam?: number;
   trinhTrang?: boolean;
-  questions: QuestionRequestDTO[];
+  questions?: QuestionRequestDTO[];
+  quizType?: 'manual_question' | 'exercise_based' | 'random_question' | string;
+  exerciseIds?: string[];
+  randomQuestionCount?: number;
+  randomQuestionTypes?: string;
+  shuffleQuestions?: boolean;
+  shuffleAnswers?: boolean;
+  showResult?: 'immediately' | 'after_due' | 'never' | string;
+  passScore?: number;
 }
 
 export interface QuestionRequestDTO {
