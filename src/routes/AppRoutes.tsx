@@ -3,6 +3,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 
 import Login from '@/pages/auth/Login';
 import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
+import InvoiceLandingPage from '@/pages/InvoiceLandingPage';
 
 import StudentDashboard from '@/pages/student/StudentDashboard';
 import ProfilePage from '@/pages/student/ProfilePage';
@@ -147,6 +148,7 @@ const AdminChatbotPageWrapper = withRole(AdminChatbotPage, 'admin');
 export const router = createBrowserRouter([
     { path: '/', element: <Login /> },
     { path: '/reset-password', element: <ResetPasswordPage /> },
+    { path: '/invoice', element: <InvoiceLandingPage /> },
 
 
     { path: '/student/dashboard', element: <StudentDashboardWrapper /> },

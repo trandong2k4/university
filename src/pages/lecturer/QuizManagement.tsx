@@ -221,8 +221,14 @@ export default function QuizManagement() {
     navigate(`/lecturer/quiz/${quiz.quizId}/results?classId=${selectedClassId}`);
   };
 
+  const isEditingStarted = activeTab === 'edit' && editingQuiz != null
+    && editingQuiz.thoiGianBatDau != null
+    && new Date(editingQuiz.thoiGianBatDau) <= new Date();
+
   // Validate and save quiz
   const validateQuiz = () => {
+    // Quiz đã bắt đầu: chỉ cập nhật 3 trường, bỏ qua validation đầy đủ
+    if (isEditingStarted) return true;
     if (!quizTitle.trim()) { showToast('Tiêu đề bài kiểm tra không được để trống', 'error'); return false; }
     if (!startTime) { showToast('Thời gian bắt đầu không được để trống', 'error'); return false; }
     if (!endTime) { showToast('Thời gian kết thúc không được để trống', 'error'); return false; }
@@ -372,7 +378,7 @@ export default function QuizManagement() {
   };
 
   const canModifyQuiz = (q: QuizResponseDTO) =>
-    !q.thoiGianBatDau || new Date(q.thoiGianBatDau) > new Date();
+    isQuizActive(q) !== 'ended';
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-50">
@@ -551,7 +557,7 @@ export default function QuizManagement() {
                                     onClick={() => handleEdit(q)}
                                     disabled={!canModify}
                                     className="w-9 h-9 flex items-center justify-center bg-gray-50 hover:bg-orange-50 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50"
-                                    title={canModify ? 'Chỉnh sửa' : 'Không thể chỉnh sửa quiz đã bắt đầu'}
+                                    title={canModify ? 'Chỉnh sửa' : 'Không thể chỉnh sửa quiz đã kết thúc'}
                                   >
                                     <Edit2 className="w-4 h-4 text-orange-500" />
                                   </button>
@@ -559,7 +565,7 @@ export default function QuizManagement() {
                                     onClick={() => setDeleteId(q.quizId)}
                                     disabled={!canModify}
                                     className="w-9 h-9 flex items-center justify-center bg-gray-50 hover:bg-red-50 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-50"
-                                    title={canModify ? 'Xóa' : 'Không thể xóa quiz đã bắt đầu'}
+                                    title={canModify ? 'Xóa' : 'Không thể xóa quiz đã kết thúc'}
                                   >
                                     <Trash2 className="w-4 h-4 text-red-400 hover:text-red-600" />
                                   </button>
@@ -593,6 +599,16 @@ export default function QuizManagement() {
                   </div>
 
                   <form onSubmit={activeTab === 'edit' ? handleUpdateQuiz : handleCreateQuiz} className="p-6 space-y-5">
+                    {/* Started quiz warning */}
+                    {isEditingStarted && (
+                      <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                        <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-bold text-amber-800">Bài kiểm tra đang diễn ra</p>
+                          <p className="text-xs text-amber-700 mt-0.5">Chỉ có thể cập nhật: <strong>Công khai</strong>, <strong>Số lần làm</strong>, <strong>Hiển thị kết quả</strong>. Các trường khác bị khóa.</p>
+                        </div>
+                      </div>
+                    )}
                     {/* Class & Title */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -603,8 +619,9 @@ export default function QuizManagement() {
                           <select
                             value={selectedClassId}
                             onChange={e => setSelectedClassId(e.target.value)}
-                            className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm font-medium"
+                            className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                             required
+                            disabled={isEditingStarted}
                           >
                             {classes.map(c => (
                               <option key={c.lopHocPhanId} value={c.lopHocPhanId}>
@@ -624,8 +641,9 @@ export default function QuizManagement() {
                           value={quizTitle}
                           onChange={e => setQuizTitle(e.target.value)}
                           placeholder="VD: Kiểm tra giữa kỳ chương 1-3"
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                           required
+                          disabled={isEditingStarted}
                         />
                       </div>
                     </div>
@@ -638,7 +656,8 @@ export default function QuizManagement() {
                         onChange={e => setQuizDescription(e.target.value)}
                         placeholder="Nhập mô tả chi tiết về bài kiểm tra..."
                         rows={2}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium resize-none"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium resize-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                        disabled={isEditingStarted}
                       />
                     </div>
 
@@ -652,8 +671,9 @@ export default function QuizManagement() {
                           type="datetime-local"
                           value={startTime}
                           onChange={e => setStartTime(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                           required
+                          disabled={isEditingStarted}
                         />
                       </div>
                       <div>
@@ -664,8 +684,9 @@ export default function QuizManagement() {
                           type="datetime-local"
                           value={endTime}
                           onChange={e => setEndTime(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                           required
+                          disabled={isEditingStarted}
                         />
                       </div>
                       <div>
@@ -677,8 +698,9 @@ export default function QuizManagement() {
                           value={duration}
                           onChange={e => setDuration(parseInt(e.target.value) || 30)}
                           min={5} max={180}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                           required
+                          disabled={isEditingStarted}
                         />
                       </div>
                       <div>
@@ -701,7 +723,8 @@ export default function QuizManagement() {
                         <select
                           value={quizType}
                           onChange={e => setQuizType(e.target.value as any)}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm font-medium"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                          disabled={isEditingStarted}
                         >
                           <option value="exercise_based">Theo bài tập</option>
                           <option value="random_question">Random từ ngân hàng câu hỏi</option>
@@ -716,7 +739,8 @@ export default function QuizManagement() {
                           onChange={e => setPassScore(parseFloat(e.target.value) || 0)}
                           min={0}
                           max={100}
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                          disabled={isEditingStarted}
                         />
                       </div>
                       <div>
@@ -790,12 +814,12 @@ export default function QuizManagement() {
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl bg-white cursor-pointer">
-                        <input type="checkbox" checked={shuffleQuestions} onChange={e => setShuffleQuestions(e.target.checked)} />
+                      <label className={`flex items-center gap-3 p-3 border border-gray-200 rounded-xl bg-white ${isEditingStarted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                        <input type="checkbox" checked={shuffleQuestions} onChange={e => setShuffleQuestions(e.target.checked)} disabled={isEditingStarted} />
                         <span className="text-sm font-semibold text-gray-700">Trộn thứ tự câu hỏi</span>
                       </label>
-                      <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl bg-white cursor-pointer">
-                        <input type="checkbox" checked={shuffleAnswers} onChange={e => setShuffleAnswers(e.target.checked)} />
+                      <label className={`flex items-center gap-3 p-3 border border-gray-200 rounded-xl bg-white ${isEditingStarted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                        <input type="checkbox" checked={shuffleAnswers} onChange={e => setShuffleAnswers(e.target.checked)} disabled={isEditingStarted} />
                         <span className="text-sm font-semibold text-gray-700">Trộn thứ tự đáp án</span>
                       </label>
                     </div>
@@ -843,7 +867,7 @@ export default function QuizManagement() {
                     </div>
 
                     {/* Questions */}
-                    {quizType === 'manual_question' && (
+                    {quizType === 'manual_question' && !isEditingStarted && (
                     <div className="border-t border-gray-100 pt-5">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-base font-bold text-gray-900">Câu hỏi</h3>

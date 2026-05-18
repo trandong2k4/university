@@ -90,6 +90,9 @@ export default function QuizPage() {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
+  const [detailQuiz, setDetailQuiz] = useState<{ quiz: Quiz; info: QuizDetailDTO } | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const autoSaveRef = useRef<NodeJS.Timeout | null>(null);
   const autoSaveDebounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -484,6 +487,18 @@ export default function QuizPage() {
     }
   };
 
+  const handleViewDetail = async (quiz: Quiz) => {
+    setDetailLoading(true);
+    try {
+      const res = await apiClient.get<QuizDetailDTO>(`/student/quiz/${quiz.id}`);
+      setDetailQuiz({ quiz, info: res.data });
+    } catch {
+      showToast('Không thể tải chi tiết quiz.', 'error');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
   const handleQuizAnswer = (questionId: string, answerId: string) => {
     setQuizAnswers(prev => ({ ...prev, [questionId]: answerId }));
     scheduleAutoSave('answer_change');
@@ -594,6 +609,7 @@ export default function QuizPage() {
     setQuizAnswers({});
     setQuizTextAnswers({});
     setReviewMarks({});
+    setShowSubmitConfirm(false);
   };
 
   if (!user) return null;
@@ -815,7 +831,11 @@ export default function QuizPage() {
                           </button>
                         )}
 
-                        <button className="flex items-center gap-2 px-6 py-3 bg-[#f1f5f9] text-[#0a2540] rounded-lg hover:bg-[#e5e7eb] transition-colors font-medium">
+                        <button
+                          onClick={() => handleViewDetail(quiz)}
+                          disabled={detailLoading}
+                          className="flex items-center gap-2 px-6 py-3 bg-[#f1f5f9] text-[#0a2540] rounded-lg hover:bg-[#e5e7eb] transition-colors font-medium disabled:opacity-50"
+                        >
                           <Eye className="w-4 h-4" />
                           Chi tiết
                         </button>
@@ -844,6 +864,174 @@ export default function QuizPage() {
       </div>
 
       <AIAssistantButton />
+
+      {/* Quiz Detail Modal */}
+      {detailQuiz && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setDetailQuiz(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-5 text-white">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-white/20 rounded-xl flex-shrink-0 mt-0.5">
+                    <Award className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold leading-snug">{detailQuiz.info.tieuDe}</h3>
+                    <p className="text-purple-100 text-sm mt-0.5">{detailQuiz.quiz.subject}</p>
+                  </div>
+                </div>
+                <button onClick={() => setDetailQuiz(null)} className="text-white/70 hover:text-white flex-shrink-0 mt-0.5">✕</button>
+              </div>
+            </div>
+
+            <div className="px-6 py-5 space-y-4">
+              {/* Score (completed) */}
+              {detailQuiz.quiz.status === 'completed' && detailQuiz.quiz.score !== undefined && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <Trophy className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-green-800">Kết quả</p>
+                      {detailQuiz.quiz.quizResult && detailQuiz.quiz.quizResult.total > 0 && (
+                        <p className="text-xs text-green-600 mt-0.5">
+                          {detailQuiz.quiz.quizResult.correct}/{detailQuiz.quiz.quizResult.total} câu đúng
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-bold text-green-600">{detailQuiz.quiz.score.toFixed(1)}</p>
+                    <p className="text-xs text-green-600">/ {detailQuiz.quiz.maxScore} điểm</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Description */}
+              {detailQuiz.info.moTa && (
+                <div className="bg-[#f8fafc] rounded-xl px-4 py-3">
+                  <p className="text-sm text-[#475569]">{detailQuiz.info.moTa}</p>
+                </div>
+              )}
+
+              {/* Info grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-[#f8fafc] rounded-xl px-4 py-3 flex items-center gap-3">
+                  <Clock className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-[#6a7282]">Thời gian làm</p>
+                    <p className="text-sm font-semibold text-[#0a2540]">{detailQuiz.info.thoiGianLam} phút</p>
+                  </div>
+                </div>
+                <div className="bg-[#f8fafc] rounded-xl px-4 py-3 flex items-center gap-3">
+                  <Target className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-[#6a7282]">Số câu hỏi</p>
+                    <p className="text-sm font-semibold text-[#0a2540]">{detailQuiz.info.questions?.length ?? '—'} câu</p>
+                  </div>
+                </div>
+                <div className="bg-[#f8fafc] rounded-xl px-4 py-3 flex items-center gap-3 col-span-2">
+                  <Calendar className="w-4 h-4 text-red-400 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-[#6a7282]">Hạn nộp</p>
+                    <p className="text-sm font-semibold text-[#0a2540]">
+                      {detailQuiz.quiz.deadline.toLocaleDateString('vi-VN')}{' '}
+                      {detailQuiz.quiz.deadline.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 pb-6 flex gap-3">
+              <button
+                onClick={() => setDetailQuiz(null)}
+                className="flex-1 px-4 py-3 bg-[#f1f5f9] text-[#0a2540] rounded-xl font-medium hover:bg-[#e5e7eb] transition-colors"
+              >
+                Đóng
+              </button>
+              {detailQuiz.quiz.status === 'pending' && (
+                <button
+                  onClick={() => { setDetailQuiz(null); handleStartQuiz(detailQuiz.quiz); }}
+                  className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <PlayCircle className="w-4 h-4" />
+                  Bắt đầu làm bài
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Submit Confirmation Modal */}
+      {showSubmitConfirm && activeQuiz && (() => {
+        const answered = getAnsweredCount(activeQuiz);
+        const total = activeQuiz.questions.length;
+        const unanswered = total - answered;
+        return (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-5 text-white">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 rounded-xl">
+                    <CheckCircle className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">Xác nhận nộp bài</h3>
+                    <p className="text-green-100 text-sm">Bạn có chắc chắn muốn nộp bài không?</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-6 py-5 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                    <p className="text-3xl font-bold text-green-600">{answered}</p>
+                    <p className="text-sm text-green-700 font-medium mt-1">Đã trả lời</p>
+                  </div>
+                  <div className={`border rounded-xl p-4 text-center ${unanswered > 0 ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <p className={`text-3xl font-bold ${unanswered > 0 ? 'text-amber-600' : 'text-gray-400'}`}>{unanswered}</p>
+                    <p className={`text-sm font-medium mt-1 ${unanswered > 0 ? 'text-amber-700' : 'text-gray-500'}`}>Chưa trả lời</p>
+                  </div>
+                </div>
+
+                {unanswered > 0 && (
+                  <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                    <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-700">
+                      Bạn còn <span className="font-bold">{unanswered} câu</span> chưa trả lời. Sau khi nộp bài sẽ không thể chỉnh sửa.
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 text-sm text-[#6a7282] bg-[#f8fafc] rounded-xl px-4 py-3">
+                  <Clock className="w-4 h-4 flex-shrink-0" />
+                  <span>Thời gian còn lại: <span className="font-semibold text-[#0a2540]">{formatTime(timeRemaining)}</span></span>
+                </div>
+              </div>
+
+              <div className="px-6 pb-6 flex gap-3">
+                <button
+                  onClick={() => setShowSubmitConfirm(false)}
+                  className="flex-1 px-4 py-3 bg-[#f1f5f9] text-[#0a2540] rounded-xl font-medium hover:bg-[#e5e7eb] transition-colors"
+                >
+                  Quay lại
+                </button>
+                <button
+                  onClick={() => { setShowSubmitConfirm(false); handleQuizSubmit(); }}
+                  className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Nộp bài
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Quiz Modal */}
       {activeQuiz && (
@@ -1057,12 +1245,7 @@ export default function QuizPage() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => {
-                      const unanswered = activeQuiz.questions.filter(q => !quizAnswers[q.id] && !quizTextAnswers[q.id]?.trim()).length;
-                      if (confirm(`Bạn có chắc muốn nộp bài?${unanswered ? ` Còn ${unanswered} câu chưa trả lời.` : ''}`)) {
-                        handleQuizSubmit();
-                      }
-                    }}
+                    onClick={() => setShowSubmitConfirm(true)}
                     className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                   >
                     <CheckCircle className="w-4 h-4" />
